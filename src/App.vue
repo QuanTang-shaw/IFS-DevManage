@@ -1,0 +1,104 @@
+<template>
+  <div id="app">
+    <header>
+      <img src="./assets/53007d5b00000.png" alt="LOGO">
+      <h2>生产设备管理</h2>
+      <div class="log">
+        <img src="./assets/people/50/guy-4.jpg" alt="头像" height="35">
+        <select name="" id="" class="account">
+          <option value="">我的账户</option>
+          <option value="">个人信息</option>
+          <option value="">退出</option>
+        </select>
+        <img src="./assets/flage.jpg" alt="guoqi" width="45">
+      </div>
+    </header>
+    <div class="row">
+      <div class="col-md-8">
+        <router-view  name="a"></router-view>
+        <router-view  name="b"></router-view>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default deviceMan-nav" data-toggle="panel-collapse" data-open="true">
+          <div class="panel-heading deviceMan-nav-head">
+            <h4 class="panel-title">生产设备管理</h4>
+          </div>
+          <div class="panel-body list-group">
+            <ul class="list-group list-group-menu">
+              <li class="list-group-item active">
+                <router-link to="/">厂区管理</router-link>
+              </li>
+              <li class="list-group-item">
+                <router-link to="/workshop">车间管理</router-link>
+              </li>
+              <li class="list-group-item"><a class="link-text-color" href="website-student-profile.html">机台列表</a></li>
+              <li class="list-group-item"><a class="link-text-color" href="website-student-messages.html">设备类别</a></li>
+              <li class="list-group-item"><a class="link-text-color" href="login.html"><span>设备厂商</span></a></li>
+              <li class="list-group-item"><a class="link-text-color" href="login.html"><span>设备列表</span></a></li>
+              <li class="list-group-item"><a class="link-text-color" href="login.html"><span>报表管理</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'app'
+}
+</script>
+
+<style>
+body{
+  margin:0;
+  padding: 0;
+}
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /*text-align: center;*/
+  color: #2c3e50;
+  padding:5px;
+}
+header{
+  border:solid 1px #D1CBCB;
+}
+header h2{
+  display:inline-block;
+  color: #78C7FB;
+}
+.log{
+  display:inline-block;
+  float: right;
+  margin-right:80px;
+}
+.account{
+  border:none;
+  padding:8px 5px;
+  font-size:30px;
+}
+.deviceMan-nav{
+  /*width:10%;*/
+  /*float: right;*/
+  margin:80px 150px;
+  position: relative;
+}
+.deviceMan-nav-head h4:after{
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 16px;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f107";
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  display: block;
+}
+.list-group-item.active a{
+  color: #FFFFFF;
+}
+</style>
