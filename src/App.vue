@@ -13,12 +13,13 @@
         <img src="./assets/flage.jpg" alt="guoqi" width="45">
       </div>
     </header>
+    <router-view class="viewOne"  name="a"></router-view>
     <div class="row">
+      <div class="col-md-1"></div>
       <div class="col-md-8">
-        <router-view  name="a"></router-view>
-        <router-view  name="b"></router-view>
+        <router-view class="viewTwo"  name="b"></router-view>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2 deviceMan-wraper">
         <div class="panel panel-default deviceMan-nav" data-toggle="panel-collapse" data-open="true">
           <div class="panel-heading deviceMan-nav-head">
             <h4 class="panel-title">生产设备管理</h4>
@@ -55,60 +56,73 @@
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+  import store from './store/store.js';
+  export default {
+    name: 'app',
+    created:function () {
+      store.initStorage();
+    }
+  }
 </script>
 
 <style>
-body{
-  margin:0;
-  padding: 0;
-}
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /*text-align: center;*/
-  color: #2c3e50;
-  padding:5px;
-}
-header{
-  border:solid 1px #D1CBCB;
-}
-header h2{
-  display:inline-block;
-  color: #78C7FB;
-}
-.log{
-  display:inline-block;
-  float: right;
-  margin-right:80px;
-}
-.account{
-  border:none;
-  padding:8px 5px;
-  font-size:30px;
-}
-.deviceMan-nav{
-  /*width:10%;*/
-  /*float: right;*/
-  margin:80px 150px;
-  position: relative;
-}
-.deviceMan-nav-head h4:after{
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: 16px;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  content: "\f107";
-  position: absolute;
-  right: 15px;
-  top: 10px;
-  display: block;
-}
-.list-group-item.active a{
-  color: #FFFFFF;
-}
+  body{
+    margin:0;
+    padding: 0;
+  }
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /*text-align: center;*/
+    color: #2c3e50;
+    padding:5px;
+  }
+  header{
+    border:solid 1px #D1CBCB;
+  }
+  header h2{
+    display:inline-block;
+    color: #78C7FB;
+  }
+  .viewTwo{
+    margin-top:30px;
+  }
+  .log{
+    display:inline-block;
+    float: right;
+    margin-right:80px;
+  }
+  .account{
+    border:none;
+    padding:8px 5px;
+    font-size:30px;
+  }
+  .deviceMan-wraper{
+    /*border:solid 1px;*/
+    padding:0;
+    margin-top:30px;
+  }
+  .deviceMan-nav{
+    width:100%;
+    /*float: right;*/
+    /*border:solid 1px;*/
+    margin:0;
+    position: relative;
+  }
+  .deviceMan-nav-head h4:after{
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 16px;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\f107";
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    display: block;
+  }
+  .list-group-item.active a{
+    color: #FFFFFF;
+  }
 </style>

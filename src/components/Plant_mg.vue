@@ -6,91 +6,15 @@
     </div>
     <div class="plant-list">
       <ul class="list-group">
-        <li class="list-group-item">
+        <li class="list-group-item" v-for="plant in plantList">
           <div class="row">
             <div class="col-md-2 plant-pic">
-              <img src="../assets/plant1.jpg" alt="" >
+              <img src="../pic/plant1.jpg" alt="" >
             </div>
             <div class="col-md-6 plant-info">
-              <p>A厂区</p>
-              <p>广东省深圳市南山区高新园15号8栋201</p>
-              <p>(+86)755-29345683</p>
-            </div>
-            <div class="col-md-4 plant-oper">
-              <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-lg"></i> Edit</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-trash-o fa-lg"></i> Delete</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-cog fa-lg"></i> Settings</a>
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-md-2 plant-pic">
-              <img src="../assets/plant1.jpg" alt="" >
-            </div>
-            <div class="col-md-6 plant-info">
-              <p>A厂区</p>
-              <p>广东省深圳市南山区高新园15号8栋201</p>
-              <p>(+86)755-29345683</p>
-            </div>
-            <div class="col-md-4 plant-oper">
-              <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-lg"></i> Edit</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-trash-o fa-lg"></i> Delete</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-cog fa-lg"></i> Settings</a>
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-md-2 plant-pic">
-              <img src="../assets/plant1.jpg" alt="" >
-            </div>
-            <div class="col-md-6 plant-info">
-              <p>A厂区</p>
-              <p>广东省深圳市南山区高新园15号8栋201</p>
-              <p>(+86)755-29345683</p>
-            </div>
-            <div class="col-md-4 plant-oper">
-              <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-lg"></i> Edit</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-trash-o fa-lg"></i> Delete</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-cog fa-lg"></i> Settings</a>
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-md-2 plant-pic">
-              <img src="../assets/plant1.jpg" alt="" >
-            </div>
-            <div class="col-md-6 plant-info">
-              <p>A厂区</p>
-              <p>广东省深圳市南山区高新园15号8栋201</p>
-              <p>(+86)755-29345683</p>
-            </div>
-            <div class="col-md-4 plant-oper">
-              <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-lg"></i> Edit</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-trash-o fa-lg"></i> Delete</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-cog fa-lg"></i> Settings</a>
-            </div>
-          </div>
-        </li>
-        <li class="list-group-item">
-          <div class="row">
-            <div class="col-md-2 plant-pic">
-              <img src="../assets/plant1.jpg" alt="" >
-            </div>
-            <div class="col-md-6 plant-info">
-              <p>A厂区</p>
-              <p>广东省深圳市南山区高新园15号8栋201</p>
-              <p>(+86)755-29345683</p>
+              <p>{{plant.name}}</p>
+              <p>{{plant.address}}</p>
+              <p>{{plant.Contact}}</p>
             </div>
             <div class="col-md-4 plant-oper">
               <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-lg"></i> Edit</a>
@@ -107,14 +31,19 @@
 </template>
 
 <script>
-export default {
-  // name: 'hello',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
+  import store from '@/store/store'
+  export default {
+    name: 'plantList',
+    data () {
+      let plantList=store.obtain('plantList');
+      return {
+        plantList
+      }
+    },
+    created:function () {
+      console.log(this.plantList)
     }
   }
-}
 </script>
 <style>
   .plantManagement{
@@ -123,7 +52,7 @@ export default {
   .plantManagement-toggle{
     /*border:solid 1px;*/
     display:inline-block;
-    margin:20px 15px;
+    margin:0px 15px 20px;
 
   }
   .plantManagement-toggle span{
