@@ -26,16 +26,26 @@
           <div class="panel-body list-group">
             <ul class="list-group list-group-menu">
               <li class="list-group-item active">
-                <router-link to="/">厂区管理</router-link>
+                <router-link to="/plant">厂区管理</router-link>
               </li>
               <li class="list-group-item">
                 <router-link to="/workshop">车间管理</router-link>
               </li>
-              <li class="list-group-item"><a class="link-text-color" href="website-student-profile.html">机台列表</a></li>
-              <li class="list-group-item"><a class="link-text-color" href="website-student-messages.html">设备类别</a></li>
-              <li class="list-group-item"><a class="link-text-color" href="login.html"><span>设备厂商</span></a></li>
-              <li class="list-group-item"><a class="link-text-color" href="login.html"><span>设备列表</span></a></li>
-              <li class="list-group-item"><a class="link-text-color" href="login.html"><span>报表管理</span></a></li>
+              <li class="list-group-item">
+                <router-link :to="{name:'machineListMg',params:{userId:123}}">机台列表</router-link>
+              </li>
+              <li class="list-group-item">
+                <router-link to="/deviceCategory">设备类别</router-link>
+              </li>
+              <li class="list-group-item">
+                <router-link to="/deviceManufacturers">设备厂商</router-link>
+              </li>
+              <li class="list-group-item">
+                <router-link to="/deviceList">设备列表</router-link>
+              </li>
+              <li class="list-group-item">
+                <router-link to="/report">报表管理</router-link>
+              </li>
             </ul>
           </div>
         </div>
