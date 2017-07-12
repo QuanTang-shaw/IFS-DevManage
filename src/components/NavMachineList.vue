@@ -1,7 +1,7 @@
 <template>
 	<div class="plant-management">
-		<button class="btn btn-default">机台管理</button>
-		<button class="btn btn-default addPlant">添加厂区</button>
+		<h2>机台管理</h2>
+		<button class="btn btn-default addPlant">添加机台</button>
 	</div>
 </template>
 

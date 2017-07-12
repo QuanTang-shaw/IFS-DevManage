@@ -85,6 +85,16 @@
     display:inline-block;
     color: #78C7FB;
   }
+  .viewOne{
+    text-align: center;
+  }
+  .viewOne h2{
+    font-size:40px;
+    letter-spacing:25px;
+    margin: 0;
+    color: #423D46;
+    display: inline-block;
+  }
   .viewTwo{
     margin-top:30px;
   }
