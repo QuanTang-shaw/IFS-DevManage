@@ -1,24 +1,29 @@
 <template>
 	<div class="machineList-mg">
-		<!-- <div class="workshopSelect" >
+		<div class="workshopSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
 			    <img src="../pic/plant1.jpg" alt="" width="120">
 			  </div>
-			  <div class="col-md-6 selectedPlant-info">
+			  <div class="col-md-4 selectedPlant-info">
 			    <p>{{selectedPlant.name}}</p>
 			    <p>{{selectedPlant.address}}</p>
 			    <p>{{selectedPlant.Contact}}</p>
 			  </div>
-			  <div class="col-md-4 selectedPlant-oper">
-				<label for="">切换厂区:
-					<select name="selectPlant" id="" v-model="selectedIndex" @change="togglePlant">
+			  <div class="col-md-6 selectedPlant-oper">
+				<label for="">厂区:
+					<select name="selectPlant" id="" v-model="plantIndex" @change="togglePlant">
 						<option :value="index" v-for="(plant,index) in plantList">{{plant.name}}</option>
+					</select>
+				</label></br>
+				<label for="">车间:
+					<select name="selectworkshop" id="" v-model="plantIndex" @change="togglePlant">
+						<option :value="index" v-for="(wp,index) in workshopList">{{wp.name}}</option>
 					</select>
 				</label>
 			  </div>
 			</div>
-		</div> -->
+		</div>
 		<div class="machineList">
 			<table class="machineList-table" border="1">
 				<thead>
@@ -48,9 +53,8 @@
 		</div>
 	</div>
 </template>
-
 <script>
-  import store from '@/store/store'
+  	import store from '@/store/store'
 	export default{
 		name:'machineList',
 		data(){
@@ -70,13 +74,20 @@
 		},
 		created:function () {
 			console.log(this.machineList)
+		},
+		methods:{
+			togglePlant:function () {
+				/* body... */
+				this.selectedPlant=this.plantList[this.plantIndex];
+			}
 		}
-
 	}
 </script>
-
-
 <style>
+	.workshopSelect{
+		font-size:20px;
+		border:solid 3px #DEDADA;
+	}
 	.machineList-mg{
 		font-size:25px;
 	}

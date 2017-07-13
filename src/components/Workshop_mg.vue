@@ -27,7 +27,10 @@
 						<th>车间名称</th>
 						<th>车间主管</th>
 						<th>车间类型</th>
-						<th>操作</th>
+						<th>操作
+							<button class="btn btn-default addWorkshop">
+							<i class="fa fa-plus"></i>添加车间</button>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -62,7 +65,6 @@
 		</div>
 	</div>
 </template>
-
 <script>
   import store from '@/store/store'
 	export default{
@@ -89,7 +91,6 @@
 		}
 	}
 </script>
-
 <style>
 	.workshopManagement{
 		margin-top:30px;
@@ -108,5 +109,13 @@
 		border:solid 1px #D9D4D4;
 		width:100%;
 		margin-top: 20px;
+	}
+	.addWorkshop{
+		font-size:20px;
+		float: right;
+	}
+	.addWorkshop:hover{
+		background-color: #1340F0;
+		color: #FFFFFF;
 	}
 </style>

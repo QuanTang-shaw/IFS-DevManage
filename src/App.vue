@@ -19,14 +19,17 @@
       <div class="col-md-8">
         <router-view class="viewTwo"  name="b"></router-view>
       </div>
-      <div class="col-md-2 deviceMan-wraper">
-        <div class="panel panel-default deviceMan-nav" data-toggle="panel-collapse" data-open="true">
-          <div class="panel-heading deviceMan-nav-head">
+      <div class="col-md-2 deviceMg-wraper">
+        <div class="panel panel-default deviceMg-nav" data-toggle="panel-collapse" data-open="true">
+          <div class="panel-heading deviceMg-nav-head">
             <h4 class="panel-title">生产设备管理</h4>
           </div>
           <div class="panel-body list-group">
             <ul class="list-group list-group-menu">
-              <li class="list-group-item active">
+              <li class="list-group-item" :class="{ active: menu.isActive }" v-for="(menu,index ) in routerMenu" @click="menuClick(index)">
+                <router-link :to="menu.path">{{menu.text}}</router-link>
+              </li>
+<!--               <li class="list-group-item active">
                 <router-link to="/plant">厂区管理</router-link>
               </li>
               <li class="list-group-item">
@@ -46,7 +49,7 @@
               </li>
               <li class="list-group-item">
                 <router-link to="/report">报表管理</router-link>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -59,8 +62,58 @@
   import store from './store/store.js';
   export default {
     name: 'app',
+    data() {
+      let routerMenu=[
+          {
+            path:'/plant',
+            text:'厂区管理',
+            isActive:false
+          },
+          {
+            path:'/workshop',
+            text:'车间管理',
+            isActive:false
+          },
+          {
+            path:'/machineList',
+            text:'机台列表',
+            isActive:false
+          },
+          {
+            path:'/deviceCategory',
+            text:'设备类别',
+            isActive:false
+          },
+          {
+            path:'/deviceManufacturers',
+            text:'设备厂商',
+            isActive:false
+          },
+          {
+            path:'/deviceList',
+            text:'设备列表',
+            isActive:false
+          },
+          {
+            path:'/report',
+            text:'报表管理',
+            isActive:false
+          }
+        ];
+      return{
+        routerMenu
+      }
+    },
     created:function () {
       store.initStorage();
+    },
+    methods:{
+      menuClick:function (index) {
+        this.routerMenu.forEach( function(element, index) {
+          element.isActive=false;
+        });
+        this.routerMenu[index].isActive=true;
+      }
     }
   }
 </script>
@@ -108,19 +161,19 @@
     padding:8px 5px;
     font-size:30px;
   }
-  .deviceMan-wraper{
+  .deviceMg-wraper{
     /*border:solid 1px;*/
     padding:0;
     margin-top:30px;
   }
-  .deviceMan-nav{
+  .deviceMg-nav{
     width:100%;
     /*float: right;*/
-    /*border:solid 1px;*/
+    font-size:25px;
     margin:0;
     position: relative;
   }
-  .deviceMan-nav-head h4:after{
+  .deviceMg-nav-head h4:after{
     font: normal normal normal 14px/1 FontAwesome;
     font-size: 16px;
     text-rendering: auto;
@@ -135,4 +188,8 @@
   .list-group-item.active a{
     color: #FFFFFF;
   }
+  /* .deviceMg-wraper .list-group-item:hover{
+    background-color: #EAECEF;
+    color: #FFFFFF;
+  } */
 </style>

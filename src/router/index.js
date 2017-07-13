@@ -40,7 +40,7 @@ export default new Router({
       }
     },
     {
-      path: '/machineList/:userId',
+      path: '/machineList',
       name: 'machineListMg',
       components:{
       	default:navMachineList,
