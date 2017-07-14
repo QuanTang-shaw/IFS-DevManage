@@ -72,6 +72,7 @@
 
 <style>
 	.deviceCategory{
+		font-size:.7em;
 		border:solid 1px #CBC6C6;
 	}
 	.categoryList-nav{
@@ -84,7 +85,7 @@
 		width: 85%;
 		float: left;
 		border:solid 1px #C5C3C3;
-		font-size:25px;
+		/*font-size:25px;*/
 	}
 	.deviceCategory,.categoryList-table{
 		width: 100%;
@@ -94,6 +95,7 @@
 	}
 	.subCategoryName{
 		cursor: pointer;
+		margin-left:25px;
 	}
 	.subCategoryName:hover{
 		background-color: #E4D8D8;

@@ -46,12 +46,12 @@
 </script>
 <style>
 	.companyList{
-		font-size:25px;
+		font-size:.75em;
 	}
 	.companyList,.companyList-table{
 		width: 100%;
 	}
 	.companyList-table th,.companyList-table td{
-		padding:25px 35px;
+		padding:20px 25px;
 	}
 </style>

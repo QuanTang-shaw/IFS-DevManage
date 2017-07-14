@@ -1,27 +1,40 @@
 <template>
   <div class="plantManagement">
-    <div class="btn-group plantManagement-toggle" role="group" aria-label="...">
-      <button type="button" class="btn btn-default">厂区列表</button>
-      <button type="button" class="btn btn-default">厂区地图</button>
+    <div>
+      <div class="btn-group plantManagement-toggle" role="group" aria-label="...">
+        <button type="button" class="btn btn-default">厂区列表</button>
+        <button type="button" class="btn btn-default">厂区地图</button>
+      </div>
+      <button class="btn btn-default addPlant">
+        <i class="fa fa-plus"></i>添加厂区</button>
     </div>
     <div class="plant-list">
       <ul class="list-group">
         <li class="list-group-item" v-for="plant in plantList">
           <div class="row">
             <div class="col-md-2 plant-pic">
-              <img src="../pic/plant1.jpg" alt="" >
+              <img src="../pic/plant1.jpg" alt="厂区图片">
             </div>
             <div class="col-md-6 plant-info">
-              <p>{{plant.name}}</p>
-              <p>{{plant.address}}</p>
-              <p>{{plant.Contact}}</p>
+              <p><b>名称:</b>{{plant.name}}</p>
+              <p><b>地址:</b>{{plant.address}}</p>
+              <p><b>联系方式:</b>{{plant.Contact}}</p>
             </div>
-            <div class="col-md-4 plant-oper">
-              <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-lg"></i> Edit</a>
+            <div class="col-md-4 plant-oper" >
+              <!-- <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-sm"></i> Edit</a>
               <a class="btn btn-default" href="#">
                 <i class="fa fa-trash-o fa-lg"></i> Delete</a>
               <a class="btn btn-default" href="#">
-                <i class="fa fa-cog fa-lg"></i> Settings</a>
+                <i class="fa fa-cog fa-lg"></i> Settings</a> -->
+                <span class="font-icon-btn">
+                  <i class="fa fa-edit fa-lg" title="编辑"></i>
+                </span>
+                <span class="font-icon-btn">
+                  <i class="fa fa-trash-o fa-lg" title="删除"></i>
+                </span>
+                <span class="font-icon-btn" title="查看详情">
+                  <i class="fa fa-list-alt fa-lg"></i>
+                </span>
             </div>
           </div>
         </li>
@@ -48,30 +61,40 @@
 <style>
   .plantManagement{
     /*border:solid 1px;*/
+    font-size:.6em;
   }
   .plantManagement-toggle{
     /*border:solid 1px;*/
     display:inline-block;
     margin:0px 15px 20px;
-
+  }
+  .addPlant{
+    float: right;
+    margin-right:20px;
   }
   .plantManagement-toggle span{
     display: inline-block;
     padding:15px 5;
   }
+  .plant-list{
+    /*font-size:15px;*/
+  }
   .plant-list li .row>div{
     display: flex;
     /*border:solid 1px;*/
   }
+  .plant-pic{
+    display:block;
+  }
   .plant-pic img{
     /*height:120px;*/
     width:100%;
-    max-height:130px;
+    max-height:120px;
     max-width:180px;
   }
   .plant-list .list-group-item {
-    margin-bottom:20px;
-    /*padding: 10px;*/
+    margin-bottom:15px;
+    padding: 0px 10px;
     /*border:solid 1px #EA0F0F;*/
   }
   .list-group-item .row{
@@ -80,11 +103,16 @@
   }
   .plant-info{
     flex-direction: column;
-    justify-content: center;
-    align-content: center;
-  }
-  .plant-oper {
-    padding: 50px;
     justify-content:space-around;
+    /*align-content: center;*/
+  }
+  .plant-info p{margin:0;}
+  .plant-oper {
+    padding: 0px;
+    justify-content:space-around;
+    align-items: center;
+  }
+  .font-icon-btn {
+    cursor: pointer;
   }
 </style>

@@ -5,9 +5,95 @@
     <title>生产设备管理</title>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+      *{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      body,#app,section,footer{
+        width:100%;
+      }
+      section{
+        /*width: 100%;*/
+        padding:20px 0;
+        min-height:700px;
+      }
+      header{
+        border-bottom:solid 1px #D1CBCB;
+      }
+      header h2{
+        display:inline-block;
+        color: #78C7FB;
+      }
+      footer{
+        border-top: solid 1px #EEE7E7;
+        text-align: center;
+        height: 105px;
+        background-color: #9490bd;
+        color: #535e65;
+      }
+      .log{
+        display:inline-block;
+        float: right;
+        margin-right:80px;
+      }
+      .account{
+        border:none;
+        padding:8px 5px;
+        font-size:30px;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <header>
+      <img src="./static/img/53007d5b00000.png" alt="LOGO">
+      <h2>生产设备管理</h2>
+      <div class="log">
+        <img src="./static/img/guy-1.jpg" alt="头像" height="35">
+        <select name="" id="" class="account">
+          <option value="">我的账户</option>
+          <option value="">个人信息</option>
+          <option value="">退出</option>
+        </select>
+        <img src="./static/img/flage.jpg" alt="guoqi" width="45">
+      </div>
+    </header>
+    <section>
+      <div id="app"></div>
+    </section>
+    <footer>
+        <table style="width:65%;margin:0 auto;" >
+          <tr>
+            <td>厂区管理</td>
+            <td>厂区管理</td>
+            <td>厂区管理</td>
+            <td>厂区管理</td>
+            <td>厂区管理</td>
+            <td>厂区管理</td>
+          </tr>
+          <tr>
+            <td>车间列表</td>
+            <td>车间列表</td>
+            <td>车间列表</td>
+            <td>车间列表</td>
+            <td>车间列表</td>
+            <td>车间列表</td>
+          </tr>
+          <tr>
+            <td>机台列表</td>
+            <td>机台列表</td>
+            <td>机台列表</td>
+            <td>机台列表</td>
+            <td>机台列表</td>
+            <td>机台列表</td>
+          </tr>
+        </table>
+        <div>
+          <span>CopyRight(C)TOP-LINK 2017-2025</span>
+          <span>深圳市拓联智能信息技术有限公司</span>
+        </div>
+    </footer>
     <!-- built files will be auto injected -->
    	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

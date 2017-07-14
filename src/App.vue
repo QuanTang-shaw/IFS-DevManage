@@ -1,46 +1,37 @@
 <template>
   <div id="app">
-    <header>
-      <img src="./assets/53007d5b00000.png" alt="LOGO">
-      <h2>生产设备管理</h2>
-      <div class="log">
-        <img src="./assets/people/50/guy-4.jpg" alt="头像" height="35">
-        <select name="" id="" class="account">
-          <option value="">我的账户</option>
-          <option value="">个人信息</option>
-          <option value="">退出</option>
-        </select>
-        <img src="./assets/flage.jpg" alt="guoqi" width="45">
-      </div>
-    </header>
     <!-- <router-view class="viewOne"  name="a"></router-view> -->
-    <pagetitle></pagetitle>
-    <div class="row">
-      <div class="col-md-1"></div>
-      <div class="col-md-8">
-        <router-view class="viewTwo"  name="b"></router-view>
-      </div>
-      <div class="col-md-2 deviceMg-wraper">
-        <div class="panel panel-default deviceMg-nav" data-toggle="panel-collapse" data-open="true">
-          <div class="panel-heading deviceMg-nav-head">
-            <h4 class="panel-title">生产设备管理</h4>
-          </div>
-          <div class="panel-body list-group">
-            <ul class="list-group list-group-menu">
-              <li class="list-group-item" :class="{ active: menu.isActive }" v-for="(menu,index ) in routerMenu" @click="menuClick(index)">
-                <router-link :to="menu.path">{{menu.text}}</router-link>
-              </li>
-              <!-- <li class="list-group-item active">
-                <router-link to="/plant">厂区管理</router-link>
-              </li> -->
-            </ul>
+      <div class="row wraper">
+        <pagetitle :message="titleText"></pagetitle>
+        <div class="col-md-9" >
+          <router-view class="viewTwo" name="b"></router-view>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2 deviceMg-wraper" >
+          <div class="panel panel-default deviceMg-nav" data-toggle="panel-collapse" data-open="true">
+            <div class="panel-heading deviceMg-nav-head">
+              <h4 class="panel-title">生产设备管理</h4>
+            </div>
+            <div class="panel-body list-group deviceMg-nav-body">
+              <ul class="list-group list-group-menu">
+                <li class="list-group-item" :class="{ active: menu.isActive }" v-for="(menu,index ) in routerMenu" @click="menuClick(index)">
+                  <router-link class="router-link" :to="menu.path">
+                    <!-- <span>
+                      <i class="fa fa-list-alt"></i>
+                    </span> -->
+                    {{menu.text}}
+                  </router-link>
+                </li>
+                <!-- <li class="list-group-item active">
+                  <router-link to="/plant">厂区管理</router-link>
+                </li> -->
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
-
 <script>
   import store from './store/store.js'
   import pagetitle from './components/pageTitle.vue'
@@ -83,9 +74,11 @@
             text:'报表管理',
             isActive:false
           }
-        ];
+        ],
+          titleText='厂区管理';
       return{
-        routerMenu
+        routerMenu,
+        titleText
       }
     },
     created:function () {
@@ -100,69 +93,40 @@
           element.isActive=false;
         });
         this.routerMenu[index].isActive=true;
+        this.titleText=event.target.innerText;
       }
     }
   }
 </script>
-
 <style>
-  body{
-    margin:0;
-    padding: 0;
-  }
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /*text-align: center;*/
+    position:relative;
+    margin:0 auto;
     color: #2c3e50;
-    padding:5px;
-    /*text-align: center;*/
-  }
-  header{
-    border:solid 1px #D1CBCB;
-  }
-  header h2{
-    display:inline-block;
-    color: #78C7FB;
-  }
-  .viewOne{
-    text-align:initial;
-    width:85%;
-    margin-left:8%;
-  }
-  .viewOne h2{
+    max-width:1300px;
     padding: 0;
+    font-size:20px;
   }
-  .viewOne h2{
-    font-size:40px;
-    letter-spacing:25px;
-    margin: 0;
-    color: #423D46;
-    display: inline-block;
+  .wraper{
+    /*border:solid 1px #11F77C;*/
+    margin-right: 0;
+    margin-left: 0;
+    padding: 0 30px;
+    font-size:20px;
   }
   .viewTwo{
     margin-top:30px;
   }
-  .log{
-    display:inline-block;
-    float: right;
-    margin-right:80px;
-  }
-  .account{
-    border:none;
-    padding:8px 5px;
-    font-size:30px;
-  }
   .deviceMg-wraper{
-    /*border:solid 1px;*/
-    padding:0;
+    /*padding:0;*/
     margin-top:30px;
   }
   .deviceMg-nav{
     width:100%;
-    /*float: right;*/
-    font-size:25px;
+    font-size:18px;
     margin:0;
     position: relative;
   }
@@ -178,11 +142,24 @@
     top: 10px;
     display: block;
   }
+  .deviceMg-nav-body{
+    padding:0px;
+  }
+  .deviceMg-nav-body .list-group{margin:0;}
+  .list-group-item{
+    padding: 0;
+  }
   .list-group-item.active a{
     color: #FFFFFF;
+    text-decoration: none;
   }
-  /* .deviceMg-wraper .list-group-item:hover{
-    background-color: #EAECEF;
-    color: #FFFFFF;
-  } */
+  .router-link{
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding:10px;
+    letter-spacing:6px;
+  }
+  .router-link:hover{text-decoration: none;}
 </style>

@@ -19,7 +19,20 @@
 			  		name:'同堕落工业园',
 			  		address:'广东省深圳市罗湖区',
 			  		Contact:"0755-111111111"
+			  	},
+			  	{
+			  		pic:'../pic/plant3.jpg',
+			  		name:'同堕落工业园',
+			  		address:'广东省深圳市罗湖区',
+			  		Contact:"0755-111111111"
+			  	},
+			  	{
+			  		pic:'../pic/plant3.jpg',
+			  		name:'同堕落工业园',
+			  		address:'广东省深圳市罗湖区',
+			  		Contact:"0755-111111111"
 			  	}
+
 			  ];
 
 		let workshopList=[

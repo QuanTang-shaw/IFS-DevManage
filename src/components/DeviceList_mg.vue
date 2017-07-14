@@ -136,7 +136,7 @@
 	}
 	.deviceList{
 		/*width: 100%;*/
-		font-size:25px;
+		font-size:.7em;
 	}
 	.deviceList ul{
 		padding:20px 0;

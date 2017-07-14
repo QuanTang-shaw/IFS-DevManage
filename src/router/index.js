@@ -10,12 +10,12 @@ import deviceList from '@/components/DeviceList_mg'
 import report from '@/components/Report_mg'
 
 import navPlant from '@/components/NavPlant'
-import navworkshop from '@/components/NavWorkshop'
-import navMachineList from '@/components/NavMachineList'
-import navDeviceCategory from '@/components/NavDeviceCategory'
-import navDeviceManufacturers from '@/components/NavDeviceManufacturers'
-import navDeviceList from '@/components/NavDeviceList'
-import navReport from '@/components/NavReport'
+// import navworkshop from '@/components/NavWorkshop'
+// import navMachineList from '@/components/NavMachineList'
+// import navDeviceCategory from '@/components/NavDeviceCategory'
+// import navDeviceManufacturers from '@/components/NavDeviceManufacturers'
+// import navDeviceList from '@/components/NavDeviceList'
+// import navReport from '@/components/NavReport'
 
 Vue.use(Router)
 
@@ -26,7 +26,7 @@ export default new Router({
       name: 'plantMg',
       components:{
       	default:navPlant,
-      	a:navPlant,
+        a:navPlant,
       	b:plant
       }
     },
@@ -34,8 +34,8 @@ export default new Router({
       path: '/workshop',
       name: 'workshopMg',
       components:{
-      	default:navworkshop,
-      	a:navworkshop,
+      	// default:navworkshop,
+      	// a:navworkshop,
       	b:workshop
       }
     },
@@ -43,8 +43,8 @@ export default new Router({
       path: '/machineList',
       name: 'machineListMg',
       components:{
-      	default:navMachineList,
-      	a:navMachineList,
+      	// default:navMachineList,
+      	// a:navMachineList,
       	b:machineList
       }
     },
@@ -52,8 +52,8 @@ export default new Router({
       path: '/deviceCategory',
       name: 'deviceCategoryMg',
       components:{
-      	default:navDeviceCategory,
-      	a:navDeviceCategory,
+      	// default:navDeviceCategory,
+      	// a:navDeviceCategory,
       	b:deviceCategory
       }
     },
@@ -61,8 +61,8 @@ export default new Router({
       path: '/deviceManufacturers',
       name: 'deviceManufacturersMg',
       components:{
-      	default:navDeviceManufacturers,
-      	a:navDeviceManufacturers,
+      	// default:navDeviceManufacturers,
+      	// a:navDeviceManufacturers,
       	b:deviceManufacturers
       }
     },
@@ -70,8 +70,8 @@ export default new Router({
       path: '/deviceList',
       name: 'deviceListMg',
       components:{
-      	default:navDeviceList,
-      	a:navDeviceList,
+      	// default:navDeviceList,
+      	// a:navDeviceList,
       	b:deviceList
       }
     },
@@ -79,8 +79,8 @@ export default new Router({
       path: '/report',
       name: 'reportMg',
       components:{
-      	default:navReport,
-      	a:navReport,
+      	// default:navReport,
+      	// a:navReport,
       	b:report
       }
     }

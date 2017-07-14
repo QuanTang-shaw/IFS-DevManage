@@ -32,7 +32,10 @@
 						<th><span>机台名称</span></th>
 						<th><span>机台主管</span></th>
 						<th><span>机台类型</span></th>
-						<th><span>操作</span></th>
+						<th><span>操作
+							<button class="btn btn-default addMachineList">
+							<i class="fa fa-plus"></i>添加车间</button>
+						</span></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -41,10 +44,15 @@
 						<td><span>{{machine.name}}</span></td>
 						<td><span>{{machine.manager}}</span></td>
 						<td><span>{{machine.machineType}}</span></td>
-						<td>
-							<span>
-								<button>查看详情</button>
-								<button>机台管理</button>
+						<td class="machineList-oper">
+							<span class="font-icon-btn">
+							  <i class="fa fa-edit fa-lg" title="编辑"></i>
+							</span>
+							<span class="font-icon-btn">
+							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
+							</span>
+							<span class="font-icon-btn" title="查看详情">
+							  <i class="fa fa-list-alt fa-lg"></i>
 							</span>
 						</td>
 					</tr>
@@ -84,20 +92,27 @@
 	}
 </script>
 <style>
-	.workshopSelect{
-		font-size:20px;
-		border:solid 3px #DEDADA;
-	}
 	.machineList-mg{
-		font-size:25px;
+		font-size:.7em;
+	}
+	.workshopSelect{
+		/*font-size:20px;*/
+		border:solid 1px #DEDADA;
 	}
 	.machineList-mg,.machineList,.machineList-table{
 		width: 100%;
 	}
 	.machineList-table{
 		border:solid 1px #DFDFDF;
+		margin-top:25px;
 	}
 	.machineList-table th,.machineList-table td{
 		padding:20px 15px;
+	}
+	.machineList-oper span{
+		margin-left:30px;
+	}
+	.addMachineList{
+		float: right;
 	}
 </style>

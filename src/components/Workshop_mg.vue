@@ -55,9 +55,16 @@
 								{{workshop.workshopType}}
 							</span>
 						</td>
-						<td>
-							<button>查看详情</button>
-							<button>机台管理</button>
+						<td class="workshop-oper">
+							<span class="font-icon-btn">
+							  <i class="fa fa-edit fa-lg" title="编辑"></i>
+							</span>
+							<span class="font-icon-btn">
+							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
+							</span>
+							<span class="font-icon-btn" title="查看详情">
+							  <i class="fa fa-list-alt fa-lg"></i>
+							</span>
 						</td>
 					</tr>
 				</tbody>
@@ -94,13 +101,14 @@
 <style>
 	.workshopManagement{
 		margin-top:30px;
+		font-size: .7em;
 	}
 	.workshopManagement,.workshopManagement-table{
-		font-size:20px;
+		/*font-size:20px;*/
 		width:100%;
 	}
 	.workshop-plantSelect{
-		border:solid 3px #DAD2D2;
+		border:solid 1px #DAD2D2;
 	}
 	.workshopManagement-table th,.workshopManagement-table td{
 		padding:15px 30px;
@@ -110,8 +118,11 @@
 		width:100%;
 		margin-top: 20px;
 	}
+	.workshop-oper span{
+		margin-left:30px;
+	}
 	.addWorkshop{
-		font-size:20px;
+		/*font-size:20px;*/
 		float: right;
 	}
 	.addWorkshop:hover{
