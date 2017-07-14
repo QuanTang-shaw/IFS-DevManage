@@ -1,7 +1,7 @@
 <template>
 	<div class="plant-management">
 		<h2>厂区管理</h2>
-		<button class="btn btn-default addPlant">添加厂区</button>
+		<!-- <button class="btn btn-default addPlant">添加厂区</button> -->
 	</div>
 </template>
 
@@ -15,7 +15,7 @@
 		/*border:solid 1px;*/
 		margin-top: 15px;
 		padding:30px 50px;
-		background-color: #8FE3FC;
+		/*background-color: #8FE3FC;*/
 	}
 	.addPlant{
 		float: right;

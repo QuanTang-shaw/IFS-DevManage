@@ -13,7 +13,8 @@
         <img src="./assets/flage.jpg" alt="guoqi" width="45">
       </div>
     </header>
-    <router-view class="viewOne"  name="a"></router-view>
+    <!-- <router-view class="viewOne"  name="a"></router-view> -->
+    <pagetitle></pagetitle>
     <div class="row">
       <div class="col-md-1"></div>
       <div class="col-md-8">
@@ -29,26 +30,8 @@
               <li class="list-group-item" :class="{ active: menu.isActive }" v-for="(menu,index ) in routerMenu" @click="menuClick(index)">
                 <router-link :to="menu.path">{{menu.text}}</router-link>
               </li>
-<!--               <li class="list-group-item active">
+              <!-- <li class="list-group-item active">
                 <router-link to="/plant">厂区管理</router-link>
-              </li>
-              <li class="list-group-item">
-                <router-link to="/workshop">车间管理</router-link>
-              </li>
-              <li class="list-group-item">
-                <router-link :to="{name:'machineListMg',params:{userId:123}}">机台列表</router-link>
-              </li>
-              <li class="list-group-item">
-                <router-link to="/deviceCategory">设备类别</router-link>
-              </li>
-              <li class="list-group-item">
-                <router-link to="/deviceManufacturers">设备厂商</router-link>
-              </li>
-              <li class="list-group-item">
-                <router-link to="/deviceList">设备列表</router-link>
-              </li>
-              <li class="list-group-item">
-                <router-link to="/report">报表管理</router-link>
               </li> -->
             </ul>
           </div>
@@ -59,7 +42,8 @@
 </template>
 
 <script>
-  import store from './store/store.js';
+  import store from './store/store.js'
+  import pagetitle from './components/pageTitle.vue'
   export default {
     name: 'app',
     data() {
@@ -107,6 +91,9 @@
     created:function () {
       store.initStorage();
     },
+    components:{
+      pagetitle
+    },
     methods:{
       menuClick:function (index) {
         this.routerMenu.forEach( function(element, index) {
@@ -130,6 +117,7 @@
     /*text-align: center;*/
     color: #2c3e50;
     padding:5px;
+    /*text-align: center;*/
   }
   header{
     border:solid 1px #D1CBCB;
@@ -139,7 +127,12 @@
     color: #78C7FB;
   }
   .viewOne{
-    text-align: center;
+    text-align:initial;
+    width:85%;
+    margin-left:8%;
+  }
+  .viewOne h2{
+    padding: 0;
   }
   .viewOne h2{
     font-size:40px;

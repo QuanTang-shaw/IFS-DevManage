@@ -1,7 +1,7 @@
 <template>
 	<div class="plant-management">
 		<h2>车间管理</h2>
-		<button class="btn btn-default addPlant">添加车间</button>
+		<!-- <button class="btn btn-default addPlant">添加车间</button> -->
 	</div>
 </template>
 
