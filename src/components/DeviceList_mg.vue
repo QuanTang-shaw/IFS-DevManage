@@ -3,7 +3,7 @@
 		<div class="Filtering">
 			<div class="row">
 				<div class="col-md-10">
-					<label for="">
+					<!-- <label for="">
 						安装位置
 						<select name="" id="">
 							<option value="">厂区1</option>
@@ -50,7 +50,105 @@
 							<option value="">TTW1210A</option>
 							<option value="">TTW1210A</option>
 						</select>
-					</label>
+					</label> -->
+					<div>
+						<label>安装位置
+							<div class="btn-group">
+							  <button type="button" class="btn btn-default">A厂区</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu">
+							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							    <!-- <li><a href="#">Action</a></li>
+							    <li><a href="#">Another action</a></li>
+							    <li><a href="#">Something else here</a></li> -->
+							    <li role="separator" class="divider"></li>
+							    <li><a href="#">Separated link</a></li>
+							  </ul>
+							</div>
+							<div class="btn-group">
+							  <button type="button" class="btn btn-default">B001车间</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu">
+							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							    <!-- <li><a href="#">Action</a></li>
+							    <li><a href="#">Another action</a></li>
+							    <li><a href="#">Something else here</a></li> -->
+							    <li role="separator" class="divider"></li>
+							    <li><a href="#">Separated link</a></li>
+							  </ul>
+							</div>
+							<div class="btn-group">
+							  <button type="button" class="btn btn-default">机台0019</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu">
+							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							    <!-- <li><a href="#">Action</a></li>
+							    <li><a href="#">Another action</a></li>
+							    <li><a href="#">Something else here</a></li> -->
+							    <li role="separator" class="divider"></li>
+							    <li><a href="#">Separated link</a></li>
+							  </ul>
+							</div>
+						</label>
+					</div>
+					<div>
+						<label>产品型号
+							<div class="btn-group">
+							  <button type="button" class="btn btn-default">所有类型</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu">
+							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							    <!-- <li><a href="#">Action</a></li>
+							    <li><a href="#">Another action</a></li>
+							    <li><a href="#">Something else here</a></li> -->
+							    <li role="separator" class="divider"></li>
+							    <li><a href="#">Separated link</a></li>
+							  </ul>
+							</div>
+							<div class="btn-group">
+							  <button type="button" class="btn btn-default">拓斯达</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu">
+							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							    <!-- <li><a href="#">Action</a></li>
+							    <li><a href="#">Another action</a></li>
+							    <li><a href="#">Something else here</a></li> -->
+							    <li role="separator" class="divider"></li>
+							    <li><a href="#">Separated link</a></li>
+							  </ul>
+							</div>
+							<div class="btn-group">
+							  <button type="button" class="btn btn-default">TTW1210A</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul class="dropdown-menu">
+							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							    <!-- <li><a href="#">Action</a></li>
+							    <li><a href="#">Another action</a></li>
+							    <li><a href="#">Something else here</a></li> -->
+							    <li role="separator" class="divider"></li>
+							    <li><a href="#">Separated link</a></li>
+							  </ul>
+							</div>
+						</label>
+					</div>
 				</div>
 				<div class="col-md-2">
 					<button class="btn btn-default" type="submit">添加设备</button>
@@ -127,9 +225,9 @@
 
 <style>
 	.Filtering{
-		border:solid 3px #CFCCCC;
-		font-size:20px;
-		padding: 25px 15px;
+		border:solid 1px #CFCCCC;
+		font-size:.7em;
+		padding: 20px 15px;
 	}
 	.Filtering>select option{
 		padding:35px 10px;

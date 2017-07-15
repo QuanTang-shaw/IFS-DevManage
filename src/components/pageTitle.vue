@@ -11,13 +11,13 @@
 
 <style>
 	.pageTitle{
-		background-color: #99bcd4;
+		background-color: #b7bdf7;
 	    padding: 3px 15px;
 	    letter-spacing: 25px;
 	    border-radius: 5px;
 	}
 	.pageTitle h2{
 		font-size:30px;
-		color: #6F5353;
+		color: #8c7f7f;
 	}
 </style>

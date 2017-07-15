@@ -2,16 +2,16 @@
 	<div class="machineList-mg">
 		<div class="workshopSelect" >
 			<div class="row">
-			  <div class="col-md-2 selectedPlant-pic">
+			  <div class="col-md-2 selectedWorkshop-pic">
 			    <img src="../pic/plant1.jpg" alt="" width="120">
 			  </div>
-			  <div class="col-md-4 selectedPlant-info">
+			  <div class="col-md-5 selectedWorkshop-info">
 			    <p>{{selectedPlant.name}}</p>
 			    <p>{{selectedPlant.address}}</p>
 			    <p>{{selectedPlant.Contact}}</p>
 			  </div>
-			  <div class="col-md-6 selectedPlant-oper">
-				<label for="">厂区:
+			  <div class="col-md-5 selectedWorkshop-oper">
+				<!-- <label for="">厂区:
 					<select name="selectPlant" id="" v-model="plantIndex" @change="togglePlant">
 						<option :value="index" v-for="(plant,index) in plantList">{{plant.name}}</option>
 					</select>
@@ -20,12 +20,46 @@
 					<select name="selectworkshop" id="" v-model="plantIndex" @change="togglePlant">
 						<option :value="index" v-for="(wp,index) in workshopList">{{wp.name}}</option>
 					</select>
-				</label>
+				</label> -->
+				<div>
+					<div class="btn-group">
+					  <button type="button" class="buttonDown btn btn-default">A厂区</button>
+					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    <span class="caret"></span>
+					    <span class="sr-only">Toggle Dropdown</span>
+					  </button>
+					  <ul class="dropdown-menu">
+					  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+					    <!-- <li><a href="#">Action</a></li>
+					    <li><a href="#">Another action</a></li>
+					    <li><a href="#">Something else here</a></li> -->
+					    <li role="separator" class="divider"></li>
+					    <li><a href="#">Separated link</a></li>
+					  </ul>
+					</div>
+				</div>
+				<div>
+					<div class="btn-group">
+					  <button type="button" class="buttonDown btn btn-default">注塑一车间</button>
+					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    <span class="caret"></span>
+					    <span class="sr-only">Toggle Dropdown</span>
+					  </button>
+					  <ul class="dropdown-menu">
+					  	<li v-for="(workshop,index) in workshopList"><a >{{workshop.name}}</a></li>
+					    <!-- <li><a href="#">Action</a></li>
+					    <li><a href="#">Another action</a></li>
+					    <li><a href="#">Something else here</a></li> -->
+					    <li role="separator" class="divider"></li>
+					    <li><a href="#">Separated link</a></li>
+					  </ul>
+					</div>
+				</div>
 			  </div>
 			</div>
 		</div>
 		<div class="machineList">
-			<table class="machineList-table" border="1">
+			<table class="machineList-table" border="1" style="box-shadow:2px 2px 5px #c6c5c7;">
 				<thead>
 					<tr>
 						<th><span>机台编号</span></th>
@@ -113,6 +147,30 @@
 		margin-left:30px;
 	}
 	.addMachineList{
-		float: right;
+		margin-left:30px;
+		/*float: right;*/
+	}
+	.selectedWorkshop-info p{
+		margin:0;
+	}
+	.selectedWorkshop-info,.selectedWorkshop-oper{
+		display: inline-flex;
+		/*border: solid 1px;*/
+	}
+	.selectedWorkshop-info{
+		flex-direction: column;
+		justify-content:space-around;
+	}
+	.selectedWorkshop-oper{
+		flex-direction: column;
+		justify-content:space-around;
+		/*align-items:center;*/
+	}
+	.workshopSelect .row{
+		display: flex;
+	}
+	.selectedWorkshop-pic img{
+		width:100%;
+		max-width:120px;
 	}
 </style>

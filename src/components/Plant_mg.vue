@@ -16,9 +16,9 @@
               <img src="../pic/plant1.jpg" alt="厂区图片">
             </div>
             <div class="col-md-6 plant-info">
-              <p><b>名称:</b>{{plant.name}}</p>
-              <p><b>地址:</b>{{plant.address}}</p>
-              <p><b>联系方式:</b>{{plant.Contact}}</p>
+              <p><b>名称:</b> &nbsp {{plant.name}}</p>
+              <p><b>地址:</b> &nbsp {{plant.address}}</p>
+              <p><b>联系方式:</b> &nbsp {{plant.Contact}}</p>
             </div>
             <div class="col-md-4 plant-oper" >
               <!-- <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-sm"></i> Edit</a>
@@ -61,7 +61,7 @@
 <style>
   .plantManagement{
     /*border:solid 1px;*/
-    font-size:.6em;
+    font-size:.7em;
   }
   .plantManagement-toggle{
     /*border:solid 1px;*/

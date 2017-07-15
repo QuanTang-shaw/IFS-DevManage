@@ -117,6 +117,9 @@
     padding: 0 30px;
     font-size:20px;
   }
+  .buttonDown{
+    /*padding:2px 12px;*/
+  }
   .viewTwo{
     margin-top:30px;
   }

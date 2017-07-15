@@ -14,17 +14,31 @@
       body,#app,section,footer{
         width:100%;
       }
+      header{
+        border-bottom:solid 1px #D1CBCB;
+        padding: 5px 10px;
+        background-color: #e6e6e6;
+      }
+      header h2{
+        display:inline-block;
+        color: rgb(6, 149, 255);
+        margin: 0;
+        vertical-align:middle;
+      }
+      .log{
+        float: right;
+        margin-right: 50px;
+        margin: 10px 30px;
+      }
+      .head-icon{border-radius:18px;}
+      .account{
+        border: none;
+        font-size: 20px;
+      }
       section{
         /*width: 100%;*/
         padding:20px 0;
         min-height:700px;
-      }
-      header{
-        border-bottom:solid 1px #D1CBCB;
-      }
-      header h2{
-        display:inline-block;
-        color: #78C7FB;
       }
       footer{
         border-top: solid 1px #EEE7E7;
@@ -33,30 +47,20 @@
         background-color: #9490bd;
         color: #535e65;
       }
-      .log{
-        display:inline-block;
-        float: right;
-        margin-right:80px;
-      }
-      .account{
-        border:none;
-        padding:8px 5px;
-        font-size:30px;
-      }
     </style>
   </head>
   <body>
-    <header>
+    <header >
       <img src="./static/img/53007d5b00000.png" alt="LOGO">
       <h2>生产设备管理</h2>
       <div class="log">
-        <img src="./static/img/guy-1.jpg" alt="头像" height="35">
+        <img class="head-icon" src="./static/img/guy-1.jpg" alt="头像" height="35">
         <select name="" id="" class="account">
           <option value="">我的账户</option>
           <option value="">个人信息</option>
           <option value="">退出</option>
         </select>
-        <img src="./static/img/flage.jpg" alt="guoqi" width="45">
+        <img class="flage" src="./static/img/flage.jpg" alt="guoqi" width="45">
       </div>
     </header>
     <section>

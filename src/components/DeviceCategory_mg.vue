@@ -4,7 +4,7 @@
 			<ul>
 				<li class="CategoryName" v-for="(category,key,index) in CategoryList">{{key}}
 					<ul>
-						<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)">{{key}}</li>
+						<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)">{{key|toChinese}}</li>
 					</ul>
 				</li>
 			</ul>
@@ -47,6 +47,7 @@
 
 <script>
   	import store from '@/store/store'
+  	import filter from '@/Filter/filter'
 	export default{
 		name:'devicCategory',
 		data(){
@@ -66,7 +67,8 @@
 				this.selectedCategory=category;
 			}
 
-		}
+		},
+		filters:filter
 	}
 </script>
 
@@ -74,24 +76,30 @@
 	.deviceCategory{
 		font-size:.7em;
 		border:solid 1px #CBC6C6;
+		height:500px;
+		position: relative;
 	}
 	.categoryList-nav{
+		height: 100%;
+		width: 20%;
 		border:solid 1px #CBC6C6;
-		float: left;
-		/*display:inline-block;*/
+		/*float: left;*/
+		overflow-y:scroll;
+		display:inline-block;
 	}
 	.categoryList{
-		/*display:inline-block;*/
-		width: 85%;
-		float: left;
-		border:solid 1px #C5C3C3;
-		/*font-size:25px;*/
+		display: inline-block;
+	    width: 80%;
+	    border: solid 1px #C5C3C3;
+	    position: absolute;
+	    top: 0;
+	    bottom: 0;
 	}
 	.deviceCategory,.categoryList-table{
 		width: 100%;
 	}
 	.categoryList-table th,.categoryList-table td{
-		padding:20px 30px;
+		padding:10px 30px;
 	}
 	.subCategoryName{
 		cursor: pointer;

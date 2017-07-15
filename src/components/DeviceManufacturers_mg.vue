@@ -1,6 +1,6 @@
 <template>
 	<div class="companyList">
-		<table border="1" class="companyList-table">
+		<table border="1" class="companyList-table" style="box-shadow: 2px 2px 5px #c6c5c7;">
 			<thead>
 				<tr>
 					<th>名称</th>

@@ -3,31 +3,48 @@
 		<div class="workshop-plantSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
-			    <img src="../pic/plant1.jpg" alt="" width="120">
+			    <img src="../pic/plant1.jpg" alt="" >
 			  </div>
-			  <div class="col-md-6 selectedPlant-info">
+			  <div class="col-md-5 selectedPlant-info">
 			    <p>{{selectedPlant.name}}</p>
 			    <p>{{selectedPlant.address}}</p>
 			    <p>{{selectedPlant.Contact}}</p>
 			  </div>
-			  <div class="col-md-4 selectedPlant-oper">
-				<label for="">切换厂区:
+			  <div class="col-md-5 selectedPlant-oper">
+				<!-- <label for="">切换厂区:
 					<select name="selectPlant" id="" v-model="selectedIndex" @change="togglePlant">
 						<option :value="index" v-for="(plant,index) in plantList">{{plant.name}}</option>
 					</select>
+				</label> -->
+				<label>切换厂区:
+					<div class="btn-group">
+					  <button type="button" class="buttonDown btn btn-default">A厂区</button>
+					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    <span class="caret"></span>
+					    <span class="sr-only">Toggle Dropdown</span>
+					  </button>
+					  <ul class="dropdown-menu">
+					  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+					    <!-- <li><a href="#">Action</a></li>
+					    <li><a href="#">Another action</a></li>
+					    <li><a href="#">Something else here</a></li> -->
+					    <li role="separator" class="divider"></li>
+					    <li><a href="#">Separated link</a></li>
+					  </ul>
+					</div>
 				</label>
 			  </div>
 			</div>
 		</div>
 		<div class="workshopManagement-table">
-			<table class="workshopTable" border="1">
+			<table class="workshopTable" border="1" style="box-shadow: 2px 2px 5px #c6c5c7;">
 				<thead>
 					<tr>
 						<th>车间编号</th>
 						<th>车间名称</th>
 						<th>车间主管</th>
 						<th>车间类型</th>
-						<th>操作
+						<th> <span>操作</span>
 							<button class="btn btn-default addWorkshop">
 							<i class="fa fa-plus"></i>添加车间</button>
 						</th>
@@ -109,6 +126,7 @@
 	}
 	.workshop-plantSelect{
 		border:solid 1px #DAD2D2;
+		padding:5px 10px;
 	}
 	.workshopManagement-table th,.workshopManagement-table td{
 		padding:15px 30px;
@@ -123,10 +141,32 @@
 	}
 	.addWorkshop{
 		/*font-size:20px;*/
-		float: right;
+		/*float: right;*/
+		margin-left:30px;
 	}
 	.addWorkshop:hover{
 		background-color: #1340F0;
 		color: #FFFFFF;
+	}
+	.selectedPlant-info p{
+		margin:0;
+	}
+	.selectedPlant-info,.selectedPlant-oper{
+		display: inline-flex;
+	}
+	.selectedPlant-info{
+		flex-direction: column;
+		justify-content:space-around;
+	}
+	.selectedPlant-oper{
+		justify-content:flex-start;
+		align-items:center;
+	}
+	.workshop-plantSelect .row{
+		display: flex;
+	}
+	.selectedPlant-pic img{
+		width:100%;
+		max-width:120px;
 	}
 </style>
