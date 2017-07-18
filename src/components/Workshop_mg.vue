@@ -37,9 +37,10 @@
 			</div>
 		</div>
 		<div class="workshopManagement-table">
-			<table class="workshopTable" border="1" style="box-shadow: 2px 2px 5px #c6c5c7;">
+			<table class="workshopTable" border="0">
 				<thead>
 					<tr>
+						<th></th>
 						<th>车间编号</th>
 						<th>车间名称</th>
 						<th>车间主管</th>
@@ -52,6 +53,7 @@
 				</thead>
 				<tbody>
 					<tr v-for="workshop in workshopList">
+						<td><input type="checkbox"></td>
 						<td>
 							<span>
 								{{workshop.numbering}}
@@ -85,7 +87,36 @@
 						</td>
 					</tr>
 				</tbody>
+				<tfoot>
+					<tr>
+						<td style="text-align:;"><input type="checkbox">全选</td>
+						<td>
+							<button class="btn btn-default">
+							  <i class="fa fa-trash-o fa-sm">删除</i>
+							</button>
+						</td>
+					</tr>
+				</tfoot>
 			</table>
+			<nav aria-label="Page navigation">
+			  <ul class="pagination">
+			    <li>
+			      <a href="#" aria-label="Previous">
+			        <span aria-hidden="true">&laquo;</span>
+			      </a>
+			    </li>
+			    <li><a href="#">1</a></li>
+			    <li><a href="#">2</a></li>
+			    <li><a href="#">3</a></li>
+			    <li><a href="#">4</a></li>
+			    <li><a href="#">5</a></li>
+			    <li>
+			      <a href="#" aria-label="Next">
+			        <span aria-hidden="true">&raquo;</span>
+			      </a>
+			    </li>
+			  </ul>
+			</nav>
 		</div>
 	</div>
 </template>
@@ -128,13 +159,27 @@
 		border:solid 1px #DAD2D2;
 		padding:5px 10px;
 	}
+	.workshopManagement-table{
+		box-shadow: 2px 2px 5px #c6c5c7;
+		padding: 10px;
+		margin-top:20px;
+	}
 	.workshopManagement-table th,.workshopManagement-table td{
-		padding:15px 30px;
+		padding:10px 0;
+		text-align: center;
+
 	}
 	.workshopTable{
-		border:solid 1px #D9D4D4;
+		/*border:solid 1px #D9D4D4;*/
 		width:100%;
-		margin-top: 20px;
+		/*margin-top: 20px;*/
+	}
+	.workshopTable tr{
+		border-bottom:solid 1px #E6E0E0;
+	}
+	.workshopTable tfoot tr{
+		border: none;
+		text-align:center;
 	}
 	.workshop-oper span{
 		margin-left:30px;

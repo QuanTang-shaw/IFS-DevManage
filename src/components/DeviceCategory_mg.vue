@@ -2,7 +2,7 @@
 	<div class="deviceCategory">
 		<div class="categoryList-nav">
 			<ul>
-				<li class="CategoryName" v-for="(category,key,index) in CategoryList">{{key}}
+				<li class="CategoryName" v-for="(category,key,index) in CategoryList">{{key|toChinese}}
 					<ul>
 						<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)">{{key|toChinese}}</li>
 					</ul>
@@ -13,6 +13,7 @@
 			<table class="categoryList-table" border="1">
 				<thead>
 					<tr>
+						<th><input type="checkbox"></th>
 						<th><span>厂商</span></th>
 						<th><span>型号</span></th>
 						<th><span>名称</span></th>
@@ -22,6 +23,7 @@
 				</thead>
 				<tbody>
 					<tr v-for="device in selectedCategory">
+						<td><input type="checkbox"></td>
 						<td>
 							<span>{{device.name}}</span>
 						</td>
@@ -82,7 +84,8 @@
 	.categoryList-nav{
 		height: 100%;
 		width: 20%;
-		border:solid 1px #CBC6C6;
+		/*border:solid 1px #CBC6C6;*/
+		background-color:#F7F6F6;
 		/*float: left;*/
 		overflow-y:scroll;
 		display:inline-block;
@@ -90,13 +93,16 @@
 	.categoryList{
 		display: inline-block;
 	    width: 80%;
-	    border: solid 1px #C5C3C3;
+	    /*border: solid 1px #C5C3C3;*/
 	    position: absolute;
 	    top: 0;
 	    bottom: 0;
 	}
 	.deviceCategory,.categoryList-table{
 		width: 100%;
+	}
+	.categoryList-table{
+		border: solid 1px #D1CCCC;
 	}
 	.categoryList-table th,.categoryList-table td{
 		padding:10px 30px;

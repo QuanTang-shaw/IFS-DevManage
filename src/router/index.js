@@ -22,7 +22,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/plant',
+      path: '/',
       name: 'plantMg',
       components:{
       	default:navPlant,

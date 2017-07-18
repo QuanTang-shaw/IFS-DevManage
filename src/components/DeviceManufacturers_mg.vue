@@ -51,6 +51,9 @@
 	.companyList,.companyList-table{
 		width: 100%;
 	}
+	.companyList-table{
+		border: solid 1px #D2CDCD;
+	}
 	.companyList-table th,.companyList-table td{
 		padding:20px 25px;
 	}

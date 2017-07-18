@@ -323,15 +323,6 @@
 							factory:'拓斯达'
 						}
 					],
-					Mediumspeed:[
-						{
-							pic:'img/topstart/Mediumspeed.jpg',
-							name:'中速粉碎机TGM系列',
-							model:'TGL-2718CB',
-							Numbering:'1',
-							factory:'拓斯达'
-						}
-					],
 					strong:[
 						{
 							pic:'img/topstart/strong.jpg',
@@ -415,6 +406,42 @@
 		]
 
 		let deviceList=[
+				{
+					pic:'',
+					name:'模温机',
+					Brand:'拓斯达',
+					serialNumber:'A5425663243',
+					model:'M108',
+					ownedWorkshop:'B001',
+					ownedMachine:'0019'
+				},
+				{
+					pic:'',
+					name:'模温机',
+					Brand:'拓斯达',
+					serialNumber:'A5425663243',
+					model:'M108',
+					ownedWorkshop:'B001',
+					ownedMachine:'0019'
+				},
+				{
+					pic:'',
+					name:'模温机',
+					Brand:'拓斯达',
+					serialNumber:'A5425663243',
+					model:'M108',
+					ownedWorkshop:'B001',
+					ownedMachine:'0019'
+				},
+				{
+					pic:'',
+					name:'模温机',
+					Brand:'拓斯达',
+					serialNumber:'A5425663243',
+					model:'M108',
+					ownedWorkshop:'B001',
+					ownedMachine:'0019'
+				},
 				{
 					pic:'',
 					name:'模温机',

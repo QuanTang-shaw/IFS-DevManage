@@ -159,8 +159,8 @@
 			<ul>
 				<li class="device" v-for="device in deviceList">
 					<div class="deviceInfo row">
-						<div class="device-pic col-md-2">
-							<img src="../assets/topstart/mtm-water.jpg" alt="" >
+						<div class="device-pic col-md-1">
+							<img src="../assets/topstart/mtm-water.jpg" alt="设备图片">
 						</div>
 						<div class="specification col-md-3">
 							<p>{{device.name}}</p>
@@ -174,13 +174,13 @@
 						</div>
 						<div class="operating col-md-2">
 							<span>
-								<i class="fa fa-edit"></i>
+								<i class="fa fa-edit fa-lg"></i>
 							</span>
 							<span>
-								<i class="fa fa-trash-o"></i>
+								<i class="fa fa-trash-o fa-lg"></i>
 							</span>
 							<span>
-								<i class="fa fa-list-alt"></i>
+								<i class="fa fa-list-alt fa-lg"></i>
 							</span>
 						</div>
 					</div>
@@ -227,7 +227,7 @@
 	.Filtering{
 		border:solid 1px #CFCCCC;
 		font-size:.7em;
-		padding: 20px 15px;
+		padding: 15px 15px;
 	}
 	.Filtering>select option{
 		padding:35px 10px;
@@ -240,12 +240,15 @@
 		padding:20px 0;
 	}
 	.deviceList li{
-		padding:10px 0;
+		padding:10px;
 		position:relative;
 		margin: 0;
 		list-style: none;
 		border:solid 1px #E7E6E6;
 		margin-bottom:10px;
+	}
+	.device{
+		padding: 0;
 	}
 	.deviceInfo{
 		margin: 0;
@@ -253,14 +256,15 @@
 	.deviceInfo,.deviceInfo>div{
 		display: flex;
 	}
+	.device-pic{padding: 0;}
 	.device-pic img{
 		/*position: absolute;*/
 		/*top:100%;*/
 		/*transform: translateY(-50%);*/
 		/*border:solid 1px;*/
 		width:100%;
-		max-width:120px;
-		max-height:120px;
+		max-width:90px;
+		max-height:90px;
 	}
 	.device-pic{
 		justify-content: center;

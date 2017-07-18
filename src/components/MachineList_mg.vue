@@ -59,9 +59,10 @@
 			</div>
 		</div>
 		<div class="machineList">
-			<table class="machineList-table" border="1" style="box-shadow:2px 2px 5px #c6c5c7;">
+			<table class="machineList-table" border="0" style="">
 				<thead>
 					<tr>
+						<th></th>
 						<th><span>机台编号</span></th>
 						<th><span>机台名称</span></th>
 						<th><span>机台主管</span></th>
@@ -74,6 +75,7 @@
 				</thead>
 				<tbody>
 					<tr v-for="machine in machineList">
+						<td><input type="checkbox"></td>
 						<td><span>{{machine.numbering}}</span></td>
 						<td><span>{{machine.name}}</span></td>
 						<td><span>{{machine.manager}}</span></td>
@@ -91,7 +93,36 @@
 						</td>
 					</tr>
 				</tbody>
+				<tfoot>
+					<tr>
+						<td><input type="checkbox"></td>
+						<td>
+							<button class="btn btn-default">
+							  <i class="fa fa-trash-o fa-sm">删除</i>
+							</button>
+						</td>
+					</tr>
+				</tfoot>
 			</table>
+			<nav aria-label="Page navigation">
+			  <ul class="pagination">
+			    <li>
+			      <a href="#" aria-label="Previous">
+			        <span aria-hidden="true">&laquo;</span>
+			      </a>
+			    </li>
+			    <li><a href="#">1</a></li>
+			    <li><a href="#">2</a></li>
+			    <li><a href="#">3</a></li>
+			    <li><a href="#">4</a></li>
+			    <li><a href="#">5</a></li>
+			    <li>
+			      <a href="#" aria-label="Next">
+			        <span aria-hidden="true">&raquo;</span>
+			      </a>
+			    </li>
+			  </ul>
+			</nav>
 		</div>
 	</div>
 </template>
@@ -132,16 +163,25 @@
 	.workshopSelect{
 		/*font-size:20px;*/
 		border:solid 1px #DEDADA;
+		padding:5px 10px;
 	}
 	.machineList-mg,.machineList,.machineList-table{
 		width: 100%;
 	}
-	.machineList-table{
-		border:solid 1px #DFDFDF;
+	.machineList{
+		padding: 10px;
+		box-shadow:2px 2px 5px #c6c5c7;
 		margin-top:25px;
 	}
+	.machineList-table{
+		/*border:solid 1px #DFDFDF;*/
+	}
+	.machineList-table tr{
+		border-bottom:solid 1px #E3E1E1;
+	}
+	.machineList-table tfoot tr{border:none;}
 	.machineList-table th,.machineList-table td{
-		padding:20px 15px;
+		padding:10px 15px;
 	}
 	.machineList-oper span{
 		margin-left:30px;

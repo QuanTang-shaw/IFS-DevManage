@@ -40,7 +40,7 @@
     data() {
       let routerMenu=[
           {
-            path:'/plant',
+            path:'/',
             text:'厂区管理',
             isActive:false
           },
