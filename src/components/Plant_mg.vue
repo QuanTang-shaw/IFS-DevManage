@@ -1,16 +1,18 @@
 <template>
   <div class="plantManagement">
+    <plant-edit v-show='showPlantEdit' @submit="plantEditSub" :editPlant="editPlant"> </plant-edit>
+    <delete-pop v-show='showDeletePop' @delete="plantDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
     <div>
       <div class="btn-group plantManagement-toggle" role="group" aria-label="...">
         <button type="button" class="btn btn-default">厂区列表</button>
         <button type="button" class="btn btn-default">厂区地图</button>
       </div>
-      <button class="btn btn-default addPlant">
-        <i class="fa fa-plus"></i>添加厂区</button>
+      <button class="btn btn-default addPlant" @click="addPlant">
+        <i class="fa fa-plus"></i>添加工厂</button>
     </div>
     <div class="plant-list">
       <ul class="list-group">
-        <li class="list-group-item" v-for="plant in plantList">
+        <li class="list-group-item" v-for="(plant,index) in plantList">
           <div class="row">
             <div class="col-md-2 plant-pic">
               <img src="../pic/plant1.jpg" alt="厂区图片">
@@ -26,10 +28,10 @@
                 <i class="fa fa-trash-o fa-lg"></i> Delete</a>
               <a class="btn btn-default" href="#">
                 <i class="fa fa-cog fa-lg"></i> Settings</a> -->
-                <span class="font-icon-btn">
+                <span class="font-icon-btn" @click="plantEdit(index)">
                   <i class="fa fa-edit fa-lg" title="编辑"></i>
                 </span>
-                <span class="font-icon-btn">
+                <span class="font-icon-btn" @click="plantDelete(plant.name)">
                   <i class="fa fa-trash-o fa-lg" title="删除"></i>
                 </span>
                 <span class="font-icon-btn" title="查看详情">
@@ -45,12 +47,55 @@
 
 <script>
   import store from '@/store/store'
+  import plantEdit from '@/components/PlantEdit'
+  import deletepop from '@/components/Delete_pop'
   export default {
     name: 'plantList',
     data () {
-      let plantList=store.obtain('plantList');
+      let plantList=store.obtain('plantList'),
+          showPlantEdit=false,
+          showDeletePop=false,
+          deletePopTitle='删除工厂',
+          deletePopContent='',
+          editPlant=plantList[0];
       return {
-        plantList
+        plantList,
+        showPlantEdit,
+        showDeletePop,
+        deletePopTitle,
+        deletePopContent,
+        editPlant
+      }
+    },
+    components:{
+      'plant-edit':plantEdit,
+      'delete-pop':deletepop
+    },
+    methods:{
+      plantEdit:function (index) {
+        this.showPlantEdit=true;
+        this.editPlant=this.plantList[index];
+      },
+      plantEditSub:function (str) {
+        if(str=='close'||str=='cancel');
+          else if(str=='confirm'){
+            //ajax
+          }
+        this.showPlantEdit=false;
+      },
+      plantDelete:function (str) {
+        this.showDeletePop=true;
+        this.deletePopContent=str;
+      },
+      plantDeletePop:function (str) {
+        if(str=='close'||str=='cancel');
+          else if(str=='confirm'){
+            //ajax
+          }
+        this.showDeletePop=false;
+      },
+      addPlant:function () {
+        this.showPlantEdit=true;
       }
     },
     created:function () {

@@ -5,25 +5,25 @@
 
 			  	{
 			  		pic:'../pic/plant2.jpg',
-			  		name:'A厂区',
+			  		name:'A工厂',
 			  		address:'广东省深圳市南山区',
 			  		Contact:"0755-88888888"
 			  	},
 			  	{
 			  		pic:'../pic/plant3.jpg',
-			  		name:'同堕落工业园',
+			  		name:'B工厂',
 			  		address:'广东省深圳市罗湖区',
 			  		Contact:"0755-111111111"
 			  	},
 			  	{
 			  		pic:'../pic/plant1.jpg',
-			  		name:'***高新技术工业产业园',
+			  		name:'C工厂',
 			  		address:'广东省深圳市宝安区西乡宝源路1053号资信达大厦',
 			  		Contact:"0755-88888888"
 			  	},
 			  	{
 			  		pic:'../pic/plant3.jpg',
-			  		name:'同堕落工业园',
+			  		name:'D工厂',
 			  		address:'广东省深圳市罗湖区',
 			  		Contact:"0755-111111111"
 			  	},

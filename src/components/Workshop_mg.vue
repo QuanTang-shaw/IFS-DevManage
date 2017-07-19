@@ -1,5 +1,7 @@
 <template>
 	<div class="workshopManagement">
+		<delete-pop v-show='showDeletePop' @delete="wsDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
+		<workshop-edit v-show='showWSEdit'  @wsEdit="subwsEdit" :editType="editTypeTxt"></workshop-edit>
 		<div class="workshop-plantSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
@@ -75,14 +77,14 @@
 							</span>
 						</td>
 						<td class="workshop-oper">
-							<span class="font-icon-btn">
+							<span class="font-icon-btn" @click="WsEdit">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>
 							</span>
-							<span class="font-icon-btn">
+							<span class="font-icon-btn" @click="deleteWs(workshop.name)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
 							<span class="font-icon-btn" title="查看详情">
-							  <i class="fa fa-list-alt fa-lg"></i>
+							  <i class="fa fa-angle-double-down fa-lg"></i>
 							</span>
 						</td>
 					</tr>
@@ -98,50 +100,62 @@
 					</tr>
 				</tfoot>
 			</table>
-			<nav aria-label="Page navigation">
-			  <ul class="pagination">
-			    <li>
-			      <a href="#" aria-label="Previous">
-			        <span aria-hidden="true">&laquo;</span>
-			      </a>
-			    </li>
-			    <li><a href="#">1</a></li>
-			    <li><a href="#">2</a></li>
-			    <li><a href="#">3</a></li>
-			    <li><a href="#">4</a></li>
-			    <li><a href="#">5</a></li>
-			    <li>
-			      <a href="#" aria-label="Next">
-			        <span aria-hidden="true">&raquo;</span>
-			      </a>
-			    </li>
-			  </ul>
-			</nav>
+			<paging></paging>
 		</div>
 	</div>
 </template>
 <script>
-  import store from '@/store/store'
+  	import store from '@/store/store'
+  	import paging from '@/components/Paging'
+	import deletepop from '@/components/Delete_pop'
+	import workshopEdit from '@/components/WorkshopEdit'
+
 	export default{
 		name:'workshoplist',
 		data () {
 		  let workshopList=store.obtain('workshopList'),
 		  	  plantList=store.obtain('plantList'),
 		  	  selectedIndex=0,
-		  	  selectedPlant=plantList[selectedIndex];
+		  	  selectedPlant=plantList[selectedIndex],
+		  	  showWSEdit=false,
+		  	  showDeletePop=false,
+		  	  deletePopTitle='删除车间',
+		  	  editTypeTxt='车间',
+		  	  deletePopContent='';
 		  return {
 		    workshopList,
 		    plantList,
 		    selectedPlant,
-		    selectedIndex
+		    selectedIndex,
+		    showWSEdit,
+		    showDeletePop,
+		    deletePopTitle,
+		    editTypeTxt,
+		    deletePopContent
 		  }
 		},
-		created:function () {
-		  console.log(this.workshopList)
+		components:{
+			paging,
+			'delete-pop':deletepop,
+			'workshop-edit':workshopEdit
 		},
 		methods:{
 			togglePlant:function () {
-		  	  this.selectedPlant=this.plantList[this.selectedIndex];
+		  	 	this.selectedPlant=this.plantList[this.selectedIndex];
+			},
+			deleteWs:function (str) {
+				this.deletePopContent=str;
+				this.showDeletePop=true;
+			},
+			wsDeletePop:function () {
+				this.showDeletePop=false;
+			},
+			subwsEdit:function () {
+				/* body... */
+				this.showWSEdit=false;
+			},
+			WsEdit:function () {
+				this.showWSEdit=true;
 			}
 		}
 	}

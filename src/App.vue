@@ -41,7 +41,7 @@
       let routerMenu=[
           {
             path:'/',
-            text:'厂区管理',
+            text:'工厂管理',
             isActive:false
           },
           {
@@ -51,7 +51,7 @@
           },
           {
             path:'/machineList',
-            text:'机台列表',
+            text:'机台管理',
             isActive:false
           },
           {
