@@ -1,5 +1,7 @@
 <template>
 	<div class="machineList-mg">
+		<delete-pop v-show="showDeletePop" @delete="MLDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
+		<machine-edit v-show="showMachineEdit" @Edit="Edit" :editType="editTypeTxt"></machine-edit>
 		<div class="workshopSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedWorkshop-pic">
@@ -81,10 +83,10 @@
 						<td><span>{{machine.manager}}</span></td>
 						<td><span>{{machine.machineType}}</span></td>
 						<td class="machineList-oper">
-							<span class="font-icon-btn">
+							<span class="font-icon-btn" @click="Edit">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>
 							</span>
-							<span class="font-icon-btn">
+							<span class="font-icon-btn" @click="Delete(machine.name)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
 							<span class="font-icon-btn" title="查看详情">
@@ -128,6 +130,8 @@
 </template>
 <script>
   	import store from '@/store/store'
+	import deletepop from '@/components/Delete_pop'
+  	import machineEdit from'@/components/WorkshopEdit'
 	export default{
 		name:'machineList',
 		data(){
@@ -136,22 +140,43 @@
 				machineList=store.obtain('machineList'),
 				plantIndex=0,
 				workshopIndex=0,
-				selectedPlant=plantList[plantIndex];
+				selectedPlant=plantList[plantIndex],
+				showMachineEdit=false,
+				showDeletePop=false,
+				editTypeTxt='机台',
+				deletePopTitle='删除机台',
+				deletePopContent='';
 			return {
 			  workshopList,
 			  plantList,
 			  machineList,
 			  selectedPlant,
-			  plantIndex
+			  plantIndex,
+			  showMachineEdit,
+			  showDeletePop,
+			  deletePopTitle,
+			  deletePopContent,
+			  editTypeTxt
 			}
 		},
-		created:function () {
-			console.log(this.machineList)
+		components:{
+			'delete-pop':deletepop,
+			'machine-edit':machineEdit
 		},
 		methods:{
 			togglePlant:function () {
 				/* body... */
 				this.selectedPlant=this.plantList[this.plantIndex];
+			},
+			Edit:function () {
+				this.showMachineEdit=!this.showMachineEdit;
+			},
+			Delete:function (str) {
+				this.showDeletePop=true;
+				this.deletePopContent=str;
+			},
+			MLDeletePop:function () {
+				this.showDeletePop=false;
 			}
 		}
 	}

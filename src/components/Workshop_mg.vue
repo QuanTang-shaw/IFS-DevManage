@@ -1,8 +1,8 @@
 <template>
 	<div class="workshopManagement">
 		<delete-pop v-show='showDeletePop' @delete="wsDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
-		<workshop-edit v-show='showWSEdit'  @wsEdit="subwsEdit" :editType="editTypeTxt"></workshop-edit>
-		<div class="workshop-plantSelect" >
+		<workshop-edit v-show='showWSEdit'  @Edit="subwsEdit" :editType="editTypeTxt"></workshop-edit>
+		<div class="workshop-plantSelect">
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
 			    <img src="../pic/plant1.jpg" alt="" >
@@ -119,8 +119,8 @@
 		  	  selectedPlant=plantList[selectedIndex],
 		  	  showWSEdit=false,
 		  	  showDeletePop=false,
-		  	  deletePopTitle='删除车间',
 		  	  editTypeTxt='车间',
+		  	  deletePopTitle='删除车间',
 		  	  deletePopContent='';
 		  return {
 		    workshopList,

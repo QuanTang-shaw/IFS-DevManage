@@ -67,13 +67,13 @@
 		},
 		methods:{
 			closePop:function () {
-				this.$emit('wsEdit','close');
+				this.$emit('Edit','close');
 			},
 			cancel:function () {
-				this.$emit('wsEdit','cancel');
+				this.$emit('Edit','cancel');
 			},
 			confirm:function () {
-				this.$emit('wsEdit','confirm');
+				this.$emit('Edit','confirm');
 			},
 			upFile:function () {
 				event.target.nextSibling.nextSibling.click();
