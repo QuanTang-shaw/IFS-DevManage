@@ -70,8 +70,8 @@
 						<th><span>机台主管</span></th>
 						<th><span>机台类型</span></th>
 						<th><span>操作
-							<button class="btn btn-default addMachineList">
-							<i class="fa fa-plus"></i>添加车间</button>
+							<button class="btn btn-default addMachineList" @click="addMachineList">
+							<i class="fa fa-plus"></i>添加机台</button>
 						</span></th>
 					</tr>
 				</thead>
@@ -90,7 +90,7 @@
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
 							<span class="font-icon-btn" title="查看详情">
-							  <i class="fa fa-list-alt fa-lg"></i>
+							  <i class="fa fa-angle-double-down fa-lg"></i>
 							</span>
 						</td>
 					</tr>
@@ -177,6 +177,9 @@
 			},
 			MLDeletePop:function () {
 				this.showDeletePop=false;
+			},
+			addMachineList:function () {
+				this.showMachineEdit=true;
 			}
 		}
 	}

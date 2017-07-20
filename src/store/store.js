@@ -1,4 +1,76 @@
 
+/*	function doListDevCategoryWeb() {
+		var obj = {
+		     "uFactoryUUID": 3,
+		};
+		$.ajax({
+			contentType: "application/json;charset=utf-8",
+			type: "POST",
+			dataType: "json",
+			async: "true",
+			//异步
+			cache: "false",
+			url: "http://ifs.top-link.me/ifs/WebService_Factory_V1.asmx/Factory_GetDetail",
+			data: JSON.stringify(obj),
+			success: function(rsp) {
+				console.log(rsp);
+				var rspObj = JSON.parse(rsp.d);
+				console.log(rspObj);
+				console.log(rspObj.obj.objectlist);
+			}
+		});
+	}
+	// doListDevCategoryWeb();
+
+	function doListDevCategoryAjax() {
+		var obj = {
+		     "uParkUUID": 1,
+		};
+		var reqData = new TRequestData();
+		reqData.op = "Park_List";
+		reqData.obj = JSON.stringify(obj);
+		$.ajax({
+			contentType: "application/json;charset=utf-8",
+			type: "POST",
+			dataType: "json",
+			async: "true",
+			//异步
+			cache: "false",
+			url: "http://ifs.top-link.me/ifs/Handler_Park_V1.ashx",
+			data: JSON.stringify(reqData),
+			success: function(rsp) {
+				console.log(rsp);
+			}
+		});
+	}
+	// doListDevCategoryAjax();
+
+
+	function Plproject_GetFileTree() {
+
+	var obj = {
+	    uPlprojectUUID: 1
+	};
+
+	var req = new TRequest();
+	// exec : function (url, op, obj, cb, err)
+	req.exec("http://ifs.top-link.me/ifs/Handler_Factory_V1.ashx", "Factory_GetDetail",{"uFactoryUUID": 3},
+	    // success:
+
+	    function (json) {
+	        console.log(json);
+	    },
+	    // error:
+
+	    function (json) {
+	        console.log(json);
+	    });
+
+	return;
+	}
+	Plproject_GetFileTree()*/
+
+
 	function initStorage(){
 
 		let plantList=[
@@ -386,14 +458,14 @@
 				location:"广东东莞",
 			},
 			{
-				name:"拓斯达",
-				englishName:"TOPSTAR",
+				name:"富士康",
+				englishName:"FOXCON",
 				fullName:"广东拓斯达科技股份科技有限公司",
 				location:"广东东莞",
 			},
 			{
-				name:"拓斯达",
-				englishName:"TOPSTAR",
+				name:"比亚迪",
+				englishName:"BYD",
 				fullName:"广东拓斯达科技股份科技有限公司",
 				location:"广东东莞",
 			},
@@ -468,10 +540,7 @@
 		localStorage.setItem('deviceCategory', JSON.stringify(deviceCategory));
 		localStorage.setItem('deviceManufacturers', JSON.stringify(deviceManufacturers));
 		localStorage.setItem('deviceList', JSON.stringify(deviceList));
-
 	}
-
-
 	function obtain (dataName) {
 		// let data=localStorage.getItem(dataName);
 		return JSON.parse(localStorage.getItem(dataName));

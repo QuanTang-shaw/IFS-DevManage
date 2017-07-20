@@ -1,23 +1,26 @@
 <template>
 	<div class="deviceCategory">
 		<div class="categoryList-nav">
-			<ul>
-				<li class="CategoryName" v-for="(category,key,index) in CategoryList">{{key|toChinese}}
-					<ul>
-						<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)">{{key|toChinese}}</li>
-					</ul>
-				</li>
-			</ul>
+			<div>
+				<div><img src="../assets/add.png" alt="" width="20"><span>设备类别</span></div>
+				<ul style="margin-left:40px;">
+					<li class="CategoryName" v-for="(category,key,index) in CategoryList"><i class="fa fa-folder-open fa-lg"></i>{{key|toChinese}}
+						<ul>
+							<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)">{{key|toChinese}}</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
 		</div>
 		<div class="categoryList">
 			<table class="categoryList-table" border="1">
 				<thead>
 					<tr>
 						<th><input type="checkbox"></th>
-						<th><span>厂商</span></th>
-						<th><span>型号</span></th>
-						<th><span>名称</span></th>
-						<th><span>数量</span></th>
+						<th><span>设备名称</span></th>
+						<th><span>设备厂商</span></th>
+						<th><span>设备型号</span></th>
+						<th><span>设备数量</span></th>
 						<th><span>操作</span></th>
 					</tr>
 				</thead>
@@ -28,10 +31,10 @@
 							<span>{{device.name}}</span>
 						</td>
 						<td>
-							<span>{{device.model}}</span>
+							<span>{{device.factory}}</span>
 						</td>
 						<td>
-							<span>{{device.factory}}</span>
+							<span>{{device.model}}</span>
 						</td>
 						<td>
 							<span>{{device.Quantity}}</span>
@@ -50,6 +53,7 @@
 <script>
   	import store from '@/store/store'
   	import filter from '@/Filter/filter'
+  	import treeNode from '@/components/TreeNode'
 	export default{
 		name:'devicCategory',
 		data(){
@@ -70,7 +74,10 @@
 			}
 
 		},
-		filters:filter
+		filters:filter,
+		components:{
+			'tree-node':treeNode
+		}
 	}
 </script>
 
@@ -84,6 +91,7 @@
 	.categoryList-nav{
 		height: 100%;
 		width: 20%;
+		padding:10px ;
 		/*border:solid 1px #CBC6C6;*/
 		background-color:#F7F6F6;
 		/*float: left;*/

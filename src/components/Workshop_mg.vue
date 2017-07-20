@@ -48,7 +48,7 @@
 						<th>车间主管</th>
 						<th>车间类型</th>
 						<th> <span>操作</span>
-							<button class="btn btn-default addWorkshop">
+							<button class="btn btn-default addWorkshop" @click="addWorkshop">
 							<i class="fa fa-plus"></i>添加车间</button>
 						</th>
 					</tr>
@@ -155,6 +155,9 @@
 				this.showWSEdit=false;
 			},
 			WsEdit:function () {
+				this.showWSEdit=true;
+			},
+			addWorkshop:function () {
 				this.showWSEdit=true;
 			}
 		}

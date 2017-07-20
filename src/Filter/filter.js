@@ -1,7 +1,7 @@
 
 function toChinese (str) {
 	let toStr='';
-	console.log(str);
+	// console.log(str);
 	switch (str) {
 		case 'feeder':
 			// statements_1
