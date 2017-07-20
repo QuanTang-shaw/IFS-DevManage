@@ -1,74 +1,111 @@
 
-/*	function doListDevCategoryWeb() {
-		var obj = {
-		     "uFactoryUUID": 3,
-		};
-		$.ajax({
-			contentType: "application/json;charset=utf-8",
-			type: "POST",
-			dataType: "json",
-			async: "true",
-			//异步
-			cache: "false",
-			url: "http://ifs.top-link.me/ifs/WebService_Factory_V1.asmx/Factory_GetDetail",
-			data: JSON.stringify(obj),
-			success: function(rsp) {
-				console.log(rsp);
-				var rspObj = JSON.parse(rsp.d);
-				console.log(rspObj);
-				console.log(rspObj.obj.objectlist);
-			}
-		});
+	//通用
+	function exec_getData(str,op,obj,txt) {
+		let url =`http://ifs.top-link.me/ifs/${str}`,
+			// obj = { uFactoryUUID: 3},
+			req = new TRequest();
+
+		// exec : function (url, op, obj, cb, err)
+		req.exec(url,op,obj,
+		    // success:
+		    function (json) {
+		    	console.log(txt);
+		        console.log(json);
+		    },
+		    // error:
+
+		    function (json) {
+		        console.log(json);
+		    });
+
+		return;
 	}
-	// doListDevCategoryWeb();
 
-	function doListDevCategoryAjax() {
-		var obj = {
-		     "uParkUUID": 1,
-		};
-		var reqData = new TRequestData();
-		reqData.op = "Park_List";
-		reqData.obj = JSON.stringify(obj);
-		$.ajax({
-			contentType: "application/json;charset=utf-8",
-			type: "POST",
-			dataType: "json",
-			async: "true",
-			//异步
-			cache: "false",
-			url: "http://ifs.top-link.me/ifs/Handler_Park_V1.ashx",
-			data: JSON.stringify(reqData),
-			success: function(rsp) {
-				console.log(rsp);
-			}
-		});
-	}
-	// doListDevCategoryAjax();
+		//工厂详情
+	//exec_getData("Handler_Factory_V1.ashx","Factory_GetDetail",{"uFactoryUUID": 3},"工厂详情:");
+		//车间详情
+	exec_getData("Handler_Workshop_V1.ashx","Workshop_GetDetail",{"uWorkshopUUID":5},"车间详情");
+		//机台详情
+	exec_getData("Handler_Workstation_V1.ashx","Workstation_GetDetail",{"uWorkstationUUID":2},"机台详情");
+		//园区详情
+	exec_getData("Handler_Park_V1.ashx","Park_GetDetail",{"uParkUUID":1},"园区详情");
+		//设备详情
+	exec_getData("Handler_Device_V1.ashx","Device_GetDetail",{"uDeviceUUID":2},"设备详情");
+		//设备分类详情
+	exec_getData("Handler_DevType_V1.ashx","DevType_GetDetail",{"uDevTypeUUID":2},"设备分类详情");
+
+	exec_getData("Handler_DevCategory_V1.ashx","DevCategory_GetDetail",{"uDevCategoryUUID":2},"设备自定义分类详情");
+
+	exec_getData("Handler_DevModel_V1.ashx","DevModel_GetDetail",{"uDevModelUUID":2},"设备型号详情");
+
+	exec_getData("Handler_Vendor_V1.ashx","Vendor_GetDetail",{"uVendorUUID":2},"设备供应商详情");
+
+	exec_getData("Handler_Device_V1.ashx","Device_GetDetail",{"uDeviceUUID":2},"设备详情");
 
 
-	function Plproject_GetFileTree() {
+   //查询列表
+	exec_getData("Handler_Factory_V1.ashx","Factory_List",{},"工厂列表:");
 
-	var obj = {
-	    uPlprojectUUID: 1
-	};
+	exec_getData("Handler_Workshop_V1.ashx","Workshop_List",{},"车间列表");
+		//机台详情
+	exec_getData("Handler_Workstation_V1.ashx","Workstation_List",{},"机台列表");
+		//园区详情
+	exec_getData("Handler_Park_V1.ashx","Park_List",{},"园区列表");
+		//设备详情
+	exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");
+		//设备分类详情
+	exec_getData("Handler_DevType_V1.ashx","DevType_List",{},"设备分类列表");
 
-	var req = new TRequest();
-	// exec : function (url, op, obj, cb, err)
-	req.exec("http://ifs.top-link.me/ifs/Handler_Factory_V1.ashx", "Factory_GetDetail",{"uFactoryUUID": 3},
-	    // success:
+	exec_getData("Handler_DevCategory_V1.ashx","DevCategory_List",{},"设备自定义分类列表");
 
-	    function (json) {
-	        console.log(json);
-	    },
-	    // error:
+	exec_getData("Handler_DevModel_V1.ashx","DevModel_List",{},"设备型号列表");
 
-	    function (json) {
-	        console.log(json);
-	    });
+	exec_getData("Handler_Vendor_V1.ashx","Vendor_List",{},"设备供应商列表");
 
-	return;
-	}
-	Plproject_GetFileTree()*/
+	exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");
+
+
+
+	// 修改工厂名称
+	exec_getData("Handler_Factory_V1.ashx","Factory_Rename",{uFactoryUUID:4,strFactoryName:"改改"},"设备名称修改");
+
+	exec_getData("Handler_Factory_V1.ashx","Factory_Del",{uFactoryUUID:3},"设备删除");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	function initStorage(){

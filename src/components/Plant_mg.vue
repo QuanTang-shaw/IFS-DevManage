@@ -99,7 +99,7 @@
       }
     },
     created:function () {
-      console.log(this.plantList)
+      // console.log(this.plantList)
     }
   }
 </script>
