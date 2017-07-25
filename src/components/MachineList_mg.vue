@@ -1,7 +1,7 @@
 <template>
 	<div class="machineList-mg">
 		<delete-pop v-show="showDeletePop" @delete="MLDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
-		<machine-edit v-show="showMachineEdit" @Edit="Edit" :editType="editTypeTxt"></machine-edit>
+		<machine-edit v-show="showMachineEdit" @Edit="Edit" :editType="editTypeTxt" :edited="edited"></machine-edit>
 		<div class="workshopSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedWorkshop-pic">
@@ -70,20 +70,20 @@
 						<th><span>机台主管</span></th>
 						<th><span>机台类型</span></th>
 						<th><span>操作
-							<button class="btn btn-default addMachineList" @click="addMachineList">
+							<button class="btn btn-default addMachineList" @click="Edit(null,'add')">
 							<i class="fa fa-plus"></i>添加机台</button>
 						</span></th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="machine in machineList">
+					<tr v-for="(machine,index) in machineList">
 						<td><input type="checkbox"></td>
-						<td><span>{{machine.numbering}}</span></td>
-						<td><span>{{machine.name}}</span></td>
+						<td><span>{{machine.strWorkstationID}}</span></td>
+						<td><span>{{machine.strWorkStationName}}</span></td>
 						<td><span>{{machine.manager}}</span></td>
 						<td><span>{{machine.machineType}}</span></td>
 						<td class="machineList-oper">
-							<span class="font-icon-btn" @click="Edit">
+							<span class="font-icon-btn" @click="Edit(index)">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>
 							</span>
 							<span class="font-icon-btn" @click="Delete(machine.name)">
@@ -131,13 +131,15 @@
 <script>
   	import store from '@/store/store'
 	import deletepop from '@/components/Delete_pop'
-  	import machineEdit from'@/components/WorkshopEdit'
+  	import machineEdit from'@/components/MachineListEdit'
+	import fetch from '@/fetch/fetch'
+
 	export default{
 		name:'machineList',
 		data(){
 			let	plantList=store.obtain('plantList'),
 				workshopList=store.obtain('workshopList'),
-				machineList=store.obtain('machineList'),
+				machineList,
 				plantIndex=0,
 				workshopIndex=0,
 				selectedPlant=plantList[plantIndex],
@@ -156,7 +158,8 @@
 			  showDeletePop,
 			  deletePopTitle,
 			  deletePopContent,
-			  editTypeTxt
+			  editTypeTxt,
+			  edited:{}
 			}
 		},
 		components:{
@@ -168,8 +171,16 @@
 				/* body... */
 				this.selectedPlant=this.plantList[this.plantIndex];
 			},
-			Edit:function () {
+			Edit:function (index,add) {
 				this.showMachineEdit=!this.showMachineEdit;
+				if(add){
+
+				}
+				else{
+					this.edited=this.machineList[index];
+					console.log(this.edited)
+
+				}
 			},
 			Delete:function (str) {
 				this.showDeletePop=true;
@@ -181,6 +192,25 @@
 			addMachineList:function () {
 				this.showMachineEdit=true;
 			}
+		},
+		beforeCreate:function () {
+			// err
+		  fetch
+		        .Workstation_ListActive()
+		        .then(data=>console.log(this.machineList=data.obj.objectlist));
+		  // fetch
+		  //       .DevType_ListActive()
+		  //       .then(data=>console.log(data));
+		  // fetch
+		  //       .Device_ListActive()
+		  //       .then(data=>console.log(data));
+		  // err
+		  // fetch
+		  //       .Devcategory_ListActive()
+		  //       .then(data=>console.log(data));
+		  // fetch
+		  //       .Vendor_ListActive()
+		  //       .then(data=>console.log(data));
 		}
 	}
 </script>

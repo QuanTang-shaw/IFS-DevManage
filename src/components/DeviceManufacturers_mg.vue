@@ -19,7 +19,7 @@
 			<tbody>
 				<tr v-for="company in companyList">
 					<td><input type="checkbox"></td>
-					<td>{{company.name}}</td>
+					<td>{{company.strVendorName}}</td>
 					<td>{{company.englishName}}</td>
 					<td>{{company.fullName}}</td>
 					<td>{{company.location}}</td>
@@ -43,6 +43,7 @@
 
 <script>
   	import store from '@/store/store'
+	import fetch from '@/fetch/fetch'
   	import paging from '@/components/Paging'
 	import deletepop from '@/components/Delete_pop'
 	import manufaEdit from '@/components/ManufacturersEdit'
@@ -50,7 +51,7 @@
 	export default{
 		name:'devicManufacturers',
 		data(){
-			let	companyList=store.obtain('deviceManufacturers');
+			let	companyList;
 			return {
 				companyList,
 				showManufaEdit:false,
@@ -74,6 +75,12 @@
 			paging,
 			deletepop,
 			"mf-edit":manufaEdit
+		},
+		beforeCreate:function () {
+			// err
+		  fetch
+		        .Vendor_ListActive()
+		        .then(data=>console.log(this.companyList=data.obj.objectlist));
 		}
 	}
 </script>

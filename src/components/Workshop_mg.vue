@@ -1,7 +1,7 @@
 <template>
 	<div class="workshopManagement">
 		<delete-pop v-show='showDeletePop' @delete="wsDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
-		<workshop-edit v-show='showWSEdit'  @Edit="subwsEdit" :editType="editTypeTxt"></workshop-edit>
+		<workshop-edit v-show='showWSEdit'  @Edit="EditSubmit" :editType="editTypeTxt" :isAdd="isAdd" :edited="editedWorkshop"></workshop-edit>
 		<div class="workshop-plantSelect">
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
@@ -18,9 +18,9 @@
 						<option :value="index" v-for="(plant,index) in plantList">{{plant.name}}</option>
 					</select>
 				</label> -->
-				<label>切换厂区:
+				<label>切换工厂:
 					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">A厂区</button>
+					  <button type="button" class="buttonDown btn btn-default">A工厂</button>
 					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					    <span class="caret"></span>
 					    <span class="sr-only">Toggle Dropdown</span>
@@ -48,22 +48,22 @@
 						<th>车间主管</th>
 						<th>车间类型</th>
 						<th> <span>操作</span>
-							<button class="btn btn-default addWorkshop" @click="addWorkshop">
+							<button class="btn btn-default addWorkshop" @click="WsEdit(null,'add')">
 							<i class="fa fa-plus"></i>添加车间</button>
 						</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="workshop in workshopList">
+					<tr v-for="(workshop,index) in workshopList">
 						<td><input type="checkbox"></td>
 						<td>
 							<span>
-								{{workshop.numbering}}
+								{{workshop.strWorkshopID}}
 							</span>
 						</td>
 						<td>
 							<span>
-								{{workshop.name}}
+								{{workshop.strWorkshopName}}
 							</span>
 						</td>
 						<td>
@@ -77,10 +77,10 @@
 							</span>
 						</td>
 						<td class="workshop-oper">
-							<span class="font-icon-btn" @click="WsEdit">
+							<span class="font-icon-btn" @click="WsEdit(index)">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>
 							</span>
-							<span class="font-icon-btn" @click="deleteWs(workshop.name)">
+							<span class="font-icon-btn" @click="wsDeletePop(workshop)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
 							<span class="font-icon-btn" title="查看详情">
@@ -106,6 +106,7 @@
 </template>
 <script>
   	import store from '@/store/store'
+  	import fetch from '@/fetch/fetch'
   	import paging from '@/components/Paging'
 	import deletepop from '@/components/Delete_pop'
 	import workshopEdit from '@/components/WorkshopEdit'
@@ -113,7 +114,7 @@
 	export default{
 		name:'workshoplist',
 		data () {
-		  let workshopList=store.obtain('workshopList'),
+		  let workshopList,
 		  	  plantList=store.obtain('plantList'),
 		  	  selectedIndex=0,
 		  	  selectedPlant=plantList[selectedIndex],
@@ -131,7 +132,9 @@
 		    showDeletePop,
 		    deletePopTitle,
 		    editTypeTxt,
-		    deletePopContent
+		    deletePopContent,
+		    isAdd:false,
+		    editedWorkshop:{}
 		  }
 		},
 		components:{
@@ -147,19 +150,54 @@
 				this.deletePopContent=str;
 				this.showDeletePop=true;
 			},
-			wsDeletePop:function () {
-				this.showDeletePop=false;
+			wsDeletePop:function (obj,str) {
+				let _this=this;
+				this.showDeletePop=!this.showDeletePop;
+				if (str) {
+				  if(str=='close'||str=='cancel');
+				    else if(str=='confirm'){
+				      fetch.Workshop_Inactive({uWorkshopUUID:this.DelWorkshopID})
+				           .then(function (a) {
+				             fetch
+				                   .Workshop_ListActive()
+				                   .then(data=>console.log(_this.workshopList=data.obj.objectlist));
+				            });
+				    }
+				}
+				else {
+				  this.deletePopContent=obj.strWorkshopName;
+				  this.DelWorkshopID=obj.uWorkshopUUID;
+				}
+
 			},
-			subwsEdit:function () {
-				/* body... */
-				this.showWSEdit=false;
+			WsEdit:function (index,add) {
+				if(add){
+					this.isAdd=true;
+					this.editedWorkshop={};
+				}
+				else{
+					this.isAdd=false;
+					this.editedWorkshop=this.workshopList[index];
+
+				}
+				this.showWSEdit=!this.showWSEdit;
 			},
-			WsEdit:function () {
-				this.showWSEdit=true;
-			},
-			addWorkshop:function () {
-				this.showWSEdit=true;
+			EditSubmit:function (str) {
+				if(str=='confirm'){
+					fetch
+					      .Workshop_ListActive()
+					      .then(data=>console.log(this.workshopList=data.obj.objectlist));
+				}
+				else if(str=='cancel'||str=='close'){
+
+				}
+				this.showWSEdit=!this.showWSEdit;
 			}
+		},
+		beforeCreate:function () {
+		  fetch
+		        .Workshop_ListActive()
+		        .then(data=>console.log(this.workshopList=data.obj.objectlist));
 		}
 	}
 </script>

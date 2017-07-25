@@ -1,109 +1,164 @@
 
-	//通用
-	function exec_getData(str,op,obj,txt) {
-		let url =`http://ifs.top-link.me/ifs/${str}`,
-			// obj = { uFactoryUUID: 3},
-			req = new TRequest();
 
+	let  Result;
+
+	//通用
+	function exec_getData(str,op,obj) {
+		let url =`http://ifs.top-link.me/ifs/${str}`,
+			req = new TRequest();
+		// obj = { uFactoryUUID: 3},
 		// exec : function (url, op, obj, cb, err)
 		req.exec(url,op,obj,
 		    // success:
 		    function (json) {
-		    	console.log(txt);
+		    	var objlist = json.obj.objectlist;
 		        console.log(json);
+		        Result=objlist;
 		    },
 		    // error:
 
 		    function (json) {
 		        console.log(json);
 		    });
-
-		return;
 	}
 
-		//工厂详情
-	//exec_getData("Handler_Factory_V1.ashx","Factory_GetDetail",{"uFactoryUUID": 3},"工厂详情:");
-		//车间详情
-	exec_getData("Handler_Workshop_V1.ashx","Workshop_GetDetail",{"uWorkshopUUID":5},"车间详情");
-		//机台详情
-	exec_getData("Handler_Workstation_V1.ashx","Workstation_GetDetail",{"uWorkstationUUID":2},"机台详情");
-		//园区详情
-	exec_getData("Handler_Park_V1.ashx","Park_GetDetail",{"uParkUUID":1},"园区详情");
-		//设备详情
-	exec_getData("Handler_Device_V1.ashx","Device_GetDetail",{"uDeviceUUID":2},"设备详情");
-		//设备分类详情
-	exec_getData("Handler_DevType_V1.ashx","DevType_GetDetail",{"uDevTypeUUID":2},"设备分类详情");
+	//工厂详情
+	
+		// exec_getData("Handler_Factory_V1.ashx","Factory_GetDetail",{"uFactoryUUID": 98},"工厂详情:");
+			//车间详情
+/*		exec_getData("Handler_Workshop_V1.ashx","Workshop_GetDetail",{"uWorkshopUUID":5},"车间详情");
+			//机台详情
+		exec_getData("Handler_Workstation_V1.ashx","Workstation_GetDetail",{"uWorkstationUUID":2},"机台详情");
+			//园区详情
+		exec_getData("Handler_Park_V1.ashx","Park_GetDetail",{"uParkUUID":1},"园区详情");
+			//设备详情
+		exec_getData("Handler_Device_V1.ashx","Device_GetDetail",{"uDeviceUUID":2},"设备详情");
+			//设备分类详情
+		exec_getData("Handler_DevType_V1.ashx","DevType_GetDetail",{"uDevTypeUUID":2},"设备分类详情");
 
-	exec_getData("Handler_DevCategory_V1.ashx","DevCategory_GetDetail",{"uDevCategoryUUID":2},"设备自定义分类详情");
+		exec_getData("Handler_DevCategory_V1.ashx","DevCategory_GetDetail",{"uDevCategoryUUID":2},"设备自定义分类详情");
 
-	exec_getData("Handler_DevModel_V1.ashx","DevModel_GetDetail",{"uDevModelUUID":2},"设备型号详情");
+		exec_getData("Handler_DevModel_V1.ashx","DevModel_GetDetail",{"uDevModelUUID":2},"设备型号详情");
 
-	exec_getData("Handler_Vendor_V1.ashx","Vendor_GetDetail",{"uVendorUUID":2},"设备供应商详情");
+		exec_getData("Handler_Vendor_V1.ashx","Vendor_GetDetail",{"uVendorUUID":2},"设备供应商详情");
 
-	exec_getData("Handler_Device_V1.ashx","Device_GetDetail",{"uDeviceUUID":2},"设备详情");
+		exec_getData("Handler_Device_V1.ashx","Device_GetDetail",{"uDeviceUUID":2},"设备详情");
+	*/
 
+	//查询列表
+	
+		// exec_getData("Handler_Factory_V1.ashx","Factory_List",{},"工厂列表:");
 
-   //查询列表
-	exec_getData("Handler_Factory_V1.ashx","Factory_List",{},"工厂列表:");
+		// exec_getData("Handler_Workshop_V1.ashx","Workshop_List",{},"车间列表");
+			//机台详情
+		// exec_getData("Handler_Workstation_V1.ashx","Workstation_List",{},"机台列表");
+			//园区详情
+		/*exec_getData("Handler_Park_V1.ashx","Park_List",{},"园区列表");
+			//设备详情
+		exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");
+			//设备分类详情
+		exec_getData("Handler_DevType_V1.ashx","DevType_List",{},"设备分类列表");
 
-	exec_getData("Handler_Workshop_V1.ashx","Workshop_List",{},"车间列表");
-		//机台详情
-	exec_getData("Handler_Workstation_V1.ashx","Workstation_List",{},"机台列表");
-		//园区详情
-	exec_getData("Handler_Park_V1.ashx","Park_List",{},"园区列表");
-		//设备详情
-	exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");
-		//设备分类详情
-	exec_getData("Handler_DevType_V1.ashx","DevType_List",{},"设备分类列表");
+		exec_getData("Handler_DevCategory_V1.ashx","DevCategory_List",{},"设备自定义分类列表");
 
-	exec_getData("Handler_DevCategory_V1.ashx","DevCategory_List",{},"设备自定义分类列表");
+		exec_getData("Handler_DevModel_V1.ashx","DevModel_List",{},"设备型号列表");
 
-	exec_getData("Handler_DevModel_V1.ashx","DevModel_List",{},"设备型号列表");
+		exec_getData("Handler_Vendor_V1.ashx","Vendor_List",{},"设备供应商列表");
 
-	exec_getData("Handler_Vendor_V1.ashx","Vendor_List",{},"设备供应商列表");
-
-	exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");
-
-
+		exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");*/
+	
 
 	// 修改工厂名称
-	exec_getData("Handler_Factory_V1.ashx","Factory_Rename",{uFactoryUUID:4,strFactoryName:"改改"},"设备名称修改");
+	// exec_getData("Handler_Factory_V1.ashx","Factory_Rename",{uFactoryUUID:4,strFactoryName:"改改"},"设备名称修改");
 
-	exec_getData("Handler_Factory_V1.ashx","Factory_Del",{uFactoryUUID:3},"设备删除");
+	// exec_getData("Handler_Factory_V1.ashx","Factory_Rename",{uFactoryUUID:4,strFactoryName:"改改"},"设备名称修改");
 
-
-
-
-
+	//删除工厂
+	// exec_getData("Handler_Factory_V1.ashx","Factory_Del",{uFactoryUUID:8});
 
 
 
 
 
+	function obtainList(str,res) {
+		/* body... */
+		switch (str) {
+			case 'parkList':
+				exec_getData("Handler_Park_V1.ashx","Park_List",{},"园区列表");
+				break;
+			case 'FactoryList':
+				exec_getData("Handler_Factory_V1.ashx","Factory_List",{},"工厂列表:",res);
+				break;
+			case 'workshopList':
+				exec_getData("Handler_Workshop_V1.ashx","Workshop_List",{},"车间列表");
+				break;
+			case 'PLineList':
+				exec_getData("Handler_PLine_V1.ashx","PLine_List",{},"产线列表");
+				break;
+			case 'workStationList':
+				exec_getData("Handler_Workstation_V1.ashx","Workstation_List",{},"机台列表");
+				break;
+			case 'deviceList':
+				exec_getData("Handler_Device_V1.ashx","Device_List",{},"设备列表");
+				break;
+			case 'devModelList':
+				exec_getData("Handler_DevModel_V1.ashx","DevModel_List",{},"设备型号列表");
+				break;
+			case 'vendorList':
+				exec_getData("Handler_Vendor_V1.ashx","Vendor_List",{},"设备供应商列表");
+				break;
+			case  'devTypeList':
+				exec_getData("Handler_DevType_V1.ashx","DevType_List",{},"设备分类列表");
+				break;
+			case  'devCategoryList':
+				exec_getData("Handler_DevCategory_V1.ashx","DevCategory_List",{},"设备自定义分类列表");
+				break;
+			default:
+				// statements_def
+				break;
+		}
+		return Result;
+	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	function inActive(str,obj) {
+		// body...
+		switch (str) {
+			case 'park':
+				exec_getData("Handler_Park_V1.ashx","Park_Inactive",obj);
+				break;
+			case 'Factory':
+				exec_getData("Handler_Factory_V1.ashx","Factory_Inactive",obj);
+				break;
+			case 'workshop':
+				exec_getData("Handler_Workshop_V1.ashx","Workshop_Inactive",obj);
+				break;
+			case 'PLine':
+				exec_getData("Handler_PLine_V1.ashx","PLine_Inactive",obj);
+				break;
+			case 'workStation':
+				exec_getData("Handler_Workstation_V1.ashx","Workstation_Inactive",obj);
+				break;
+			case 'device':
+				exec_getData("Handler_Device_V1.ashx","Device_Inactive",obj);
+				break;
+			case 'devModel':
+				exec_getData("Handler_DevModel_V1.ashx","DevModel_Inactive",obj);
+				break;
+			case 'vendor':
+				exec_getData("Handler_Vendor_V1.ashx","Vendor_Inactive",obj);
+				break;
+			case  'devType':
+				exec_getData("Handler_DevType_V1.ashx","DevType_Inactive",obj);
+				break;
+			case  'devCategory':
+				exec_getData("Handler_DevCategory_V1.ashx","DevCategory_Inactive",obj);
+				break;
+			default:
+				// statements_def
+				break;
+		}
+	}
 
 
 
@@ -585,5 +640,8 @@
 
 	export default{
 		initStorage,
-		obtain
+		obtain,
+		obtainList,
+		Result,
+		inActive
 	}

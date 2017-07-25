@@ -13,13 +13,13 @@
 	          <div class="form-group">
 	            <label for="inputEmail3" class="col-sm-2 control-label">编号</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputEmail3" :placeholder="`请输入${editType}编号`" v-model="edited.strWorkshopID">
+	              <input type="text" class="form-control" id="inputEmail3" :placeholder="`请输入${editType}编号`" v-model="edited.strWorkstationID">
 	            </div>
 	          </div>
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">名称</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3"  :placeholder="`请输入${editType}名称`" v-model="edited.strWorkshopName">
+	              <input type="text" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}名称`">
 	            </div>
 	          </div>
 	          <div class="form-group">
@@ -57,7 +57,6 @@
 </template>
 
 <script>
-    import fetch from '@/fetch/fetch'
 	export default{
 		name:'plantEdit',
 		props:['editType','isAdd','edited'],
@@ -74,31 +73,21 @@
 				this.$emit('Edit','cancel');
 			},
 			confirm:function () {
+				this.$emit('Edit','confirm');
 				if(this.isAdd){
-					fetch.Workshop_Add({
-						uFactoryUUID: 1,
-						strWorkshopID: this.edited.strWorkshopID,
-						strWorkshopName: this.edited.strWorkshopName,
-						uWorkshopAdminUUID: 1
-					}).then(()=>this.$emit('Edit','confirm'));
 
 				}
 				else{
-					fetch.Workshop_Update({
-						uWorkshopUUID: this.edited.uWorkshopUUID,
-						uFactoryUUID: 1,
-						strWorkshopName:this.edited.strWorkshopName,
-						strWorkshopID :this.edited.strWorkshopID,
-						strWorkshopDesc: "装配车间一 DESC",
-						strWorkshopNote: "装配车间一 NOTE",
-						uWorkshopTypeUUID: 10,
-						uWorkshopAdminUUID : 10001
-					}).then(()=>this.$emit('Edit','confirm'));
+
 				}
 			},
 			upFile:function () {
 				event.target.nextSibling.nextSibling.click();
 			}
+		},
+		created:function () {
+
+			// console.log(editPlant)
 		}
 	}
 </script>

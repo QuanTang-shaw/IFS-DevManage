@@ -2,9 +2,14 @@
 	<div class="deviceCategory">
 		<div class="categoryList-nav">
 			<div>
-				<div><img src="../assets/add.png" alt="" width="20"><span>设备类别</span></div>
-				<ul style="margin-left:40px;">
-					<li class="CategoryName" v-for="(category,key,index) in CategoryList"><i class="fa fa-folder-open fa-lg"></i>{{key|toChinese}}
+				<div><i class="fa fa-minus-square-o  fa-lg"></i><span>设备类别</span></div>
+				<ul style="margin-left:30px;">
+					<li class="CategoryName" v-for="(category,key,index) in CategoryList">
+						<div class="devType" @mouseover="category.showopt=true" >
+							<i class="fa fa-minus-square-o  fa-lg" style="margin-right:6px;"></i>
+							{{key|toChinese}}
+							<i class="fa fa-caret-down fa-sm" v-show="category.showopt" style="margin-right:6px;"></i>
+						</div>
 						<ul>
 							<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)">{{key|toChinese}}</li>
 						</ul>
@@ -13,7 +18,7 @@
 			</div>
 		</div>
 		<div class="categoryList">
-			<table class="categoryList-table" border="1">
+			<table class="categoryList-table" border="0">
 				<thead>
 					<tr>
 						<th><input type="checkbox"></th>
@@ -61,7 +66,8 @@
 				selectedCategory=CategoryList.feeder.Direct;
 			return {
 				CategoryList,
-				selectedCategory
+				selectedCategory,
+				isShowArrow:[7]
 			}
 		},
 		created:function () {
@@ -71,6 +77,10 @@
 			categoryClick:function (category) {
 				console.log(category);
 				this.selectedCategory=category;
+			},
+			showArrow:function (index){
+				this.isShowArrow[index]=true;
+				console.log(index)
 			}
 
 		},
@@ -105,19 +115,23 @@
 	    position: absolute;
 	    top: 0;
 	    bottom: 0;
+	    padding:15px;
 	}
 	.deviceCategory,.categoryList-table{
 		width: 100%;
 	}
 	.categoryList-table{
-		border: solid 1px #D1CCCC;
+		/*border: solid 1px #D1CCCC;*/
 	}
 	.categoryList-table th,.categoryList-table td{
 		padding:10px 30px;
 	}
+	.categoryList-table tr{
+		border-bottom:solid 1px #E9E5E5;
+	}
 	.subCategoryName{
 		cursor: pointer;
-		margin-left:25px;
+		margin-left:20px;
 	}
 	.subCategoryName:hover{
 		background-color: #E4D8D8;

@@ -27,13 +27,13 @@
 		props:['popTitle','contentTxt'],
 		methods:{
 			closePop:function () {
-				this.$emit('delete','close');
+				this.$emit('delete',null,'close');
 			},
 			cancel:function () {
-				this.$emit('delete','cancel');
+				this.$emit('delete',null,'cancel');
 			},
 			confirm:function () {
-				this.$emit('delete','confirm');
+				this.$emit('delete',null,'confirm');
 			}
 		}
 

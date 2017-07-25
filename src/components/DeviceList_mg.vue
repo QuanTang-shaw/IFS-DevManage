@@ -192,6 +192,8 @@
 
 <script>
   	import store from '@/store/store'
+	import fetch from '@/fetch/fetch'
+
 	export default{
 		name:'machineList',
 		data(){
@@ -211,15 +213,17 @@
 				plantIndex
 			}
 		},
-		created:function () {
-			console.log(this.machineList)
-		},
 		methods:{
 			togglePlant:function () {
 				/* body... */
 				this.selectedPlant=this.plantList[this.plantIndex];
 			}
-		}
+		},
+		beforeCreate:function () {
+			fetch
+			      .Device_ListActive()
+			      .then(data=>console.log(data));
+		},
 	}
 </script>
 

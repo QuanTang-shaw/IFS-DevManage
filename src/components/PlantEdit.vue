@@ -13,22 +13,22 @@
 	          <div class="form-group">
 	            <label for="inputEmail3" class="col-sm-2 control-label">名称</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputEmail3" placeholder="请输入工厂名称" :value='editPlant.name'>
+	              <input type="text" class="form-control" id="inputEmail3" placeholder="请输入工厂名称"  v-model="editPlant.strFactoryName">
 	            </div>
 	          </div>
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">地址</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入工厂地址" :value='editPlant.address'>
+	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入工厂地址" v-model="editPlant.strFactoryAddress">
 	            </div>
 	          </div>
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">联系方式</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入联系方式" :value='editPlant.Contact'>
+	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入联系方式">
 	            </div>
 	          </div>
-	          <div class="form-group">
+	          <!-- <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">经度</label>
 	            <div class="col-sm-10">
 	              <input type="password" class="form-control" id="inputPassword3" placeholder="请输入工厂经度">
@@ -45,7 +45,7 @@
 	            <div class="col-sm-10">
 	              <input type="password" class="form-control" id="inputPassword3" placeholder="请输入工厂海拔">
 	            </div>
-	          </div>
+	          </div> -->
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">工厂图片</label>
 	            <div class="col-sm-10">
@@ -69,12 +69,15 @@
 </template>
 
 <script>
+    import fetch from '@/fetch/fetch'
+
 	export default{
 		name:'plantEdit',
-		props:['editPlant'],
+		props:['editPlant','isAddPlant'],
 		data(){
 			return{
-				// editPlant
+				plantName:'',
+				plantAddress:''
 			}
 		},
 		methods:{
@@ -85,15 +88,33 @@
 				this.$emit('submit','cancel');
 			},
 			confirm:function () {
-				this.$emit('submit','confirm');
+				if (this.isAddPlant){
+					console.log(typeof this.editPlant.strFactoryAddress)
+					fetch.Factory_Add({
+						uParkUUID        : 1,     //从属园区编码
+						strFactoryName   : this.editPlant.strFactoryName,    //工厂名称
+						strFactoryID     : this.editPlant.strFactoryID,    //工厂ID
+						strFactoryAddress: this.editPlant.strFactoryAddress     //工厂地址
+					}).then(()=>this.$emit('submit','confirm'));
+				}
+				else{
+					fetch.Factory_Update({
+						uFactoryUUID     : this.editPlant.uFactoryUUID,
+						uParkUUID        : 1,     //从属园区编码
+						strFactoryName   : this.editPlant.strFactoryName,    //工厂名称
+						strFactoryID     : this.editPlant.strFactoryID,    //工厂ID
+						uFactoryAdminUUID:  1,
+					    strFactoryDesc:"Desc HK LEE 1",
+					    strFactoryNote:"Note HK LEE 1"
+					}).then(()=>this.$emit('submit','confirm'));
+				}
 			},
 			upFile:function () {
 				event.target.nextSibling.nextSibling.click();
 			}
 		},
 		created:function () {
-
-			// console.log(editPlant)
+			console.log(this.editPlant)
 		}
 	}
 </script>
