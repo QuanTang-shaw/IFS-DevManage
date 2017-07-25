@@ -1,7 +1,7 @@
 <template>
 	<div class="machineList-mg">
-		<delete-pop v-show="showDeletePop" @delete="MLDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
-		<machine-edit v-show="showMachineEdit" @Edit="Edit" :editType="editTypeTxt" :edited="edited"></machine-edit>
+		<delete-pop v-show="showDeletePop" @delete="MachineDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
+		<machine-edit v-show="showMachineEdit" @Edit="EditSubmit" :editType="editTypeTxt" :edited="editedMachine" :isAdd="isAddMachine"></machine-edit>
 		<div class="workshopSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedWorkshop-pic">
@@ -70,7 +70,7 @@
 						<th><span>机台主管</span></th>
 						<th><span>机台类型</span></th>
 						<th><span>操作
-							<button class="btn btn-default addMachineList" @click="Edit(null,'add')">
+							<button class="btn btn-default addMachineList" @click="machineEdit(null,'add')">
 							<i class="fa fa-plus"></i>添加机台</button>
 						</span></th>
 					</tr>
@@ -79,14 +79,14 @@
 					<tr v-for="(machine,index) in machineList">
 						<td><input type="checkbox"></td>
 						<td><span>{{machine.strWorkstationID}}</span></td>
-						<td><span>{{machine.strWorkStationName}}</span></td>
+						<td><span>{{machine.strWorkstationName}}</span></td>
 						<td><span>{{machine.manager}}</span></td>
 						<td><span>{{machine.machineType}}</span></td>
 						<td class="machineList-oper">
-							<span class="font-icon-btn" @click="Edit(index)">
+							<span class="font-icon-btn" @click="machineEdit(index)">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>
 							</span>
-							<span class="font-icon-btn" @click="Delete(machine.name)">
+							<span class="font-icon-btn" @click="MachineDelete(machine)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
 							<span class="font-icon-btn" title="查看详情">
@@ -159,7 +159,8 @@
 			  deletePopTitle,
 			  deletePopContent,
 			  editTypeTxt,
-			  edited:{}
+			  editedMachine:{},
+			  isAddMachine:false
 			}
 		},
 		components:{
@@ -168,49 +169,55 @@
 		},
 		methods:{
 			togglePlant:function () {
-				/* body... */
 				this.selectedPlant=this.plantList[this.plantIndex];
 			},
-			Edit:function (index,add) {
-				this.showMachineEdit=!this.showMachineEdit;
+			machineEdit:function (index,add) {
 				if(add){
-
+					this.isAddMachine=true;
+					this.editedMachine={};
 				}
 				else{
-					this.edited=this.machineList[index];
-					console.log(this.edited)
+					this.isAddMachine=false;
+					this.editedMachine=this.machineList[index];
 
 				}
+				this.showMachineEdit=!this.showMachineEdit;
 			},
-			Delete:function (str) {
-				this.showDeletePop=true;
-				this.deletePopContent=str;
+			EditSubmit:function (str) {
+				if(str=='confirm'){
+					fetch
+					      .Workstation_ListActive()
+					      .then(data=>console.log(this.machineList=data.obj.objectlist));
+				}
+				else if(str=='cancel'||str=='close'){
+
+				}
+				this.showMachineEdit=!this.showMachineEdit;
 			},
-			MLDeletePop:function () {
-				this.showDeletePop=false;
-			},
-			addMachineList:function () {
-				this.showMachineEdit=true;
+			MachineDelete:function (obj,str) {
+				let _this=this;
+				this.showDeletePop=!this.showDeletePop;
+				if (str) {
+				  if(str=='close'||str=='cancel');
+				    else if(str=='confirm'){
+				      fetch.Workstation_Inactive({uWorkstationUUID:this.DelWorkstationID})
+				           .then(function () {
+				             fetch
+				                   .Workstation_ListActive()
+				                   .then(data=>console.log(_this.machineList=data.obj.objectlist));
+				            });
+				    }
+				}
+				else {
+				  this.deletePopContent=obj.strWorkstationName;
+				  this.DelWorkstationID=obj.uWorkstationUUID;
+				}
 			}
 		},
 		beforeCreate:function () {
-			// err
 		  fetch
 		        .Workstation_ListActive()
 		        .then(data=>console.log(this.machineList=data.obj.objectlist));
-		  // fetch
-		  //       .DevType_ListActive()
-		  //       .then(data=>console.log(data));
-		  // fetch
-		  //       .Device_ListActive()
-		  //       .then(data=>console.log(data));
-		  // err
-		  // fetch
-		  //       .Devcategory_ListActive()
-		  //       .then(data=>console.log(data));
-		  // fetch
-		  //       .Vendor_ListActive()
-		  //       .then(data=>console.log(data));
 		}
 	}
 </script>

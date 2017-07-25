@@ -19,7 +19,7 @@
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">名称</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}名称`">
+	              <input type="text" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}名称`" v-model="edited.strWorkstationName">
 	            </div>
 	          </div>
 	          <div class="form-group">
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+    import fetch from '@/fetch/fetch'
 	export default{
 		name:'plantEdit',
 		props:['editType','isAdd','edited'],
@@ -73,11 +74,22 @@
 				this.$emit('Edit','cancel');
 			},
 			confirm:function () {
-				this.$emit('Edit','confirm');
 				if(this.isAdd){
-
+					fetch.Workstation_Add({
+						uPLineUUID: 1,
+						strWorkstationName:this.edited.strWorkstationName,
+						strWorkstationID:this.edited.strWorkstationID,
+					}).then(()=>this.$emit('Edit','confirm'));
 				}
 				else{
+					fetch.Workstation_Update({
+						uWorkstationUUID: this.edited.uWorkstationUUID,
+						uPLineUUID: 1,
+						strWorkstationName:this.edited.strWorkstationName,
+						strWorkstationID:this.edited.strWorkstationID,
+						strWorkstationDesc:"Desc PHKT 05",
+						strWorkstationNote:"Note PHKT 05"
+					}).then(()=>this.$emit('Edit','confirm'));
 
 				}
 			},

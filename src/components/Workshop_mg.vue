@@ -146,10 +146,6 @@
 			togglePlant:function () {
 		  	 	this.selectedPlant=this.plantList[this.selectedIndex];
 			},
-			deleteWs:function (str) {
-				this.deletePopContent=str;
-				this.showDeletePop=true;
-			},
 			wsDeletePop:function (obj,str) {
 				let _this=this;
 				this.showDeletePop=!this.showDeletePop;
@@ -168,7 +164,6 @@
 				  this.deletePopContent=obj.strWorkshopName;
 				  this.DelWorkshopID=obj.uWorkshopUUID;
 				}
-
 			},
 			WsEdit:function (index,add) {
 				if(add){

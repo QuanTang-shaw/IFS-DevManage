@@ -81,7 +81,6 @@
 						strWorkshopName: this.edited.strWorkshopName,
 						uWorkshopAdminUUID: 1
 					}).then(()=>this.$emit('Edit','confirm'));
-
 				}
 				else{
 					fetch.Workshop_Update({
