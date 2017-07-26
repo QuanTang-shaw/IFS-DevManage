@@ -81,7 +81,7 @@
 						<td><span>{{machine.strWorkstationID}}</span></td>
 						<td><span>{{machine.strWorkstationName}}</span></td>
 						<td><span>{{machine.manager}}</span></td>
-						<td><span>{{machine.machineType}}</span></td>
+						<td><span>{{machine.strWorkstationTypeName}}</span></td>
 						<td class="machineList-oper">
 							<span class="font-icon-btn" @click="machineEdit(index)">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>

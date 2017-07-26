@@ -31,7 +31,7 @@
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">类型</label>
 	            <div class="col-sm-10">
-	              <input type="password" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}类型`">
+	              <input type="text" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}类型`" v-model="edited.strWorkshopTypeName">
 	            </div>
 	          </div>
 	          <div class="form-group">
@@ -86,12 +86,12 @@
 					fetch.Workshop_Update({
 						uWorkshopUUID: this.edited.uWorkshopUUID,
 						uFactoryUUID: 1,
+						uWorkshopTypeUUID: 1,
+						uWorkshopAdminUUID : 10001,
 						strWorkshopName:this.edited.strWorkshopName,
 						strWorkshopID :this.edited.strWorkshopID,
 						strWorkshopDesc: "装配车间一 DESC",
-						strWorkshopNote: "装配车间一 NOTE",
-						uWorkshopTypeUUID: 10,
-						uWorkshopAdminUUID : 10001
+						strWorkshopNote: "装配车间一 NOTE"
 					}).then(()=>this.$emit('Edit','confirm'));
 				}
 			},

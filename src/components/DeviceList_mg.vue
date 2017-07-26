@@ -163,14 +163,14 @@
 							<img src="../assets/topstart/mtm-water.jpg" alt="设备图片">
 						</div>
 						<div class="specification col-md-3">
-							<p>{{device.name}}</p>
+							<p>{{device.strDeviceName}}</p>
 							<p><span>品牌:</span>{{device.Brand}}</p>
-							<p>序列号: <strong></strong> {{device.serialNumber}}</p>
+							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
 						</div>
 						<div class="model col-md-5">
-							<strong>{{device.model}}</strong>
-							<span><strong>{{device.ownedWorkshop}}</strong>车间</span>
-							<span>机台<strong>{{device.ownedMachine}}</strong></span>
+							<strong>型号:</strong>
+							<span><strong>车间:</strong>001</span>
+							<span>机台:<strong>00A</strong></span>
 						</div>
 						<div class="operating col-md-2">
 							<span>
@@ -197,7 +197,7 @@
 	export default{
 		name:'machineList',
 		data(){
-			let	deviceList=store.obtain('deviceList'),
+			let	deviceList,
 				plantList=store.obtain('plantList'),
 				workshopList=store.obtain('workshopList'),
 				machineList=store.obtain('machineList'),
@@ -222,7 +222,7 @@
 		beforeCreate:function () {
 			fetch
 			      .Device_ListActive()
-			      .then(data=>console.log(data));
+			      .then(data=>console.log(this.deviceList=data.obj.objectlist));
 		},
 	}
 </script>

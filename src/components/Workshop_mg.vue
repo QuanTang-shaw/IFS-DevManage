@@ -73,7 +73,7 @@
 						</td>
 						<td>
 							<span>
-								{{workshop.workshopType}}
+								{{workshop.strWorkshopTypeName}}
 							</span>
 						</td>
 						<td class="workshop-oper">

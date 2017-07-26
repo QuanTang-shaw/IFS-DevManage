@@ -13,25 +13,25 @@
 	          <div class="form-group">
 	            <label for="inputEmail3" class="col-sm-2 control-label">名称</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputEmail3" placeholder="请输入厂商名称">
+	              <input type="text" class="form-control" id="inputEmail3" placeholder="请输入厂商名称" v-model="edited.strVendorShortName">
 	            </div>
 	          </div>
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">英文</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入厂商英文">
+	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入厂商英文" v-model="edited.strVendorShortName_EN">
 	            </div>
 	          </div>
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">全称</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入厂商全称" >
+	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入厂商全称" v-model="edited.strVendorName">
 	            </div>
 	          </div>
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">所在地</label>
 	            <div class="col-sm-10">
-	              <input type="password" class="form-control" id="inputPassword3" placeholder="请输入厂商所在地">
+	              <input type="text" class="form-control" id="inputPassword3" placeholder="请输入厂商所在地" v-model="edited.strVendorAddress">
 	            </div>
 	          </div>
 	          <div class="form-group">
@@ -57,8 +57,10 @@
 </template>
 
 <script>
+    import fetch from '@/fetch/fetch'
 	export default{
 		name:'manufaEdit',
+		props:['edited','isAdd'],
 		data(){
 			return{
 				// editmanufa
@@ -72,7 +74,32 @@
 				this.$emit('Edit','cancel');
 			},
 			confirm:function () {
-				this.$emit('Edit','confirm');
+				if(this.isAdd){
+					fetch.Vendor_Add({
+						uUserUUID: 1,
+						strVendorName:this.edited.strVendorName,
+						strVendorID:"VND001",
+						strVendorShortName:this.edited.strVendorShortName,
+						strVendorShortName_EN:this.edited.strVendorShortName_EN,
+						strVendorName_EN:-1,
+						strVendorAddress:this.edited.strVendorAddress,
+					}).then(()=>this.$emit('Edit','confirm'));
+				}
+				else{
+					fetch.Vendor_Update({
+						uVendorUUID: this.edited.uVendorUUID,
+						uUserUUID: 1,
+						strVendorName:this.edited.strVendorName,
+						strVendorID:"PHK005T",
+						strVendorNote:"Note PHKT 05",
+						strVendorShortName:this.edited.strVendorShortName,
+						strVendorShortName_EN:this.edited.strVendorShortName_EN,
+						strVendorName_EN:-1,
+						strVendorAddress:this.edited.strVendorAddress,
+						strVendorDesc:-1
+					}).then(()=>this.$emit('Edit','confirm'));
+
+				}
 			},
 			upFile:function () {
 				event.target.nextSibling.nextSibling.click();

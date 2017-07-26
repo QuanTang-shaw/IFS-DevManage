@@ -101,11 +101,16 @@
 					fetch.Factory_Update({
 						uFactoryUUID     : this.editPlant.uFactoryUUID,
 						uParkUUID        : 1,     //从属园区编码
+						uFactoryTypeUUID : -1,
+						uFactoryAdminUUID: 1,
 						strFactoryName   : this.editPlant.strFactoryName,    //工厂名称
 						strFactoryID     : this.editPlant.strFactoryID,    //工厂ID
-						uFactoryAdminUUID:  1,
 					    strFactoryDesc:"Desc HK LEE 1",
-					    strFactoryNote:"Note HK LEE 1"
+					    strFactoryNote:"Note HK LEE 1",
+					    strFactoryAddress :this.editPlant.strFactoryAddress,
+					    fFactoryLatitude :-1,
+					    fFactoryLongitude :-1,
+					    fFactoryAltitude :-1
 					}).then(()=>this.$emit('submit','confirm'));
 				}
 			},

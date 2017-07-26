@@ -414,7 +414,7 @@
 					]
 				},
 				//机械手Manipulator
-				Manipulator:{
+				/*Manipulator:{
 					//Horizontal single axis   单轴横走式
 					Hor_singleAxis:[
 						{
@@ -435,7 +435,7 @@
 							factory:'拓斯达'
 						}
 					]
-				},
+				},*/
 				//Measuring machine    计量
 				Measuringmachine:{
 					Screw:[
@@ -477,7 +477,7 @@
 
 				},
 				//Crushing and recycling equipment  粉碎回收设备
-				CrushingRecycling:{
+				/*CrushingRecycling:{
 					Slowmuffler:[
 						{
 							pic:'img/topstart/Slowmuffler.jpg',
@@ -505,9 +505,9 @@
 							factory:'拓斯达'
 						}
 					]
-				},
+				},*/
 				// Injection-molding-machine
-				imm:{
+				/*imm:{
 					//柱塞式
 					plunger:[
 						{
@@ -539,7 +539,7 @@
 							pic:'img/Inj-machine.jpg'
 						}
 					]
-				}
+				}*/
 			}
 
 		let deviceManufacturers=[

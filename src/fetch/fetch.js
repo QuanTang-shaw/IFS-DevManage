@@ -27,7 +27,13 @@
 		var result = await exec_getData(
 	              "Handler_Factory_V1.ashx",
 	              "Factory_ListActive",
-	              {"nPageIndex": 0,"nPageSize": -1,"uParkUUID": -1});
+	              {
+		              "nPageIndex": 0,
+		              "nPageSize": -1,
+		              "uParkUUID": 1,
+		              "uFactoryTypeUUID":-1,
+	  				  "uFactoryAdminUUID":-1
+  				  });
 		 return result;
 	}
 
@@ -35,7 +41,13 @@
 		var result = await exec_getData(
 	              "Handler_Workshop_V1.ashx",
 	              "Workshop_ListActive",
-	              {"nPageIndex": 0,"nPageSize": -1,"uFactoryUUID": 1});
+	              {
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uFactoryUUID": 1,
+	              	"uWorkshopTypeUUID":-1,
+	              	"uWorkshopAdminUUID":-1
+	              });
 		 return result;
 	}
 
@@ -43,14 +55,20 @@
 		var result = await exec_getData(
 	              "Handler_Workstation_V1.ashx",
 	              "Workstation_ListActive",
-	              {"nPageIndex": 0,"nPageSize": -1,"uPLineUUID": 1});
+	              {
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uPLineUUID": 1,
+	              	"uWorkstationTypeUUID":1,
+	    			"uWorkstationAdminUUID":1,
+	              });
 		 return result;
 	}
 
 	async  function DevType_ListActive(){
 		var result = await exec_getData(
 	              "Handler_DevType_V1.ashx",
-	              "DevType_List",
+	              "DevType_ListActive",
 	              {"nPageIndex": 0,"nPageSize": -1,"uDevTypeParentUUID": 1});
 		 return result;
 	}
@@ -58,7 +76,7 @@
 	async  function DevModel_ListActive(){
 		var result = await exec_getData(
 	              "Handler_DevModel_V1.ashx",
-	              "DevModel_List",
+	              "DevModel_ListActive",
 	              {"nPageIndex": 0,"nPageSize": -1,"uDevTypeUUID": 1});
 		 return result;
 	}
@@ -67,8 +85,8 @@
 	async  function Device_ListActive(){
 		var result = await exec_getData(
 	              "Handler_Device_V1.ashx",
-	              "Device_List",
-	              {"nPageIndex": 0,"nPageSize": -1,"uDevModelUUID": 1});
+	              "Device_ListActive",
+	              {"nPageIndex": 0,"nPageSize": -1,"uDevModelUUID": -1});
 		 return result;
 	}
 
@@ -76,7 +94,7 @@
 	async  function Devcategory_ListActive(){
 		var result = await exec_getData(
 	              "Handler_Devcategory_V1.ashx",
-	              "Devcategory_List",
+	              "Devcategory_ListActive",
 	              {"nPageIndex": 0,"nPageSize": -1,"uDevCategoryParentUUID": 1});
 		 return result;
 	}
@@ -84,7 +102,7 @@
 	async  function Vendor_ListActive(){
 		var result = await exec_getData(
 	              "Handler_Vendor_V1.ashx",
-	              "Vendor_List",
+	              "Vendor_ListActive",
 	              {"nPageIndex": 0,"nPageSize": -1,"uUserUUID": 1});
 		 return result;
 	}
@@ -160,6 +178,31 @@
 
 
 
+
+
+
+
+
+	//修改厂商
+	async  function Vendor_Update (obj) {
+		await   exec_getData("Handler_Vendor_V1.ashx","Vendor_Update",obj);
+	}
+	// 增加厂商
+	async  function Vendor_Add (obj) {
+		await   exec_getData("Handler_Vendor_V1.ashx","Vendor_Add",obj);
+	}
+	//删除厂商
+	async  function Vendor_Inactive (obj) {
+		await   exec_getData("Handler_Vendor_V1.ashx","Vendor_Inactive",obj);
+	}
+	//厂商详情
+	async  function Vendor_Detail (obj) {
+		await   exec_getData("Handler_Vendor_V1.ashx","Vendor_GetDetail",obj);
+	}
+
+
+
+
 	export default{
 		exec_getData,
 
@@ -186,4 +229,11 @@
 		Workstation_Add,
 		Workstation_Inactive,
 		Workstation_Detail,
+
+
+
+		Vendor_Update,
+		Vendor_Add,
+		Vendor_Inactive,
+		Vendor_Detail,
 	}
