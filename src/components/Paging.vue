@@ -1,6 +1,6 @@
 <template>
 	<ul class="pagination" >
-	    <li v-show="current != 1" @click="current-- && goto(current)" >
+	    <li v-show="current != 1" @click="current-- && goto(current--)" >
 	    	<a>上一页</a>
 	    </li>
 	    <li v-for="index in pages" @click="goto(index)" :class="{'active':current == index}" :key="index">
@@ -13,11 +13,12 @@
 </template>
 <script>
 	export default{
+		props:["totalcount","items"],
 		data:function(){
 		    return{
 		      current:1,
-		      showItem:5,
-		      allpage:13
+		      showItem:this.items,
+		      allpage:this.totalcount
 		    }
 		  },
 		  computed:{
@@ -32,7 +33,7 @@
 	            }
 	            else{ //当前页数大于显示页数了
 	                var middle = this.current - Math.floor(this.showItem / 2 ),//从哪里开始
-	                     i = this.showItem;
+	                    i = this.showItem;
 	                if( middle >  (this.allpage - this.showItem)  ){
 	                     middle = (this.allpage - this.showItem) + 1
 	                }
@@ -48,6 +49,7 @@
 		    if(index == this.current) return;
 		      this.current = index;
 		      //这里可以发送ajax请求
+		      this.$emit('togglePage',index-1)
 		  }
 		}
 	}
@@ -59,6 +61,7 @@
 	.pagination li{
 		display: inline-block;
 		margin:0 5px;
+		cursor: pointer;
 	}
 	.pagination li a{
 		padding:.5rem 1rem;

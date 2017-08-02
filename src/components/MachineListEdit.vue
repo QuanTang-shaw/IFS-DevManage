@@ -29,9 +29,37 @@
 	            </div>
 	          </div>
 	          <div class="form-group">
-	            <label for="inputPassword3" class="col-sm-2 control-label">类型</label>
+	            <label for="inputPassword3" class="col-sm-2 control-label">机台类型</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}类型`" v-model="edited.strWorkstationTypeName">
+	              <div class="btn-group">
+	                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                {{currentMachineType.strWorkstationTypeName}}<span class="caret"></span>
+	                </button>
+	                <ul class="dropdown-menu">
+	                  <li v-for="machineType in MachineTypeList" @click="toggleMachineType(machineType)"><a>{{machineType.strWorkstationTypeName}}</a></li>
+	                </ul>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label for="inputPassword3" class="col-sm-2 control-label">所属车间</label>
+	            <div class="col-sm-10">
+	              <div class="btn-group">
+	                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                  {{currentFactory.strFactoryName}}<span class="caret"></span>
+	                </button>
+	                <ul class="dropdown-menu">
+	                  <li v-for="factory in factoryList" @click="toggleFactory(factory)"><a>{{factory.strFactoryName}}</a></li>
+	                </ul>
+	              </div>
+	              <div class="btn-group">
+	                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                {{currentWorkshop.strWorkshopName}} <span class="caret"></span>
+	                </button>
+	                <ul class="dropdown-menu">
+	                  <li v-for="workshop in workshopList" @click="toggleWorkshop(workshop)"><a>{{workshop.strWorkshopName}}</a></li>
+	                </ul>
+	              </div>
 	            </div>
 	          </div>
 	          <div class="form-group">
@@ -60,13 +88,43 @@
     import fetch from '@/fetch/fetch'
 	export default{
 		name:'plantEdit',
-		props:['editType','isAdd','edited'],
+		props:['editType','isAdd','edited','factoryList','selectedFactory','selectedWorkshop'],
 		data(){
+			let workshopList,
+				MachineTypeList;
 			return{
-				// editPlant
+				workshopList,
+				MachineTypeList,
+				currentFactory:this.selectedFactory,
+				currentWorkshop:this.selectedWorkshop,
+				currentMachineType:{
+					strWorkstationTypeName:this.edited.strWorkstationTypeName,
+					uWorkstationTypeUUID:this.edited.uWorkstationTypeUUID
+				}
 			}
 		},
 		methods:{
+			toggleFactory:function (obj) {
+				this.currentFactory=obj;
+				fetch
+	    		      .Workshop_ListActive({
+    		        	"nPageIndex": 0,
+    		            "nPageSize": -1,
+    		            "uFactoryUUID":this.currentFactory.uFactoryUUID,
+    		            "uWorkshopTypeUUID":-1,
+    	  				"uWorkshopAdminUUID":-1
+	    		       })
+	    		      .then(data=>{
+    		        	console.log(this.workshopList=data.obj.objectlist);
+    		        	this.currentWorkshop=this.workshopList[0];
+	    		       });
+			},
+			toggleWorkshop:function (obj) {
+				this.currentWorkshop=obj;
+			},
+			toggleMachineType:function (obj) {
+				this.currentMachineType=obj;
+			},
 			closePop:function () {
 				this.$emit('Edit','close');
 			},
@@ -76,8 +134,8 @@
 			confirm:function () {
 				if(this.isAdd){
 					fetch.Workstation_Add({
-						uPLineUUID: 1,
-						uWorkstationTypeUUID:1,
+						uPLineUUID: this.currentWorkshop.uWorkshopUUID,
+						uWorkstationTypeUUID:this.currentMachineType.uWorkstationTypeUUID,
 						uWorkstationAdminUUID:1,
 						strWorkstationName:this.edited.strWorkstationName,
 						strWorkstationID:this.edited.strWorkstationID,
@@ -86,8 +144,8 @@
 				else{
 					fetch.Workstation_Update({
 						uWorkstationUUID: this.edited.uWorkstationUUID,
-						uPLineUUID: 1,
-						uWorkstationTypeUUID:1,
+						uPLineUUID:this.currentWorkshop.uWorkshopUUID,
+						uWorkstationTypeUUID:this.currentMachineType.uWorkstationTypeUUID,
 						uWorkstationAdminUUID:1,
 						strWorkstationName:this.edited.strWorkstationName,
 						strWorkstationID:this.edited.strWorkstationID,
@@ -102,8 +160,29 @@
 			}
 		},
 		created:function () {
+			console.log(this.edited)
+			let self=this;
+			fetch.WorkstationType_ListActive({
+					"nPageIndex":0,
+					"nPageSize":-1
+					})
+				 .then(data=>{
+				 	console.log(data);
+				 	this.MachineTypeList=data.obj.objectlist;
+				 });
 
-			// console.log(editPlant)
+    		 fetch
+    		      .Workshop_ListActive({
+		        	"nPageIndex": 0,
+		            "nPageSize": -1,
+		            "uFactoryUUID":self.selectedFactory.uFactoryUUID,
+		            "uWorkshopTypeUUID":-1,
+	  				"uWorkshopAdminUUID":-1
+    		       })
+    		      .then(data=>{
+		        	console.log(self.workshopList=data.obj.objectlist);
+		        	// self.selectedWorkshop=self.workshopList[0];
+    		       });
 		}
 	}
 </script>

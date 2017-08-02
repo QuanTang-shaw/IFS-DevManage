@@ -4,20 +4,20 @@
 			<div>
 				<div><i class="fa fa-minus-square-o  fa-lg"></i><span>设备类别</span></div>
 				<ul style="margin-left:20px;">
-					<li class="CategoryName" v-for="(category,key,index) in CategoryList" style="position:relative;">
+					<li class="CategoryName" v-for="(parentCategory,index0) in DevParentClass" style="position:relative;">
 						<div class="devType" @mouseover="showArrow" @mouseout="hideArrow" style="cursor:default;">
 							<i class="fa fa-minus-square-o  fa-lg" style="margin-right:6px;"></i>
-							{{key|toChinese}}
+							{{parentCategory.strDevCategoryName}}
 							<i class="fa fa-caret-down fa-sm"  style="display:none;"></i>
 						</div>
 						<div style="
-						position:absolute;
-						right:0;
-						z-index:100;
-						background-color:#FFFFFF;
-						width:50px;
-						padding:10px;
-						display:none;
+							position:absolute;
+							right:0;
+							z-index:100;
+							background-color:#FFFFFF;
+							width:50px;
+							padding:10px;
+							display:none;
 						top:0;">
 							<ul>
 								<li>增加</li>
@@ -26,10 +26,15 @@
 							</ul>
 						</div>
 						<ul style="border:solid 0px;">
-							<li class="subCategoryName" v-for="(device,key,index) in category" @click="categoryClick(device)" style="border:solid 0px;margin:0px;" @mouseleave="devNameOut" @mouseenter=" devNameOver">
+							<li class="subCategoryName" v-for="(subCategory,index) in DevSubClass[index0]" @click="categoryClick" style="border:solid 0px;margin:0px;" @mouseleave="devNameOut" @mouseenter=" devNameOver">
 									<i class="fa fa-trash  fa-sm" style="visibility:hidden;"></i>
-									<i class="fa fa-edit fa-sm"  style="visibility:hidden;" @click="devNameEdit"></i>
-									<span>{{key|toChinese}}</span>
+									<i class="fa fa-edit fa-sm"  style="visibility:hidden;" @click="devNameEdit({index0,index})"></i>
+									<!-- <span>{{subCategory.strDevCategoryName}}</span> -->
+									<input type="text" disabled="disabled" v-model="subCategory.strDevCategoryName" style="
+									    width: 80px;
+									    border: none;
+									    background: transparent;" @change="changeName">
+									<span v-show="subCategory.uShowInput"><input type="text" v-model="subCategory.strDevCategoryName"></span>
 							</li>
 						</ul>
 					</li>
@@ -78,6 +83,8 @@
   	import store from '@/store/store'
   	import filter from '@/Filter/filter'
   	import treeNode from '@/components/TreeNode'
+	import fetch from '@/fetch/fetch'
+
 	export default{
 		name:'devicCategory',
 		data(){
@@ -87,11 +94,14 @@
 				CategoryList,
 				selectedCategory,
 				isShowArrow:[7],
-				showInput:false
+				// showInput:false,
+				DevParentClass:[],
+				DevSubClass:[],
+				showInput:[],
 			}
 		},
-		created:function () {
-			console.log(this.selectedCategory)
+		watch:function (argument) {
+			/* body... */
 		},
 		methods:{
 			categoryClick:function (category) {
@@ -120,25 +130,82 @@
 					event.target.children[1].style.visibility = "hidden";
 				}
 			},
-			devNameEdit:function () {
+			devNameEdit:function (obj) {
 				event.cancelBubble=true;
 				let el=event.target.nextSibling.nextSibling,
 					val=el.innerHTML;
 
-				el.innerHTML=`<input class="editName" type="text" value="${val}" v-on:blur="changeName"/>`;
-				el.children[0].select();
-				// el.children[0].focus();
+				// el.innerHTML=`<input class="editName" type="text" value="${val}" v-on:change="changeName"/>`;
 				// style.contenteditable="true";
-				// console.log(el)
+				el.removeAttribute('disabled')
+				el.focus();
+				el.select();
+				console.log(el)
 			},
 			changeName:function () {
 				alert('blur');
+			},
+			alert:function () {
+				alert('message?: DOMString')
 			}
 
 		},
 		filters:filter,
 		components:{
 			'tree-node':treeNode
+		},
+		beforeCreate:function () {
+			fetch
+			      .Devcategory_ListActive({
+			      	"nPageIndex": 0,
+			      	"nPageSize": -1,
+			      	"uDevCategoryParentUUID":0,
+			      	"uUserUUID":-1})
+			      .then(data=>{
+			      	console.log(this.DevParentClass=data.obj.objectlist);
+					for(var j = 1, length2 = this.DevParentClass.length; j <= length2; j++){
+						/*fetch
+						      .Devcategory_ListActive({
+						      	"nPageIndex": 0,
+						      	"nPageSize": -1,
+						      	"uDevCategoryParentUUID":j,
+						      	"uUserUUID":-1})
+						      .then(data=>{
+						      	this.DevSubClass.push(data.obj.objectlist);
+						      });*/
+						    function getSubcategory () {
+						      	 let promise=new Promise(function (resolve,reject) {
+						      	 	fetch
+						      	 	      .Devcategory_ListActive({
+						      	 	      	"nPageIndex": 0,
+						      	 	      	"nPageSize": -1,
+						      	 	      	"uDevCategoryParentUUID":j,
+						      	 	      	"uUserUUID":-1})
+						      	 	      .then(data=>resolve(data));
+						      	 });
+						      	 return promise;
+						     }
+							    (async function () {
+							      	let value=await getSubcategory();
+							      	return value;
+							    })().then(data=>{
+							    	this.DevSubClass.push(data.obj.objectlist);
+							    	// console.log(this.DevSubClass)
+							    })
+					}
+			      });
+
+
+		},
+		created:function () {
+			setTimeout(()=>{
+			    this.DevSubClass.forEach( function(element, index,arr) {
+					element.forEach( function(element, index) {
+						element.uShowInput=false;
+					});
+			    });
+			},300);
+			// setTimeout(()=>console.log(this.DevSubClass),1000);
 		}
 	}
 </script>

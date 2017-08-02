@@ -120,9 +120,6 @@
           this.deletePopContent=obj.strFactoryName;
           this.DelFactoryID=obj.uFactoryUUID;
         }
-
-
-
       },
       addPlant:function () {
         this.showPlantEdit=true;

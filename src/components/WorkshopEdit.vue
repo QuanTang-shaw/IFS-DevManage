@@ -29,9 +29,33 @@
 	            </div>
 	          </div>
 	          <div class="form-group">
-	            <label for="inputPassword3" class="col-sm-2 control-label">类型</label>
+	            <label for="inputPassword3" class="col-sm-2 control-label">车间类型</label>
 	            <div class="col-sm-10">
-	              <input type="text" class="form-control" id="inputPassword3" :placeholder="`请输入${editType}类型`" v-model="edited.strWorkshopTypeName">
+	              <div class="btn-group">
+	                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                  {{currentWorkshopType.strWorkshopTypeNote}}<span class="caret"></span>
+	                </button>
+	                <ul class="dropdown-menu">
+	                  <li v-for="(workshopType,index) in workshopTypelist" @click="toggleWorkshopType(index)"><a>{{workshopType.strWorkshopTypeNote}}</a></li>
+	                  <!-- <li role="separator" class="divider"></li>
+	                  <li><a href="#">Separated link</a></li> -->
+	                </ul>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label for="inputPassword3" class="col-sm-2 control-label">所属工厂</label>
+	            <div class="col-sm-10">
+	              <div class="btn-group">
+	                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                  {{changeFactory.strFactoryName}}<span class="caret"></span>
+	                </button>
+	                <ul class="dropdown-menu">
+	                  <li v-for="(factory,index) in factoryList" @click="toggleFactory(index)"><a>{{factory.strFactoryName}}</a></li>
+	                  <!-- <li role="separator" class="divider"></li>
+	                  <li><a href="#">Separated link</a></li> -->
+	                </ul>
+	              </div>
 	            </div>
 	          </div>
 	          <div class="form-group">
@@ -60,10 +84,13 @@
     import fetch from '@/fetch/fetch'
 	export default{
 		name:'plantEdit',
-		props:['editType','isAdd','edited'],
+		props:['editType','isAdd','edited','factoryList','selectedFactory'],
 		data(){
+			let changeFactory;
 			return{
-				// editPlant
+				workshopTypelist:[],
+				changeFactory:this.selectedFactory,
+				currentWorkshopType:{}
 			}
 		},
 		methods:{
@@ -76,17 +103,18 @@
 			confirm:function () {
 				if(this.isAdd){
 					fetch.Workshop_Add({
-						uFactoryUUID: 1,
+						uFactoryUUID: this.changeFactory.uFactoryUUID,
+						uWorkshopTypeUUID:this.currentWorkshopType.uWorkshopTypeUUID,
+						uWorkshopAdminUUID: 1,
 						strWorkshopID: this.edited.strWorkshopID,
 						strWorkshopName: this.edited.strWorkshopName,
-						uWorkshopAdminUUID: 1
 					}).then(()=>this.$emit('Edit','confirm'));
 				}
 				else{
 					fetch.Workshop_Update({
 						uWorkshopUUID: this.edited.uWorkshopUUID,
-						uFactoryUUID: 1,
-						uWorkshopTypeUUID: 1,
+						uFactoryUUID: this.changeFactory.uFactoryUUID,
+						uWorkshopTypeUUID:this.currentWorkshopType.uWorkshopTypeUUID,
 						uWorkshopAdminUUID : 10001,
 						strWorkshopName:this.edited.strWorkshopName,
 						strWorkshopID :this.edited.strWorkshopID,
@@ -95,9 +123,38 @@
 					}).then(()=>this.$emit('Edit','confirm'));
 				}
 			},
+			toggleWorkshopType:function (index) {
+				this.currentWorkshopType=this.workshopTypelist[index];
+			},
+			toggleFactory:function (index) {
+				this.changeFactory=this.factoryList[index];
+				console.log(this.factoryList)
+			},
 			upFile:function () {
 				event.target.nextSibling.nextSibling.click();
 			}
+		},
+		beforeCreate:function () {
+			fetch.WorkshopType_ListActive({
+	              	"nPageIndex":0,
+	              	"nPageSize":-1
+	              }).then((data)=>{
+				console.log(this.workshopTypelist=data.obj.objectlist);
+				if(!this.isAdd){
+					for(var j = 0, length2 = this.workshopTypelist.length; j < length2; j++){
+						if(this.workshopTypelist[j].uWorkshopTypeUUID==this.edited.uWorkshopTypeUUID){
+							this.currentWorkshopType=this.workshopTypelist[j];
+							break;
+						}
+					}
+				}
+				else{
+					// this.currentWorkshopType={
+					// 	strWorkshopTypeNote:"请选择车间类型"
+					// }
+					this.currentWorkshopType=this.workshopTypelist[0];
+				}
+			});
 		}
 	}
 </script>

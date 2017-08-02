@@ -1,37 +1,35 @@
 <template>
 	<div class="workshopManagement">
 		<delete-pop v-show='showDeletePop' @delete="wsDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
-		<workshop-edit v-show='showWSEdit'  @Edit="EditSubmit" :editType="editTypeTxt" :isAdd="isAdd" :edited="editedWorkshop"></workshop-edit>
+		<workshop-edit v-if='showWSEdit'  @Edit="EditSubmit" :editType="editTypeTxt" :isAdd="isAdd" :edited="editedWorkshop" :factoryList="factoryList" :selectedFactory="selectedPlant"></workshop-edit>
 		<div class="workshop-plantSelect">
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
 			    <img src="../pic/plant1.jpg" alt="" >
 			  </div>
 			  <div class="col-md-5 selectedPlant-info">
-			    <p>{{selectedPlant.name}}</p>
-			    <p>{{selectedPlant.address}}</p>
-			    <p>{{selectedPlant.Contact}}</p>
+			    <p><span>名称:</span> {{selectedPlant.strFactoryName}}</p>
+			    <p><span>地址:</span> {{selectedPlant.strFactoryAddress}}</p>
 			  </div>
 			  <div class="col-md-5 selectedPlant-oper">
 				<!-- <label for="">切换厂区:
 					<select name="selectPlant" id="" v-model="selectedIndex" @change="togglePlant">
-						<option :value="index" v-for="(plant,index) in plantList">{{plant.name}}</option>
+						<option :value="index" v-for="(plant,index) in factoryList">{{plant.name}}</option>
 					</select>
 				</label> -->
 				<label>切换工厂:
 					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">A工厂</button>
+					  <button type="button" class="buttonDown btn btn-default">{{selectedPlant.strFactoryName}}</button>
 					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					    <span class="caret"></span>
 					    <span class="sr-only">Toggle Dropdown</span>
 					  </button>
 					  <ul class="dropdown-menu">
-					  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
-					    <!-- <li><a href="#">Action</a></li>
-					    <li><a href="#">Another action</a></li>
-					    <li><a href="#">Something else here</a></li> -->
+					  	<li v-for="(factory,index) in factoryList" @click="togglePlant(index)">
+					  		<a>{{factory.strFactoryName}}</a>
+					  	</li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="#">Separated link</a></li>
+					    <li><a>全部工厂</a></li>
 					  </ul>
 					</div>
 				</label>
@@ -83,9 +81,9 @@
 							<span class="font-icon-btn" @click="wsDeletePop(workshop)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
-							<span class="font-icon-btn" title="查看详情">
+							<!-- <span class="font-icon-btn" title="查看详情">
 							  <i class="fa fa-angle-double-down fa-lg"></i>
-							</span>
+							</span> -->
 						</td>
 					</tr>
 				</tbody>
@@ -100,7 +98,7 @@
 					</tr>
 				</tfoot>
 			</table>
-			<paging></paging>
+			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
 		</div>
 	</div>
 </template>
@@ -115,26 +113,25 @@
 		name:'workshoplist',
 		data () {
 		  let workshopList,
-		  	  plantList=store.obtain('plantList'),
-		  	  selectedIndex=0,
-		  	  selectedPlant=plantList[selectedIndex],
-		  	  showWSEdit=false,
-		  	  showDeletePop=false,
-		  	  editTypeTxt='车间',
-		  	  deletePopTitle='删除车间',
+		  	  factoryList,
 		  	  deletePopContent='';
 		  return {
 		    workshopList,
-		    plantList,
-		    selectedPlant,
-		    selectedIndex,
-		    showWSEdit,
-		    showDeletePop,
-		    deletePopTitle,
-		    editTypeTxt,
-		    deletePopContent,
+		    factoryList,
+		    selectedIndex:0,
+		    selectedPlant:{},
+		    showWSEdit:false,
+		    showDeletePop:false,
 		    isAdd:false,
-		    editedWorkshop:{}
+		    showPaging:false,
+		    deletePopTitle:'删除车间',
+		    editTypeTxt:'车间',
+		    deletePopContent:'',
+		    editedWorkshop:{},
+		    totalcount:0,
+		    pageItems:5,
+		    items:5,
+		    currentPage:0
 		  }
 		},
 		components:{
@@ -143,8 +140,38 @@
 			'workshop-edit':workshopEdit
 		},
 		methods:{
-			togglePlant:function () {
-		  	 	this.selectedPlant=this.plantList[this.selectedIndex];
+			togglePlant:function (index) {
+		  	 	this.selectedPlant=this.factoryList[index];
+    			this.showPaging=false;
+		  	 	//获取选中的厂房列表
+		  	 	fetch
+		        .Workshop_ListActive({
+		              "nPageIndex": 0,
+		              "nPageSize":this.items,
+		              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+		              "uWorkshopTypeUUID":-1,
+	  				  "uWorkshopAdminUUID":-1
+  				  })
+		        .then(data=>{
+			        console.log(this.workshopList=data.obj.objectlist);
+    			    this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+    			    this.showPaging=true;
+		        	console.log(this.totalCount);
+		        });
+			},
+			togglePage:function (index) {
+				fetch
+			        .Workshop_ListActive({
+			              "nPageIndex": index,
+			              "nPageSize": this.items,
+			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+			              "uWorkshopTypeUUID":-1,
+		  				  "uWorkshopAdminUUID":-1
+	  				  })
+			        .then(data=>{
+			        	console.log(this.workshopList=data.obj.objectlist);
+			        });
+			    this.currentPage=index;
 			},
 			wsDeletePop:function (obj,str) {
 				let _this=this;
@@ -155,7 +182,12 @@
 				      fetch.Workshop_Inactive({uWorkshopUUID:this.DelWorkshopID})
 				           .then(function (a) {
 				             fetch
-				                   .Workshop_ListActive()
+				                   .Workshop_ListActive({
+						              "nPageIndex":_this.currentPage,
+		    			              "nPageSize":_this.items,
+		    			              "uFactoryUUID":_this.selectedPlant.uFactoryUUID,
+		    			              "uWorkshopTypeUUID":-1,
+		    		  				  "uWorkshopAdminUUID":-1})
 				                   .then(data=>console.log(_this.workshopList=data.obj.objectlist));
 				            });
 				    }
@@ -173,14 +205,18 @@
 				else{
 					this.isAdd=false;
 					this.editedWorkshop=this.workshopList[index];
-
 				}
 				this.showWSEdit=!this.showWSEdit;
 			},
 			EditSubmit:function (str) {
 				if(str=='confirm'){
 					fetch
-					      .Workshop_ListActive()
+					      .Workshop_ListActive({
+					      	  "nPageIndex":this.currentPage,
+    			              "nPageSize":this.items,
+    			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+    			              "uWorkshopTypeUUID":-1,
+    		  				  "uWorkshopAdminUUID":-1})
 					      .then(data=>console.log(this.workshopList=data.obj.objectlist));
 				}
 				else if(str=='cancel'||str=='close'){
@@ -190,9 +226,28 @@
 			}
 		},
 		beforeCreate:function () {
+			//初始化,获取工厂一下面的车间
+
 		  fetch
-		        .Workshop_ListActive()
-		        .then(data=>console.log(this.workshopList=data.obj.objectlist));
+		        .Factory_ListActive()
+		        .then(data=>{
+		        	console.log(this.factoryList=data.obj.objectlist);
+		        	this.selectedPlant=this.factoryList[0];
+
+	    			fetch
+    			        .Workshop_ListActive({
+    			              "nPageIndex": 0,
+    			              "nPageSize": this.items,
+    			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+    			              "uWorkshopTypeUUID":-1,
+    		  				  "uWorkshopAdminUUID":-1
+    	  				  })
+    			        .then(data=>{
+    			        	console.log(this.workshopList=data.obj.objectlist);
+    			        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+    			        	this.showPaging=true;
+    			        });
+		        });
 		}
 	}
 </script>

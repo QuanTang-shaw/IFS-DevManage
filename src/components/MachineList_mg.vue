@@ -1,59 +1,42 @@
 <template>
 	<div class="machineList-mg">
 		<delete-pop v-show="showDeletePop" @delete="MachineDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
-		<machine-edit v-show="showMachineEdit" @Edit="EditSubmit" :editType="editTypeTxt" :edited="editedMachine" :isAdd="isAddMachine"></machine-edit>
+		<machine-edit v-if="showMachineEdit" @Edit="EditSubmit" :editType="editTypeTxt" :edited="editedMachine" :isAdd="isAddMachine" :factoryList="factoryList" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop"></machine-edit>
 		<div class="workshopSelect" >
 			<div class="row">
 			  <div class="col-md-2 selectedWorkshop-pic">
 			    <img src="../pic/plant1.jpg" alt="" width="120">
 			  </div>
 			  <div class="col-md-5 selectedWorkshop-info">
-			    <p>{{selectedPlant.name}}</p>
-			    <p>{{selectedPlant.address}}</p>
-			    <p>{{selectedPlant.Contact}}</p>
+			    <p><span>名称:</span> {{selectedFactory.strFactoryName}}</p>
+			    <p><span>地址:</span> {{selectedFactory.strFactoryAddress}}</p>
 			  </div>
 			  <div class="col-md-5 selectedWorkshop-oper">
-				<!-- <label for="">厂区:
-					<select name="selectPlant" id="" v-model="plantIndex" @change="togglePlant">
-						<option :value="index" v-for="(plant,index) in plantList">{{plant.name}}</option>
-					</select>
-				</label></br>
-				<label for="">车间:
-					<select name="selectworkshop" id="" v-model="plantIndex" @change="togglePlant">
-						<option :value="index" v-for="(wp,index) in workshopList">{{wp.name}}</option>
-					</select>
-				</label> -->
 				<div>
 					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">A厂区</button>
+					  <button type="button" class="buttonDown btn btn-default">{{selectedFactory.strFactoryName}}</button>
 					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					    <span class="caret"></span>
 					    <span class="sr-only">Toggle Dropdown</span>
 					  </button>
 					  <ul class="dropdown-menu">
-					  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
-					    <!-- <li><a href="#">Action</a></li>
-					    <li><a href="#">Another action</a></li>
-					    <li><a href="#">Something else here</a></li> -->
+					  	<li v-for="(factory,index) in factoryList" @click="toggleFactory(factory,index)"><a >{{factory.strFactoryName}}</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="#">Separated link</a></li>
+					    <li><a>全部工厂</a></li>
 					  </ul>
 					</div>
 				</div>
 				<div>
 					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">注塑一车间</button>
+					  <button type="button" class="buttonDown btn btn-default">{{selectedWorkshop.strWorkshopName}}</button>
 					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					    <span class="caret"></span>
 					    <span class="sr-only">Toggle Dropdown</span>
 					  </button>
 					  <ul class="dropdown-menu">
-					  	<li v-for="(workshop,index) in workshopList"><a >{{workshop.name}}</a></li>
-					    <!-- <li><a href="#">Action</a></li>
-					    <li><a href="#">Another action</a></li>
-					    <li><a href="#">Something else here</a></li> -->
+					  	<li v-for="(workshop,index) in workshopList" @click="toggleWorkshop(workshop,index)"><a >{{workshop.strWorkshopName}}</a></li>
 					    <li role="separator" class="divider"></li>
-					    <li><a href="#">Separated link</a></li>
+					    <li><a>全部车间</a></li>
 					  </ul>
 					</div>
 				</div>
@@ -106,70 +89,105 @@
 					</tr>
 				</tfoot>
 			</table>
-			<nav aria-label="Page navigation">
-			  <ul class="pagination">
-			    <li>
-			      <a href="#" aria-label="Previous">
-			        <span aria-hidden="true">&laquo;</span>
-			      </a>
-			    </li>
-			    <li><a href="#">1</a></li>
-			    <li><a href="#">2</a></li>
-			    <li><a href="#">3</a></li>
-			    <li><a href="#">4</a></li>
-			    <li><a href="#">5</a></li>
-			    <li>
-			      <a href="#" aria-label="Next">
-			        <span aria-hidden="true">&raquo;</span>
-			      </a>
-			    </li>
-			  </ul>
-			</nav>
+			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
 		</div>
 	</div>
 </template>
 <script>
   	import store from '@/store/store'
 	import deletepop from '@/components/Delete_pop'
+  	import paging from '@/components/Paging'
   	import machineEdit from'@/components/MachineListEdit'
 	import fetch from '@/fetch/fetch'
 
 	export default{
 		name:'machineList',
 		data(){
-			let	plantList=store.obtain('plantList'),
-				workshopList=store.obtain('workshopList'),
-				machineList,
-				plantIndex=0,
-				workshopIndex=0,
-				selectedPlant=plantList[plantIndex],
-				showMachineEdit=false,
-				showDeletePop=false,
-				editTypeTxt='机台',
-				deletePopTitle='删除机台',
-				deletePopContent='';
+			let	factoryList,
+				workshopList,
+				machineList;
 			return {
 			  workshopList,
-			  plantList,
+			  factoryList,
 			  machineList,
-			  selectedPlant,
-			  plantIndex,
-			  showMachineEdit,
-			  showDeletePop,
-			  deletePopTitle,
-			  deletePopContent,
-			  editTypeTxt,
+			  selectedFactory:{},
+			  selectedWorkshop:{},
+			  showMachineEdit:false,
+			  showDeletePop:false,
+			  showPaging:false,
+			  isAddMachine:false,
+			  deletePopContent:'',
+			  deletePopTitle:'删除机台',
+			  editTypeTxt:'机台',
 			  editedMachine:{},
-			  isAddMachine:false
+			  totalCount:0,
+			  pageItems:5,
+			  items:5,
+			  currentPage:0
 			}
 		},
 		components:{
 			'delete-pop':deletepop,
-			'machine-edit':machineEdit
+			'machine-edit':machineEdit,
+			paging
 		},
 		methods:{
-			togglePlant:function () {
-				this.selectedPlant=this.plantList[this.plantIndex];
+			togglePage:function (index) {
+				fetch
+	  		        .Workstation_ListActive({
+	  	              	"nPageIndex":index,
+	  	              	"nPageSize":this.items,
+	  	              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
+	  	              	"uWorkstationTypeUUID":-1,
+	  	    			"uWorkstationAdminUUID":-1,
+	  	              })
+	  		        .then(data=>this.machineList=data.obj.objectlist);
+	  		    this.currentPage=index;
+			},
+			toggleFactory:function (factory,index) {
+				this.selectedFactory=factory;
+				//更新车间列表
+				fetch
+			        .Workshop_ListActive({
+			        	"nPageIndex": 0,
+			            "nPageSize": -1,
+			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
+			            "uWorkshopTypeUUID":-1,
+		  				"uWorkshopAdminUUID":-1
+			        })
+			        .then(data=>{
+			        	this.workshopList=data.obj.objectlist;
+			        	this.selectedWorkshop=this.workshopList[0];
+					    this.toggleWorkshop();
+			        },()=>alert('没有查到车间!'));
+			    //更新机台列表
+			    /*fetch
+		        .Workstation_ListActive({
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
+	              	"uWorkstationTypeUUID":-1,
+	    			"uWorkstationAdminUUID":-1,
+	              })
+		        .then(data=>this.machineList=data.obj.objectlist);*/
+			},
+			toggleWorkshop:function (workshop,index) {
+				if(workshop)  this.selectedWorkshop=workshop;
+				this.showPaging=false;
+				fetch
+			        .Workstation_ListActive({
+		              	"nPageIndex": 0,
+		              	"nPageSize":this.pageItems,
+		              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
+		              	"uWorkstationTypeUUID":-1,
+		    			"uWorkstationAdminUUID":-1,
+		              })
+			        .then(data=>{
+			        	console.log(data)
+			        	console.log(this.machineList=data.obj.objectlist);
+			        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+			        	this.showPaging=true;
+			        });
 			},
 			machineEdit:function (index,add) {
 				if(add){
@@ -185,8 +203,14 @@
 			},
 			EditSubmit:function (str) {
 				if(str=='confirm'){
+					// alert(this.currentPage)
 					fetch
-					      .Workstation_ListActive()
+					      .Workstation_ListActive({
+					      	"nPageIndex":this.currentPage,
+		              		"nPageSize":this.pageItems,
+		              		"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
+		              		"uWorkstationTypeUUID":-1,
+		    				"uWorkstationAdminUUID":-1,})
 					      .then(data=>console.log(this.machineList=data.obj.objectlist));
 				}
 				else if(str=='cancel'||str=='close'){
@@ -200,11 +224,22 @@
 				if (str) {
 				  if(str=='close'||str=='cancel');
 				    else if(str=='confirm'){
+					  this.showPaging=false;
 				      fetch.Workstation_Inactive({uWorkstationUUID:this.DelWorkstationID})
 				           .then(function () {
 				             fetch
-				                   .Workstation_ListActive()
-				                   .then(data=>console.log(_this.machineList=data.obj.objectlist));
+				                   .Workstation_ListActive({
+				                   	 "nPageIndex":_this.currentPage,
+					              	 "nPageSize":_this.pageItems,
+					              	 "uPLineUUID":_this.selectedWorkshop.uWorkshopUUID,
+					              	 "uWorkstationTypeUUID":-1,
+					    			 "uWorkstationAdminUUID":-1,
+		    						})
+				                   .then(data=>{
+				                   		console.log(_this.machineList=data.obj.objectlist);
+				                   		_this.totalCount=Math.ceil(data.obj.totalcount/_this.items);
+			        					_this.showPaging=true;
+				                   });
 				            });
 				    }
 				}
@@ -215,9 +250,80 @@
 			}
 		},
 		beforeCreate:function () {
-		  fetch
-		        .Workstation_ListActive()
+		/*  fetch
+		        .Workstation_ListActive({
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uPLineUUID": 1,
+	              	"uWorkstationTypeUUID":-1,
+	    			"uWorkstationAdminUUID":-1,
+	              })
 		        .then(data=>console.log(this.machineList=data.obj.objectlist));
+		  fetch
+		        .Factory_ListActive()
+		        .then(data=>{
+		        	console.log(this.factoryList=data.obj.objectlist);
+		        	this.selectedFactory=this.factoryList[0];
+		        });
+		  fetch
+		        .Workshop_ListActive({
+		        	"nPageIndex": 0,
+		            "nPageSize": -1,
+		            "uFactoryUUID":1,
+		            "uWorkshopTypeUUID":-1,
+	  				"uWorkshopAdminUUID":-1
+		        })
+		        .then(data=>{
+		        	console.log(this.workshopList=data.obj.objectlist);
+		        	this.selectedWorkshop=this.workshopList[0];
+		        });*/
+
+		    let self=this;
+
+			(async function () {
+				let factorylist=await
+				 new Promise((resolve,reject)=>{
+				 	fetch
+				        .Factory_ListActive()
+				        .then(data=>resolve(data));
+				});
+				// console.log(factorylist);
+				self.factoryList=factorylist.obj.objectlist;
+				self.selectedFactory=self.factoryList[0];
+
+				let workshoplist=await new Promise((resolve,reject)=>{
+				  fetch
+				        .Workshop_ListActive({
+				        	"nPageIndex": 0,
+				            "nPageSize": -1,
+				            "uFactoryUUID":self.selectedFactory.uFactoryUUID,
+				            "uWorkshopTypeUUID":-1,
+			  				"uWorkshopAdminUUID":-1
+				        })
+				        .then(data=>resolve(data));
+				});
+				self.workshopList=workshoplist.obj.objectlist;
+				self.selectedWorkshop=self.workshopList[0];
+				console.log(self.selectedWorkshop);
+
+				let workstationList=await new Promise((resolve,reject)=>{
+				  fetch
+		  		        .Workstation_ListActive({
+		  	              	"nPageIndex": 0,
+		  	              	"nPageSize": 5,
+		  	              	"uPLineUUID": self.selectedWorkshop.uWorkshopUUID,
+		  	              	"uWorkstationTypeUUID":-1,
+		  	    			"uWorkstationAdminUUID":-1,
+		  	              })
+		  		        .then(data=>resolve(data));
+				});
+				// console.log(workstationList);
+				self.machineList=workstationList.obj.objectlist;
+				self.totalCount=Math.ceil(workstationList.obj.totalcount/self.items);
+    			self.showPaging=true;
+
+			})()
+
 		}
 	}
 </script>

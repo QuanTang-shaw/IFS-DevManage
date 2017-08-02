@@ -2,11 +2,7 @@
   <div id="app">
     <!-- <router-view class="viewOne"  name="a"></router-view> -->
       <div class="row wraper">
-        <pagetitle :message="titleText"></pagetitle>
-        <div class="col-md-9" >
-          <router-view class="viewTwo" name="b"></router-view>
-        </div>
-        <div class="col-md-1"></div>
+        <!-- <pagetitle :message="titleText"></pagetitle> -->
         <div class="col-md-2 deviceMg-wraper" >
           <div class="panel panel-default deviceMg-nav" data-toggle="panel-collapse" data-open="true">
             <div class="panel-heading deviceMg-nav-head">
@@ -28,6 +24,10 @@
               </ul>
             </div>
           </div>
+        </div>
+        <!-- <div class="col-md-1"></div> -->
+        <div class="col-md-9" >
+          <router-view class="viewTwo" name="b"></router-view>
         </div>
       </div>
   </div>

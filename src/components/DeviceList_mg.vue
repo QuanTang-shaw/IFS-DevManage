@@ -1,107 +1,52 @@
 <template>
 	<div class="deviceList-mg">
+		<device-edit v-show='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice"></device-edit>
+		<delete-pop v-show='showDeletePop' @delete="deviceDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
 		<div class="Filtering">
 			<div class="row">
 				<div class="col-md-10">
-					<!-- <label for="">
-						安装位置
-						<select name="" id="">
-							<option value="">厂区1</option>
-							<option value="">厂区2</option>
-							<option value="">厂区3</option>
-							<option value="">厂区4</option>
-							<option value="">厂区5</option>
-						</select>
-						<select name="" id="">
-							<option value="">车间1</option>
-							<option value="">车间2</option>
-							<option value="">车间3</option>
-							<option value="">车间4</option>
-							<option value="">车间5</option>
-						</select>
-						<select name="" id="">
-							<option value="">机台1</option>
-							<option value="">机台2</option>
-							<option value="">机台3</option>
-							<option value="">机台4</option>
-							<option value="">机台5</option>
-						</select>
-					</label></br>
-					<label for="">
-						产品型号
-						<select name="" id="">
-							<option value="">送料机</option>
-							<option value="">模温机</option>
-							<option value="">注塑机</option>
-							<option value="">干燥机</option>
-							<option value="">机械手</option>
-						</select>
-						<select name="" id="">
-							<option value="">拓斯达</option>
-							<option value="">拓斯达</option>
-							<option value="">拓斯达</option>
-							<option value="">拓斯达</option>
-							<option value="">拓斯达</option>
-						</select>
-						<select name="" id="">
-							<option value="">TTW1210A</option>
-							<option value="">TTW1210A</option>
-							<option value="">TTW1210A</option>
-							<option value="">TTW1210A</option>
-							<option value="">TTW1210A</option>
-						</select>
-					</label> -->
 					<div>
-						<label>安装位置
+						<div>安装位置:
 							<div class="btn-group">
-							  <button type="button" class="btn btn-default">A厂区</button>
+							  <button type="button" class="btn btn-default">{{selectedFactory.strFactoryName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							    <span class="caret"></span>
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
-							    <!-- <li><a href="#">Action</a></li>
-							    <li><a href="#">Another action</a></li>
-							    <li><a href="#">Something else here</a></li> -->
+							  	<li v-for="(factory,index) in factoryList"><a >{{factory.strFactoryName}}</a></li>
 							    <li role="separator" class="divider"></li>
-							    <li><a href="#">Separated link</a></li>
+							    <li><a href="#">全部工厂</a></li>
 							  </ul>
 							</div>
 							<div class="btn-group">
-							  <button type="button" class="btn btn-default">B001车间</button>
+							  <button type="button" class="btn btn-default">{{selectedWorkshop.strWorkshopName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							    <span class="caret"></span>
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
-							    <!-- <li><a href="#">Action</a></li>
-							    <li><a href="#">Another action</a></li>
-							    <li><a href="#">Something else here</a></li> -->
+							  	<li v-for="(workshop,index) in workshopList"><a>{{workshop.strWorkshopName}}</a></li>
 							    <li role="separator" class="divider"></li>
-							    <li><a href="#">Separated link</a></li>
+							    <li><a href="#">全部厂房</a></li>
 							  </ul>
 							</div>
 							<div class="btn-group">
-							  <button type="button" class="btn btn-default">机台0019</button>
+							  <button type="button" class="btn btn-default">{{selectedMachine.strWorkstationName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							    <span class="caret"></span>
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
-							    <!-- <li><a href="#">Action</a></li>
-							    <li><a href="#">Another action</a></li>
-							    <li><a href="#">Something else here</a></li> -->
+							  	<li v-for="(machine,index) in machineList" @click="toggleMachine(index)"><a >{{machine.strWorkstationName}}</a></li>
 							    <li role="separator" class="divider"></li>
-							    <li><a href="#">Separated link</a></li>
+							    <li><a href="#">全部机台</a></li>
 							  </ul>
 							</div>
-						</label>
+						</div>
 					</div>
 					<div>
-						<label>产品型号
+						<div>产品型号:
 							<div class="btn-group">
 							  <button type="button" class="btn btn-default">所有类型</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -109,7 +54,7 @@
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
 							    <!-- <li><a href="#">Action</a></li>
 							    <li><a href="#">Another action</a></li>
 							    <li><a href="#">Something else here</a></li> -->
@@ -124,7 +69,7 @@
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
 							    <!-- <li><a href="#">Action</a></li>
 							    <li><a href="#">Another action</a></li>
 							    <li><a href="#">Something else here</a></li> -->
@@ -139,7 +84,7 @@
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in plantList"><a >{{plant.name}}</a></li>
+							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
 							    <!-- <li><a href="#">Action</a></li>
 							    <li><a href="#">Another action</a></li>
 							    <li><a href="#">Something else here</a></li> -->
@@ -147,37 +92,38 @@
 							    <li><a href="#">Separated link</a></li>
 							  </ul>
 							</div>
-						</label>
+						</div>
 					</div>
 				</div>
 				<div class="col-md-2">
-					<button class="btn btn-default" type="submit">添加设备</button>
+					<button class="btn btn-default addPlant" @click="deviceEdit(null,true)">
+        			<i class="fa fa-plus"></i>添加设备</button>
 				</div>
 			</div>
 		</div>
 		<div class="deviceList">
-			<ul>
-				<li class="device" v-for="device in deviceList">
+			<ul class="deviceList-ul">
+				<li class="device" v-for="(device,index) in deviceList">
 					<div class="deviceInfo row">
 						<div class="device-pic col-md-1">
 							<img src="../assets/topstart/mtm-water.jpg" alt="设备图片">
 						</div>
 						<div class="specification col-md-3">
 							<p>{{device.strDeviceName}}</p>
-							<p><span>品牌:</span>{{device.Brand}}</p>
+							<p><span>品牌:</span>{{device.strVendorShortName}}</p>
 							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
 						</div>
 						<div class="model col-md-5">
-							<strong>型号:</strong>
-							<span><strong>车间:</strong>001</span>
-							<span>机台:<strong>00A</strong></span>
+							<strong><span></span>{{device.strDevModelName}}</strong>
+							<span><strong></strong>{{device.strWorkshopName}}</span>
+							<span><strong>{{device.strWorkstationName}}</strong></span>
 						</div>
 						<div class="operating col-md-2">
 							<span>
-								<i class="fa fa-edit fa-lg"></i>
+								<i class="fa fa-edit fa-lg" @click="deviceEdit(index)"></i>
 							</span>
 							<span>
-								<i class="fa fa-trash-o fa-lg"></i>
+								<i class="fa fa-trash-o fa-lg" @click="deviceDelete(device)"></i>
 							</span>
 							<span>
 								<i class="fa fa-list-alt fa-lg"></i>
@@ -186,6 +132,7 @@
 					</div>
 				</li>
 			</ul>
+			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
 		</div>
 	</div>
 </template>
@@ -193,40 +140,217 @@
 <script>
   	import store from '@/store/store'
 	import fetch from '@/fetch/fetch'
+	import deletepop from '@/components/Delete_pop'
+    import deviceEdit from '@/components/DeviceEdit'
+  	import paging from '@/components/Paging'
 
 	export default{
 		name:'machineList',
 		data(){
 			let	deviceList,
-				plantList=store.obtain('plantList'),
-				workshopList=store.obtain('workshopList'),
-				machineList=store.obtain('machineList'),
-				plantIndex=0,
-				workshopIndex=0,
-				selectedPlant=plantList[plantIndex];
+				factoryList,
+				workshopList,
+				machineList;
 			return {
 				deviceList,
 				workshopList,
-				plantList,
+				factoryList,
 				machineList,
-				selectedPlant,
-				plantIndex
+				editDevice:{},
+				selectedFactory:{},
+				selectedWorkshop:{},
+				selectedMachine:{},
+				showDeletePop:false,
+				showDeviceEdit:false,
+				showPaging:false,
+				isAddDevice:false,
+				deletePopTitle:'删除工厂',
+          		deletePopContent:'',
+          		totalCount:0,
+          		pageItems:5,
+          		items:5
 			}
+		},
+		components:{
+			"delete-pop":deletepop,
+			"device-edit":deviceEdit,
+			paging
 		},
 		methods:{
 			togglePlant:function () {
 				/* body... */
-				this.selectedPlant=this.plantList[this.plantIndex];
+				// this.selectedPlant=this.factoryList[this.plantIndex];
+			},
+			toggleMachine:function (index) {
+				this.selectedMachine=this.machineList[index];
+				fetch
+			      .Device_ListActive({
+			      	"nPageIndex": 0,
+			      	"nPageSize":5,
+			      	"uDevModelUUID": this.selectedMachine.uDevModelUUID,
+			      	"uWorkstationUUID":-1
+			      })
+			      .then(data=>{
+			      	console.log(this.deviceList=data.obj.objectlist);
+			      	// console.log(data);
+			      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+			      	// this.showPaging=true;
+			      });
+
+			},
+			togglePage:function (index) {
+				fetch
+				      .Device_ListActive({
+				      	"nPageIndex": index,
+				      	"nPageSize":5,
+				      	"uDevModelUUID": this.selectedMachine.uDevModelUUID,
+				      	"uWorkstationUUID":-1
+				      })
+				      .then(data=>{
+				      	console.log(this.deviceList=data.obj.objectlist);
+				      });
+			},
+			deviceEdit:function (index,addDevice) {
+			  if (addDevice){
+			    this.isAddDevice=true;
+			    this.editDevice={
+			    	uDevModelUUID:1,
+			     	uWorkstationUUID:1,
+			      	strDeviceName:'',
+			      	strDeviceID:'',
+			      	strDeviceSN:''
+			    };
+			  }
+			  else{
+			    this.isAddDevice=false;
+			    this.editDevice=this.deviceList[index];
+			    console.log(this.editDevice)
+			  }
+			  	this.showDeviceEdit=true;
+			},
+			deviceEditSub:function (str) {
+			  this.showDeviceEdit=false;
+			   fetch
+			      .Device_ListActive({
+			      	"nPageIndex": 0,
+			      	"nPageSize": -1,
+			      	"uDevModelUUID": -1,
+			      	"uWorkstationUUID":1
+			      })
+			      .then(data=>console.log(this.deviceList=data.obj.objectlist));
+			  if(str=='close'||str=='cancel');
+			    else if(str=='confirm'){
+			    }
+			},
+			deviceDelete:function (obj,str) {
+				let _this=this;
+				this.showDeletePop=!this.showDeletePop;
+				if (str) {
+				  if(str=='close'||str=='cancel');
+				    else if(str=='confirm'){
+				      fetch.Device_Inactive({uDeviceUUID:this.DelDeviceID})
+				           .then(function () {
+				             fetch
+							      .Device_ListActive({
+							      	"nPageIndex": 0,
+							      	"nPageSize": -1,
+							      	"uDevModelUUID": -1,
+							      	"uWorkstationUUID":1
+							      	})
+							      .then(data=>console.log(_this.deviceList=data.obj.objectlist));
+							});
+					}
+				}
+				else {
+				  this.deletePopContent=obj.strDeviceName;
+				  this.DelDeviceID=obj.uDeviceUUID;
+				}
 			}
 		},
 		beforeCreate:function () {
 			fetch
-			      .Device_ListActive()
-			      .then(data=>console.log(this.deviceList=data.obj.objectlist));
+			      .Device_ListActive({
+			      	"nPageIndex": 0,
+			      	"nPageSize":this.items,
+			      	"uDevModelUUID": -1,
+			      	"uWorkstationUUID":-1
+			      })
+			      .then(data=>{
+			      	console.log(this.deviceList=data.obj.objectlist);
+			      	console.log(data);
+			      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+			      	this.showPaging=true;
+			      });
+
+      		/*fetch
+                  .Factory_ListActive()
+                  .then(data=>{
+                  	console.log(_this.factoryList=data.obj.objectlist);
+                  	this.selectedFactory=_this.factoryList[0];
+                  });
+
+
+			fetch
+			     .Workshop_ListActive({
+			          "nPageIndex": 0,
+			          "nPageSize": -1,
+			          "uFactoryUUID":1,
+			          "uWorkshopTypeUUID":-1,
+					  "uWorkshopAdminUUID":-1
+					})
+			     .then(data=>{
+			    	console.log(this.workshopList=data.obj.objectlist);
+			    	this.selectedWorkshop=_this.workshopList[0];
+			     });*/
+
+
+
+
+			let _this=this;
+			function *obtain () {
+				yield
+					fetch
+			            .Factory_ListActive()
+			            .then(data=>{
+			            console.log(_this.factoryList=data.obj.objectlist);
+			            	_this.selectedFactory=_this.factoryList[0];
+			            });
+	            yield
+		            fetch
+				        .Workshop_ListActive({
+				              "nPageIndex": 0,
+				              "nPageSize": -1,
+				              "uFactoryUUID":_this.selectedFactory.uFactoryUUID,
+				              "uWorkshopTypeUUID":-1,
+			  				  "uWorkshopAdminUUID":-1
+		  				  })
+				        .then(data=>{
+				        	console.log(_this.workshopList=data.obj.objectlist);
+				        	_this.selectedWorkshop=_this.workshopList[0];
+				        });
+				yield
+				    fetch
+				        .Workstation_ListActive({
+			              	"nPageIndex": 0,
+			              	"nPageSize": -1,
+			              	"uPLineUUID": _this.selectedWorkshop.uWorkshopUUID,
+			              	"uWorkstationTypeUUID":-1,
+			    			"uWorkstationAdminUUID":-1,
+			              })
+				        .then(data=>{
+				        	console.log(_this.machineList=data.obj.objectlist);
+				        	_this.selectedMachine=_this.machineList[0];
+				        });
+			}
+			var t=obtain(),
+				timer=null;
+			timer=setInterval(()=>{
+				console.log('t.next()');
+				if(t.next().done) clearInterval(timer);
+			},50);
 		},
 	}
 </script>
-
 <style>
 	.Filtering{
 		border:solid 1px #CFCCCC;
@@ -243,7 +367,7 @@
 	.deviceList ul{
 		padding:20px 0;
 	}
-	.deviceList li{
+	.deviceList-ul li{
 		padding:10px;
 		position:relative;
 		margin: 0;
