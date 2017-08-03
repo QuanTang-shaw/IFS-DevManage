@@ -250,36 +250,8 @@
 			}
 		},
 		beforeCreate:function () {
-		/*  fetch
-		        .Workstation_ListActive({
-	              	"nPageIndex": 0,
-	              	"nPageSize": -1,
-	              	"uPLineUUID": 1,
-	              	"uWorkstationTypeUUID":-1,
-	    			"uWorkstationAdminUUID":-1,
-	              })
-		        .then(data=>console.log(this.machineList=data.obj.objectlist));
-		  fetch
-		        .Factory_ListActive()
-		        .then(data=>{
-		        	console.log(this.factoryList=data.obj.objectlist);
-		        	this.selectedFactory=this.factoryList[0];
-		        });
-		  fetch
-		        .Workshop_ListActive({
-		        	"nPageIndex": 0,
-		            "nPageSize": -1,
-		            "uFactoryUUID":1,
-		            "uWorkshopTypeUUID":-1,
-	  				"uWorkshopAdminUUID":-1
-		        })
-		        .then(data=>{
-		        	console.log(this.workshopList=data.obj.objectlist);
-		        	this.selectedWorkshop=this.workshopList[0];
-		        });*/
 
 		    let self=this;
-
 			(async function () {
 				let factorylist=await
 				 new Promise((resolve,reject)=>{
@@ -321,9 +293,38 @@
 				self.machineList=workstationList.obj.objectlist;
 				self.totalCount=Math.ceil(workstationList.obj.totalcount/self.items);
     			self.showPaging=true;
+			})();
 
-			})()
 
+			/*
+			  fetch
+			        .Workstation_ListActive({
+		              	"nPageIndex": 0,
+		              	"nPageSize": -1,
+		              	"uPLineUUID": 1,
+		              	"uWorkstationTypeUUID":-1,
+		    			"uWorkstationAdminUUID":-1,
+		              })
+			        .then(data=>console.log(this.machineList=data.obj.objectlist));
+			  fetch
+			        .Factory_ListActive()
+			        .then(data=>{
+			        	console.log(this.factoryList=data.obj.objectlist);
+			        	this.selectedFactory=this.factoryList[0];
+			        });
+			  fetch
+			        .Workshop_ListActive({
+			        	"nPageIndex": 0,
+			            "nPageSize": -1,
+			            "uFactoryUUID":1,
+			            "uWorkshopTypeUUID":-1,
+		  				"uWorkshopAdminUUID":-1
+			        })
+			        .then(data=>{
+			        	console.log(this.workshopList=data.obj.objectlist);
+			        	this.selectedWorkshop=this.workshopList[0];
+			        });
+			*/
 		}
 	}
 </script>

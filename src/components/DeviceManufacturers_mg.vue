@@ -37,7 +37,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<paging></paging>
+		<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
 	</div>
 </template>
 
@@ -56,14 +56,25 @@
 				companyList,
 				showManufaEdit:false,
 				showDeletePop:false,
+				showPaging:false,
 				editTypeTxt:'机台',
 				deletePopTitle:'删除厂商',
 				deletePopContent:'',
 				editedManufa:{},
-				isAddManufa:false
+				isAddManufa:false,
+				totalCount:0,
+				items:5,
+				pageItems:5
 			}
 		},
 		methods:{
+			togglePage:function (index) {
+				fetch
+		        	.Vendor_ListActive({"nPageIndex": index,"nPageSize":5,"uUserUUID":-1})
+		        	.then(data=>{
+			        	this.companyList=data.obj.objectlist;
+		        	});
+			},
 			Delete:function (obj,str) {
 				let _this=this;
 				this.showDeletePop=!this.showDeletePop;
@@ -105,7 +116,6 @@
 				}
 				this.showManufaEdit=!this.showManufaEdit;
 			}
-
 		},
 		components:{
 			paging,
@@ -115,8 +125,13 @@
 		beforeCreate:function () {
 			// err
 		  fetch
-		        .Vendor_ListActive()
-		        .then(data=>console.log(this.companyList=data.obj.objectlist));
+		        .Vendor_ListActive({"nPageIndex": 0,"nPageSize":5,"uUserUUID":-1})
+		        .then(data=>{
+		        	console.log(data);
+		        	this.companyList=data.obj.objectlist;
+		        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+    				this.showPaging=true;
+		        });
 		}
 	}
 </script>

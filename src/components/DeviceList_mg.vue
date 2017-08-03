@@ -1,11 +1,11 @@
 <template>
 	<div class="deviceList-mg">
-		<device-edit v-show='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice"></device-edit>
+		<device-edit v-if='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop" :selectedMachine="selectedMachine" :factoryList="factoryList"></device-edit>
 		<delete-pop v-show='showDeletePop' @delete="deviceDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
 		<div class="Filtering">
 			<div class="row">
 				<div class="col-md-10">
-					<div>
+					<div class="InsLocation">
 						<div>安装位置:
 							<div class="btn-group">
 							  <button type="button" class="btn btn-default">{{selectedFactory.strFactoryName}}</button>
@@ -14,7 +14,7 @@
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(factory,index) in factoryList"><a >{{factory.strFactoryName}}</a></li>
+							  	<li v-for="(factory,index) in factoryList" @click="toggleFactory(factory)"><a >{{factory.strFactoryName}}</a></li>
 							    <li role="separator" class="divider"></li>
 							    <li><a href="#">全部工厂</a></li>
 							  </ul>
@@ -26,7 +26,7 @@
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(workshop,index) in workshopList"><a>{{workshop.strWorkshopName}}</a></li>
+							  	<li v-for="(workshop,index) in workshopList"  @click="toggleWorkshop(workshop)"><a>{{workshop.strWorkshopName}}</a></li>
 							    <li role="separator" class="divider"></li>
 							    <li><a href="#">全部厂房</a></li>
 							  </ul>
@@ -38,14 +38,14 @@
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(machine,index) in machineList" @click="toggleMachine(index)"><a >{{machine.strWorkstationName}}</a></li>
+							  	<li v-for="(machine,index) in machineList" @click="toggleMachine(machine)"><a >{{machine.strWorkstationName}}</a></li>
 							    <li role="separator" class="divider"></li>
 							    <li><a href="#">全部机台</a></li>
 							  </ul>
 							</div>
 						</div>
 					</div>
-					<div>
+					<div class="ProModel">
 						<div>产品型号:
 							<div class="btn-group">
 							  <button type="button" class="btn btn-default">所有类型</button>
@@ -85,9 +85,6 @@
 							  </button>
 							  <ul class="dropdown-menu">
 							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
-							    <!-- <li><a href="#">Action</a></li>
-							    <li><a href="#">Another action</a></li>
-							    <li><a href="#">Something else here</a></li> -->
 							    <li role="separator" class="divider"></li>
 							    <li><a href="#">Separated link</a></li>
 							  </ul>
@@ -112,6 +109,7 @@
 							<p>{{device.strDeviceName}}</p>
 							<p><span>品牌:</span>{{device.strVendorShortName}}</p>
 							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
+							<p>编号: <strong></strong> {{device.strDeviceID}}</p>
 						</div>
 						<div class="model col-md-5">
 							<strong><span></span>{{device.strDevModelName}}</strong>
@@ -168,7 +166,8 @@
           		deletePopContent:'',
           		totalCount:0,
           		pageItems:5,
-          		items:5
+          		items:5,
+          		currentPage:0
 			}
 		},
 		components:{
@@ -177,38 +176,73 @@
 			paging
 		},
 		methods:{
-			togglePlant:function () {
-				/* body... */
-				// this.selectedPlant=this.factoryList[this.plantIndex];
+			togglePage:function (index) {
+				this.currentPage=index;
+				fetch
+				      .Device_ListActive({
+				      	"nPageIndex": index,
+				      	"nPageSize":5,
+				      	"uDevModelUUID":-1,
+				      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
+				      })
+				      .then(data=>{
+				      	console.log(this.deviceList=data.obj.objectlist);
+				      });
 			},
-			toggleMachine:function (index) {
-				this.selectedMachine=this.machineList[index];
+			toggleFactory:function (obj) {
+				this.selectedFactory=obj;
+				//更新车间列表
+				fetch
+			        .Workshop_ListActive({
+			        	"nPageIndex": 0,
+			            "nPageSize": -1,
+			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
+			            "uWorkshopTypeUUID":-1,
+		  				"uWorkshopAdminUUID":-1
+			        })
+			        .then(data=>{
+			        	this.workshopList=data.obj.objectlist;
+			        	this.selectedWorkshop=this.workshopList[0];
+					    this.toggleWorkshop();
+			        },()=>alert('没有查到车间!'));
+			},
+			toggleWorkshop:function (obj) {
+				if(obj)  this.selectedWorkshop=obj;
+				// this.showPaging=false;
+				fetch
+			        .Workstation_ListActive({
+		              	"nPageIndex": 0,
+		              	"nPageSize":-1,
+		              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
+		              	"uWorkstationTypeUUID":-1,
+		    			"uWorkstationAdminUUID":-1,
+		              })
+			        .then(data=>{
+			        	console.log(this.machineList=data.obj.objectlist);
+			        	this.selectedMachine=this.machineList[0];
+			        	this.toggleMachine();
+			        	// console.log(data)
+			        	// this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+			        	// this.showPaging=true;
+			        });
+			},
+			toggleMachine:function (obj) {
+				if(obj) this.selectedMachine=obj;
+			    this.showPaging=false;
 				fetch
 			      .Device_ListActive({
 			      	"nPageIndex": 0,
 			      	"nPageSize":5,
-			      	"uDevModelUUID": this.selectedMachine.uDevModelUUID,
-			      	"uWorkstationUUID":-1
+			      	"uDevModelUUID":-1,
+			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
 			      })
 			      .then(data=>{
 			      	console.log(this.deviceList=data.obj.objectlist);
 			      	// console.log(data);
 			      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-			      	// this.showPaging=true;
+			      	this.showPaging=true;
 			      });
 
-			},
-			togglePage:function (index) {
-				fetch
-				      .Device_ListActive({
-				      	"nPageIndex": index,
-				      	"nPageSize":5,
-				      	"uDevModelUUID": this.selectedMachine.uDevModelUUID,
-				      	"uWorkstationUUID":-1
-				      })
-				      .then(data=>{
-				      	console.log(this.deviceList=data.obj.objectlist);
-				      });
 			},
 			deviceEdit:function (index,addDevice) {
 			  if (addDevice){
@@ -232,10 +266,10 @@
 			  this.showDeviceEdit=false;
 			   fetch
 			      .Device_ListActive({
-			      	"nPageIndex": 0,
-			      	"nPageSize": -1,
+			      	"nPageIndex": this.currentPage,
+			      	"nPageSize": 5,
 			      	"uDevModelUUID": -1,
-			      	"uWorkstationUUID":1
+			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
 			      })
 			      .then(data=>console.log(this.deviceList=data.obj.objectlist));
 			  if(str=='close'||str=='cancel');
@@ -252,10 +286,10 @@
 				           .then(function () {
 				             fetch
 							      .Device_ListActive({
-							      	"nPageIndex": 0,
-							      	"nPageSize": -1,
+							      	"nPageIndex": _this.currentPage,
+							      	"nPageSize": 5,
 							      	"uDevModelUUID": -1,
-							      	"uWorkstationUUID":1
+							      	"uWorkstationUUID":_this.selectedMachine.uWorkstationUUID
 							      	})
 							      .then(data=>console.log(_this.deviceList=data.obj.objectlist));
 							});
@@ -268,87 +302,108 @@
 			}
 		},
 		beforeCreate:function () {
-			fetch
-			      .Device_ListActive({
-			      	"nPageIndex": 0,
-			      	"nPageSize":this.items,
-			      	"uDevModelUUID": -1,
-			      	"uWorkstationUUID":-1
-			      })
-			      .then(data=>{
-			      	console.log(this.deviceList=data.obj.objectlist);
-			      	console.log(data);
-			      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-			      	this.showPaging=true;
-			      });
+		    let self=this;
+			(async function () {
+				let factorylist=await
+				 new Promise((resolve,reject)=>{
+				 	fetch
+				        .Factory_ListActive()
+				        .then(data=>resolve(data));
+				});
+				// console.log(factorylist);
+				self.factoryList=factorylist.obj.objectlist;
+				self.selectedFactory=self.factoryList[0];
 
-      		/*fetch
-                  .Factory_ListActive()
-                  .then(data=>{
-                  	console.log(_this.factoryList=data.obj.objectlist);
-                  	this.selectedFactory=_this.factoryList[0];
-                  });
-
-
-			fetch
-			     .Workshop_ListActive({
-			          "nPageIndex": 0,
-			          "nPageSize": -1,
-			          "uFactoryUUID":1,
-			          "uWorkshopTypeUUID":-1,
-					  "uWorkshopAdminUUID":-1
-					})
-			     .then(data=>{
-			    	console.log(this.workshopList=data.obj.objectlist);
-			    	this.selectedWorkshop=_this.workshopList[0];
-			     });*/
-
-
-
-
-			let _this=this;
-			function *obtain () {
-				yield
-					fetch
-			            .Factory_ListActive()
-			            .then(data=>{
-			            console.log(_this.factoryList=data.obj.objectlist);
-			            	_this.selectedFactory=_this.factoryList[0];
-			            });
-	            yield
-		            fetch
+				let workshoplist=await new Promise((resolve,reject)=>{
+				  fetch
 				        .Workshop_ListActive({
-				              "nPageIndex": 0,
-				              "nPageSize": -1,
-				              "uFactoryUUID":_this.selectedFactory.uFactoryUUID,
-				              "uWorkshopTypeUUID":-1,
-			  				  "uWorkshopAdminUUID":-1
-		  				  })
-				        .then(data=>{
-				        	console.log(_this.workshopList=data.obj.objectlist);
-				        	_this.selectedWorkshop=_this.workshopList[0];
-				        });
-				yield
-				    fetch
-				        .Workstation_ListActive({
-			              	"nPageIndex": 0,
-			              	"nPageSize": -1,
-			              	"uPLineUUID": _this.selectedWorkshop.uWorkshopUUID,
-			              	"uWorkstationTypeUUID":-1,
-			    			"uWorkstationAdminUUID":-1,
-			              })
-				        .then(data=>{
-				        	console.log(_this.machineList=data.obj.objectlist);
-				        	_this.selectedMachine=_this.machineList[0];
-				        });
-			}
-			var t=obtain(),
-				timer=null;
-			timer=setInterval(()=>{
-				console.log('t.next()');
-				if(t.next().done) clearInterval(timer);
-			},50);
-		},
+				        	"nPageIndex": 0,
+				            "nPageSize": -1,
+				            "uFactoryUUID":self.selectedFactory.uFactoryUUID,
+				            "uWorkshopTypeUUID":-1,
+			  				"uWorkshopAdminUUID":-1
+				        })
+				        .then(data=>resolve(data));
+				});
+				self.workshopList=workshoplist.obj.objectlist;
+				self.selectedWorkshop=self.workshopList[0];
+				// console.log(self.selectedWorkshop);
+
+				let workstationList=await new Promise((resolve,reject)=>{
+				  fetch
+		  		        .Workstation_ListActive({
+		  	              	"nPageIndex": 0,
+		  	              	"nPageSize": -1,
+		  	              	"uPLineUUID": self.selectedWorkshop.uWorkshopUUID,
+		  	              	"uWorkstationTypeUUID":-1,
+		  	    			"uWorkstationAdminUUID":-1,
+		  	              })
+		  		        .then(data=>resolve(data));
+				});
+				return workstationList;
+			})()
+				.then(data=>{
+					self.machineList=data.obj.objectlist;
+					self.selectedMachine=self.machineList[0];
+					fetch
+					      .Device_ListActive({
+					      	"nPageIndex": 0,
+					      	"nPageSize":5,
+					      	"uDevModelUUID": -1,
+					      	"uWorkstationUUID":self.selectedMachine.uWorkstationUUID
+					      })
+					      .then(data=>{
+					      	self.deviceList=data.obj.objectlist;
+					      	console.log(data);
+					      	self.totalCount=Math.ceil(data.obj.totalcount/self.items);
+					      	self.showPaging=true;
+					      });
+				});
+
+			/*let _this=this;
+				function *obtain () {
+					yield
+						fetch
+				            .Factory_ListActive()
+				            .then(data=>{
+				            console.log(_this.factoryList=data.obj.objectlist);
+				            	_this.selectedFactory=_this.factoryList[0];
+				            });
+		            yield
+			            fetch
+					        .Workshop_ListActive({
+					              "nPageIndex": 0,
+					              "nPageSize": -1,
+					              "uFactoryUUID":_this.selectedFactory.uFactoryUUID,
+					              "uWorkshopTypeUUID":-1,
+				  				  "uWorkshopAdminUUID":-1
+			  				  })
+					        .then(data=>{
+					        	console.log(_this.workshopList=data.obj.objectlist);
+					        	_this.selectedWorkshop=_this.workshopList[0];
+					        });
+					yield
+					    fetch
+					        .Workstation_ListActive({
+				              	"nPageIndex": 0,
+				              	"nPageSize": -1,
+				              	"uPLineUUID": _this.selectedWorkshop.uWorkshopUUID,
+				              	"uWorkstationTypeUUID":-1,
+				    			"uWorkstationAdminUUID":-1,
+				              })
+					        .then(data=>{
+					        	console.log(_this.machineList=data.obj.objectlist);
+					        	_this.selectedMachine=_this.machineList[0];
+					        });
+				}
+				var t=obtain(),
+					timer=null;
+				timer=setInterval(()=>{
+					console.log('t.next()');
+					if(t.next().done) clearInterval(timer);
+				},150);
+			*/
+		}
 	}
 </script>
 <style>

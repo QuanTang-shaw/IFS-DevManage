@@ -105,11 +105,11 @@
 		 return result;
 	}
 
-	async  function Vendor_ListActive(){
+	async  function Vendor_ListActive(obj){
 		var result = await exec_getData(
 	              "Handler_Vendor_V1.ashx",
 	              "Vendor_ListActive",
-	              {"nPageIndex": 0,"nPageSize": -1,"uUserUUID":-1});
+	              obj);
 		 return result;
 	}
 
