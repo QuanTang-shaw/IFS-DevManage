@@ -31,19 +31,28 @@
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">设备位置</label>
 	            <div class="col-sm-10">
-					<div class="btn-group">
-					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					    {{currentFactory.strFactoryName}}<span class="caret"></span>
+	            	<!-- <el-cascader
+	            	    expand-trigger="hover"
+	            	    :options="options"
+	            	    v-model="selectedOptions2"
+	            	    @change="handleChange">
+	            	</el-cascader> -->
+					<div class="btn-group Multistage-menu-wrap">
+					  <button type="button" class="btn btn-default dropdown-toggle Multistage-menu-input" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					    {{currentFactory.strFactoryName}}<span>/</span>
+					    {{currentWorkshop.strWorkshopName}}<span>/</span>
+					    {{currentMachine.strWorkstationName}}
+					    <span class="caret"></span>
 					  </button>
-					  <div class="Multistage-menu"  style="solid 1px #FB1616;">
-						  <ul class="dropdown-menu" style="solid 1px #584EF0;">
-						    <li v-for="factory in factoryList" @click="toggleFactory(factory)"><a>{{factory.strFactoryName}}</a></li>
+					  <div class="Multistage-menu" @click="menuClick">
+						  <ul class="Multistage-menus" >
+						    <li class="menu-item menu-item-icon" v-for="(factory,$index) in factoryList" @click="toggleFactory(factory,$index)" :class="{isActive:activeFNum==$index}">{{factory.strFactoryName}} </li>
 						  </ul>
-						  <ul class="dropdown-menu" style="solid 1px #D13E3E;">
-						    <li v-for="workshop in workshopList" @click="toggleWorkshop(workshop)"><a>{{workshop.strWorkshopName}}</a></li>
+						  <ul class="Multistage-menus" >
+						    <li class="menu-item menu-item-icon" v-for="(workshop,$index) in workshopList" @click="toggleWorkshop(workshop,$index)" :class="{isActive:activeWNum==$index}">{{workshop.strWorkshopName}}</li>
 						  </ul>
-						  <ul class="dropdown-menu">
-						    <li v-for="workstation in workstationList" @click="toggleWorkstation(workstation)"><a>{{workstation.strWorkstationName}}</a></li>
+						  <ul class="Multistage-menus">
+						    <li class="menu-item" v-for="(workstation,$index) in workstationList" @click="toggleMachine(workstation,$index)" :class="{isActive:activeMNum==$index}">{{workstation.strWorkstationName}}</li>
 						  </ul>
 					  </div>
 					</div>
@@ -106,14 +115,311 @@
 				currentFactory:this.selectedFactory,
 				currentWorkshop:this.selectedWorkshop,
 				currentMachine:this.selectedMachine,
+				currentCategory:{},
 				factoryList:[],
 				workshopList:[],
-				workstationList:[]
+				workstationList:[],
+				workshopListAll:[],
+				workstationListAll:[],
+				DevParentCategoryList:[],
+				DevSubCategoryList:[],
+				DevModelList:[],
+				currentDevModel:[],
+				activeFNum:0,
+				activeWNum:0,
+				activeMNum:0
+				/*options: [
+							{
+					          	value: '.....',
+					          	label: '指南',
+						        children: [
+							        {
+							            value: 'shejiyuanze',
+							            label: '设计原则',
+							            children: [
+								            {
+								              value: 'yizhi',
+								              label: '一致'
+								            },
+								            {
+								              value: 'fankui',
+								              label: '反馈'
+								            },
+								            {
+								              value: 'xiaolv',
+								              label: '效率'
+								            },
+								            {
+							              	  value: 'kekong',
+							              	  label: '可控'
+							            	}
+						            	]
+						          	},
+							        {
+							            value: 'daohang',
+							            label: '导航',
+							            children: [
+								            {
+								              value: 'cexiangdaohang',
+								              label: '侧向导航'
+								            },
+								            {
+								              value: 'dingbudaohang',
+								              label: '顶部导航'
+								            }
+							            ]
+							        }
+							    ]
+				        	},
+				        	{
+					          	value: 'zujian',
+					          	label: '组件',
+					          	children: [
+					          		{
+							            value: 'basic',
+							            label: 'Basic',
+							            children: [
+								            {
+								              	value: 'layout',
+								              	label: 'Layout 布局'
+								            },
+								            {
+							              		value: 'color',
+							              		label: 'Color 色彩'
+							            	},
+								            {
+								              	value: 'typography',
+								              	label: 'Typography 字体'
+								            },
+								            {
+								              	value: 'icon',
+								              	label: 'Icon 图标'
+								            },
+								            {
+								              	value: 'button',
+								              	label: 'Button 按钮'
+								            }
+						            	]
+				          			},
+							        {
+							            value: 'form',
+							            label: 'Form',
+							            children: [
+								            {
+								              value: 'radio',
+								              label: 'Radio 单选框'
+								            },
+								            {
+								              value: 'checkbox',
+								              label: 'Checkbox 多选框'
+								            },
+								            {
+								              value: 'input',
+								              label: 'Input 输入框'
+								            },
+								            {
+								              value: 'input-number',
+								              label: 'InputNumber 计数器'
+								            },
+								            {
+								              value: 'select',
+								              label: 'Select 选择器'
+								            },
+								            {
+								              value: 'cascader',
+								              label: 'Cascader 级联选择器'
+								            },
+								            {
+								              value: 'switch',
+								              label: 'Switch 开关'
+								            },
+								            {
+								              value: 'slider',
+								              label: 'Slider 滑块'
+								            },
+								            {
+								              value: 'time-picker',
+								              label: 'TimePicker 时间选择器'
+								            },
+								            {
+								              value: 'date-picker',
+								              label: 'DatePicker 日期选择器'
+								            },
+								            {
+								              value: 'datetime-picker',
+								              label: 'DateTimePicker 日期时间选择器'
+								            },
+								            {
+								              value: 'upload',
+								              label: 'Upload 上传'
+								            },
+								            {
+								              value: 'rate',
+								              label: 'Rate 评分'
+								            },
+								            {
+								              value: 'form',
+								              label: 'Form 表单'
+								            }
+							            ]
+							        },
+							        {
+							            value: 'data',
+							            label: 'Data',
+							            children: [
+								            {
+								              value: 'table',
+								              label: 'Table 表格'
+								            },
+								            {
+								              value: 'tag',
+								              label: 'Tag 标签'
+								            },
+								            {
+								              value: 'progress',
+								              label: 'Progress 进度条'
+								            },
+								            {
+								              value: 'tree',
+								              label: 'Tree 树形控件'
+								            },
+								            {
+								              value: 'pagination',
+								              label: 'Pagination 分页'
+								            },
+								            {
+								              value: 'badge',
+								              label: 'Badge 标记'
+								            }
+							            ]
+							        },
+							        {
+							            value: 'notice',
+							            label: 'Notice',
+							            children: [
+								            {
+								              value: 'alert',
+								              label: 'Alert 警告'
+								            },
+								            {
+								              value: 'loading',
+								              label: 'Loading 加载'
+								            },
+								            {
+								              value: 'message',
+								              label: 'Message 消息提示'
+								            },
+								            {
+								              value: 'message-box',
+								              label: 'MessageBox 弹框'
+								            },
+								            {
+								              value: 'notification',
+								              label: 'Notification 通知'
+								            }
+							            ]
+							        },
+							        {
+							            value: 'navigation',
+							            label: 'Navigation',
+							            children: [
+								            {
+								              value: 'menu',
+								              label: 'NavMenu 导航菜单'
+								            },
+								            {
+								              value: 'tabs',
+								              label: 'Tabs 标签页'
+								            },
+								            {
+								              value: 'breadcrumb',
+								              label: 'Breadcrumb 面包屑'
+								            },
+								            {
+								              value: 'dropdown',
+								              label: 'Dropdown 下拉菜单'
+								            },
+								            {
+								              value: 'steps',
+								              label: 'Steps 步骤条'
+								            }
+							            ]
+							        },
+							        {
+							            value: 'others',
+							            label: 'Others',
+							            children: [
+								            {
+								              value: 'dialog',
+								              label: 'Dialog 对话框'
+								            },
+								            {
+								              value: 'tooltip',
+								              label: 'Tooltip 文字提示'
+								            },
+								            {
+								              value: 'popover',
+								              label: 'Popover 弹出框'
+								            },
+								            {
+								              value: 'card',
+								              label: 'Card 卡片'
+								            },
+								            {
+								              value: 'carousel',
+								              label: 'Carousel 走马灯'
+								            },
+								            {
+								              value: 'collapse',
+								              label: 'Collapse 折叠面板'
+								            }
+							            ]
+							        }
+				          		]
+				        	},
+					        {
+					          value: 'ziyuan',
+					          label: '资源',
+					          children: [
+						          {
+						            value: 'axure',
+						            label: 'Axure Components'
+						          },
+						          {
+						            value: 'sketch',
+						            label: 'Sketch Templates'
+						          },
+						          {
+						            value: 'jiaohu',
+						            label: '组件交互文档'
+						          }
+					          ]
+					        }
+				        ],
+				selectedOptions: [],
+				selectedOptions2: []*/
+			}
+		},
+		computed:{
+			options:function () {
+				let arr=[],
+					obj=null,
+					self=this;
+				this.factoryList.forEach( function(element, index) {
+					let	obj={};
+					// statements
+					obj.value='F'+index;
+					obj.label=element.strFactoryName;
+					obj.children=[];
+
+				});
 			}
 		},
 		methods:{
-			toggleFactory:function (obj) {
+			toggleFactory:function (obj,index) {
 				this.currentFactory=obj;
+				this.activeFNum=index;
+				// this.activeWNum=0;
 				//更新车间列表
 				fetch
 			        .Workshop_ListActive({
@@ -129,7 +435,8 @@
 					    this.toggleWorkshop();
 			        },()=>alert('没有查到车间!'));
 			},
-			toggleWorkshop:function (obj) {
+			toggleWorkshop:function (obj,index) {
+				this.activeWNum=index;
 				if(obj)  this.currentWorkshop=obj;
 				// this.showPaging=false;
 				fetch
@@ -141,16 +448,20 @@
 		    			"uWorkstationAdminUUID":-1,
 		              })
 			        .then(data=>{
-			        	console.log(this.machineList=data.obj.objectlist);
-			        	this.currentMachine=this.machineList[0];
+			        	console.log(this.workstationList=data.obj.objectlist);
+			        	this.currentMachine=this.workstationList[0];
 			        	this.toggleMachine();
 			        	// console.log(data)
 			        	// this.totalCount=Math.ceil(data.obj.totalcount/this.items);
 			        	// this.showPaging=true;
 			        });
 			},
-			toggleMachine:function (obj) {
-				if(obj) this.currentMachine=obj;
+			toggleMachine:function (obj,index) {
+				this.activeMNum=index;
+				if(obj) {
+					this.currentMachine=obj;
+					console.log($(".Multistage-menu-wrap").removeClass('open'))
+				}
 			    /*this.showPaging=false;
 				fetch
 			      .Device_ListActive({
@@ -186,7 +497,7 @@
 					fetch.Device_Update({
 						uDeviceUUID: this.editDevice.uDeviceUUID,
 						uDevModelUUID:this.editDevice.uDevModelUUID,
-						uWorkstationUUID:this.editDevice.uWorkstationUUID,
+						uWorkstationUUID:this.currentMachine.uWorkstationUUID,
 						strDeviceName:this.editDevice.strDeviceName,
 						strDeviceID:this.editDevice.strDeviceID,
 						strDeviceSN:this.editDevice.strDeviceSN,
@@ -197,9 +508,13 @@
 			},
 			upFile:function () {
 				event.target.nextSibling.nextSibling.click();
+			},
+			menuClick:function () {
+				event.cancelBubble=true;
 			}
 		},
 		created:function () {
+			let self=this;
 			// console.log(this.editDevice);
 			fetch
 			        .Factory_ListActive()
@@ -225,7 +540,79 @@
 		              })
 			        .then(data=>this.workstationList=data.obj.objectlist);
 
-		}
+	        fetch
+	              .Devcategory_ListActive({
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uDevCategoryParentUUID":0,
+	              	"uUserUUID":-1})
+	              .then(data=>{
+	              	this.DevParentCategoryList=data.obj.objectlist;
+	              	this.currentCategory=this.DevParentCategoryList[0];
+
+
+			        fetch
+		                .Devcategory_ListActive({
+		                	"nPageIndex": 0,
+		                	"nPageSize": -1,
+		                	"uDevCategoryParentUUID":1,
+		                	"uUserUUID":-1})
+		                .then(data=>{
+		                	self.DevSubCategoryList=data.obj.objectlist;
+		                });
+
+	            })
+
+
+
+	    	fetch
+	    			.DevModel_ListActive({
+	    				"nPageIndex": 0,
+	    				"nPageSize": -1,
+	    				"uDevTypeUUID": -1,
+						"uDevCategoryUUID":1,
+						"uVendorUUID":-1,
+						"uUserUUID":-1,
+	    			})
+	    			.then(data=>{
+	    				console.log(data)
+	    			})
+		},
+		/*beforeCreate:function () {
+
+			let self=this
+			fetch
+			        .Factory_ListActive()
+			        .then(data=>{
+			        	console.log(this.factoryList=data.obj.objectlist);
+
+						this.factoryList.forEach((ele,index)=>{
+							self.workshopListAll[index]=[];
+							fetch
+				        		.Workshop_ListActive({
+						        	"nPageIndex": 0,
+						            "nPageSize": -1,
+						            "uFactoryUUID":ele.uFactoryUUID,
+						            "uWorkshopTypeUUID":-1,
+					  				"uWorkshopAdminUUID":-1
+				        		})
+					        	.then(data=>{
+					        		self.workshopListAll[index]=data.obj.objectlist;
+					        		console.log(self.workshopListAll);
+					        	});
+						});
+			    	});
+
+			fetch
+		        .Workstation_ListActive({
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uPLineUUID": -1,
+	              	"uWorkstationTypeUUID":-1,
+	    			"uWorkstationAdminUUID":-1,
+	              })
+		        .then(data=>console.log(data))
+		}*/
 	}
 </script>
 <style>
@@ -292,9 +679,65 @@
 		white-space: nowrap;
 	    background: #fff;
 	    position: absolute;
-	    margin: 5px 0;
+	    margin: 38px 0;
 	    border: 1px solid #d1dbe5;
 	    border-radius: 2px;
 	    box-shadow: 0 2px 4px rgba(0,0,0,.12), 0 0 6px rgba(0,0,0,.04);
+
+
+	    position: fixed;
+        /*top: 517px;*/
+        /*left: 487px;*/
+        transform-origin: center top 30px;
+        z-index: 2002;
+	}
+	.Multistage-menus{
+		display: inline-block;
+	    vertical-align: top;
+	    height: 204px;
+	    overflow: auto;
+	    border-right: 1px solid #d1dbe5;
+	    margin: 0;
+	    padding: 6px 0;
+	    min-width: 160px;
+	}
+	.menu-item{
+		font-size: 14px;
+		padding: 8px 30px 8px 10px;
+		position: relative;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: #48576a;
+		height: 36px;
+		line-height: 1.5;
+		box-sizing: border-box;
+		cursor: pointer;
+	}
+	.menu-item:hover{
+		background-color: #E8DFDF;
+	}
+	.menu-item-icon:after{
+	    font-family: element-icons;
+	    content: "\E606";
+	    font-size: 12px;
+	    transform: scale(.8);
+	    color: #bfcbd9;
+	    position: absolute;
+	    right: 10px;
+	    margin-top: 1px;
+	}
+	.menu-item-icon.isActive{
+		color: #fff;
+		background-color: #20a0ff;
+	}
+	.Multistage-menu-wrap .btn-default{
+		font-size:14px;
+		color: #3C3939;
+	}
+	.Multistage-menu-wrap .btn-default>span{
+		/*padding:5px;*/
+		color: #7594EC;
+		font-weight:bolder;
 	}
 </style>

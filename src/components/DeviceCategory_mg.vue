@@ -2,39 +2,50 @@
 	<div class="deviceCategory">
 		<div class="categoryList-nav">
 			<div>
-				<div><i class="fa fa-minus-square-o  fa-lg"></i><span>设备类别</span></div>
+				<div @mouseenter="showIcon" @mouseleave="hideIcon">
+					<i class="fa fa-minus-square-o  fa-lg"></i>
+					<span>设备类别</span>
+					<span class="operating-icon">
+						<i class="fa fa-plus fa-sm" @click="addDevParentCategory"></i>
+					</span>
+				</div>
 				<ul style="margin-left:20px;">
 					<li class="CategoryName" v-for="(parentCategory,index0) in DevParentClass" style="position:relative;">
-						<div class="devType" @mouseover="showArrow" @mouseout="hideArrow" style="cursor:default;">
-							<i class="fa fa-minus-square-o  fa-lg" style="margin-right:6px;"></i>
-							{{parentCategory.strDevCategoryName}}
-							<i class="fa fa-caret-down fa-sm"  style="display:none;"></i>
+						<div class="devType" @mouseenter="showIcon" @mouseleave="hideIcon">
+							<i class="fa fa-minus-square-o fa-lg"
+								style="margin-right:6px;"
+								@click="fold(index0,parentCategory)">
+							</i>
+							<input
+								type="text"
+								class="categoryNameInput"
+								v-model="parentCategory.strDevCategoryName"
+								@change="changeParentDevName(parentCategory)"
+								v-if="parentIndex==index0"
+								@blur="blur"
+								v-focus>
+							<span v-else style="font-weight:bolder">{{parentCategory.strDevCategoryName}}</span>
+							<span class="operating-icon">
+								<i class="fa fa-edit fa-sm" @click.stop="parentNameEdit(index0)"></i>
+								<i class="fa fa-plus fa-sm" @click="addSubCategory(index0)"></i>
+								<i class="fa fa-remove fa-sm" @click="delCategory(parentCategory,{index0},'parent')"></i>
+							</span>
 						</div>
-						<div style="
-							position:absolute;
-							right:0;
-							z-index:100;
-							background-color:#FFFFFF;
-							width:50px;
-							padding:10px;
-							display:none;
-						top:0;">
-							<ul>
-								<li>增加</li>
-								<li>删除</li>
-								<li>修改</li>
-							</ul>
-						</div>
-						<ul style="border:solid 0px;">
-							<li class="subCategoryName" v-for="(subCategory,index) in DevSubClass[index0]" @click="categoryClick" style="border:solid 0px;margin:0px;" @mouseleave="devNameOut" @mouseenter=" devNameOver">
-									<i class="fa fa-trash  fa-sm" style="visibility:hidden;"></i>
-									<i class="fa fa-edit fa-sm"  style="visibility:hidden;" @click="devNameEdit({index0,index})"></i>
-									<!-- <span>{{subCategory.strDevCategoryName}}</span> -->
-									<input type="text" disabled="disabled" v-model="subCategory.strDevCategoryName" style="
-									    width: 80px;
-									    border: none;
-									    background: transparent;" @change="changeName">
-									<span v-show="subCategory.uShowInput"><input type="text" v-model="subCategory.strDevCategoryName"></span>
+						<ul style="border:solid 0px;" v-if="unfolder[index0]">
+							<li class="subCategoryName" v-for="(subCategory,$index1) in DevSubClass[index0]" @click="categoryClick(subCategory)" style="padding-left:15px;" @mouseleave="devNameOut" @mouseenter="devNameOver">
+									<input
+										type="text"
+										class="categoryNameInput"
+										v-model="subCategory.strDevCategoryName"
+										@change="changeName(subCategory)"
+										v-if="showInputIndex0==index0&&showInputIndex1==$index1"
+										@blur="blur"
+									v-focus>
+									<span v-else>{{subCategory.strDevCategoryName}}</span>
+									<span class="operating-icon">
+										<i class="fa fa-trash  fa-sm"  @click="delCategory(subCategory,{index0,$index1})"></i>
+										<i class="fa fa-edit fa-sm" @click.stop="devNameEdit(index0,$index1)"></i>
+									</span>
 							</li>
 						</ul>
 					</li>
@@ -42,7 +53,7 @@
 			</div>
 		</div>
 		<div class="categoryList">
-			<table class="categoryList-table" border="1">
+			<table class="categoryList-table" border="0">
 				<thead>
 					<tr>
 						<!-- <th><input type="checkbox"></th> -->
@@ -54,23 +65,27 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="device in selectedCategory">
+					<tr v-for="device in DevModelList">
 						<!-- <td><input type="checkbox"></td> -->
 						<td>
-							<span>{{device.model}}</span>
+							<span>{{device.strDevModelName}}</span>
 						</td>
 						<td>
-							<span>{{device.name}}</span>
+							<span>{{device.strDevCategoryName}}</span>
 						</td>
 						<td>
-							<span>{{device.factory}}</span>
+							<span>{{device.strVendorShortName}}</span>
 						</td>
 						<td>
-							<span>{{device.Quantity}}</span>
+							<span>15</span>
 						</td>
 						<td>
-							<span>列表</span>
-							<span>管理</span>
+							<span title="编辑">
+								<i class="fa fa-edit fa-lg"></i>
+							</span>
+							<span title="删除">
+								<i class="fa fa-trash-o fa-lg"></i>
+							</span>
 						</td>
 					</tr>
 				</tbody>
@@ -88,73 +103,161 @@
 	export default{
 		name:'devicCategory',
 		data(){
-			let	CategoryList=store.obtain('deviceCategory'),
-				selectedCategory=CategoryList.feeder.Direct;
 			return {
-				CategoryList,
-				selectedCategory,
-				isShowArrow:[7],
-				// showInput:false,
+				selectedCategory:{},
 				DevParentClass:[],
 				DevSubClass:[],
-				showInput:[],
+				DevModelList:[],
+				showInputIndex0:-1,
+				showInputIndex1:-1,
+				parentIndex:-1,
+				isEdit:false,
+				unfolder:[]
 			}
-		},
-		watch:function (argument) {
-			/* body... */
 		},
 		methods:{
 			categoryClick:function (category) {
 				console.log(category);
 				this.selectedCategory=category;
+				fetch
+					.DevModel_ListActive({
+						nPageIndex:0,
+						nPageSize:-1,
+						uDevTypeUUID:-1,
+						uDevCategoryUUID:category.uDevCategoryUUID,
+						uVendorUUID:-1,
+						uUserUUID:-1
+					})
+					.then(data=>console.log(this.DevModelList=data.obj.objectlist));
 			},
-			showArrow:function (){
-				// this.isShowArrow[index]=true;
-				// event.target.children[1].style.display = 'inline-block';
+			fold:function (index) {
+				this.unfolder.splice(index, 1,!this.unfolder[index]);
+				$(event.target).toggleClass('fa-minus-square-o')
+							   .toggleClass('fa-plus-square-o');
 			},
-			hideArrow:function () {
-				/* body... */
-				// event.target.children[1].style.display = 'none';
+			showIcon:function (){
+				if(!this.isEdit)
+				$(event.target).children('.operating-icon').css('display','inline-block');
+			},
+			hideIcon:function () {
+				$(event.target).children('.operating-icon').css('display','none');
+			},
+			addDevParentCategory:function () {
+				fetch
+	      	 	      .Devcategory_Add({
+				      	 	uDevCategoryParentUUID:0,
+			  	 	      	uUserUUID:-1,
+			  	 	      	strDevCategoryName:'新设备类型',
+	      	 	      })
+	      	 	this.DevParentClass.push({strDevCategoryName:"xinshebei"})
+			},
+			addSubCategory:function (index0) {
+				let pID=0,
+					len=this.DevSubClass[index0].length;
+				console.log(this.DevSubClass[index0]);
+
+				if(this.DevSubClass[index0].length>=0){
+					pID=this.DevSubClass[index0][0].uDevCategoryParentUUID;
+				}
+				else{
+					pID=this.DevSubClass[index0][0].length+1;
+				}
+				fetch
+	      	 	      .Devcategory_Add({
+				      	 	uDevCategoryParentUUID:pID,
+			  	 	      	uUserUUID:-1,
+			  	 	      	strDevCategoryName:'',
+	      	 	      });
+	      	 	      console.log(this.DevSubClass[index0][len-1])
+				this.DevSubClass[index0].push({
+					uDevCategoryUUID:parseInt(this.DevSubClass[index0][len-1].uDevCategoryUUID)+1,
+		      	 	uDevCategoryParentUUID:pID,
+	  	 	      	uUserUUID:0,
+	  	 	      	strDevCategoryName:'新设备种类',
+	  	 	      	strDevCategoryDesc:'',
+	  	 	      	strDevCategoryNote:''
+				});
+				/*fetch
+	      	 	      .Devcategory_ListActive({
+	      	 	      	"nPageIndex": 0,
+	      	 	      	"nPageSize": -1,
+	      	 	      	"uDevCategoryParentUUID":pID,
+	      	 	      	"uUserUUID":-1})
+	      	 	      .then(data=>this.DevSubClass[index0]=data.obj.objectlist);*/
+				this.devNameEdit(index0,this.DevSubClass[index0].length-1);
+			},
+			delCategory:function (obj1,obj2,parent) {
+				let UUID=obj1.uDevCategoryUUID;
+				if(parent){
+					// UUID=null;
+					this.DevSubClass[obj2.index0].forEach(function (ele,index) {
+						fetch
+			      	 	      .Devcategory_Inactive({
+						      	 	uDevCategoryUUID:ele.uDevCategoryUUID
+			      	 	      })
+					})
+				}
+				else{
+		      	 	this.DevSubClass[obj2.index0].splice(obj2.$index1, 1);
+				}
+				fetch
+	      	 	      .Devcategory_Inactive({
+				      	 	uDevCategoryUUID:UUID
+	      	 	      })
 			},
 			devNameOver:function () {
-				if(event.target.children[1]){
-					event.target.children[0].style.visibility = "visible";
-					event.target.children[1].style.visibility = "visible";
-				}
-				// console.log(event.target.children[1])
+				$(event.target).children('.operating-icon').css('display','inline-block');
 			},
 			devNameOut:function (argument) {
 				event.cancelBubble=true;
-				if(event.target.children[1]){
-					event.target.children[0].style.visibility = "hidden";
-					event.target.children[1].style.visibility = "hidden";
-				}
+				$(event.target).children('.operating-icon').css('display','none');
 			},
-			devNameEdit:function (obj) {
+			parentNameEdit:function (index) {
+				this.isEdit=true;
+				this.parentIndex=index;
+				$(event.target.parentElement).css('display','none');
+			},
+			devNameEdit:function (index0,index1) {
+				this.showInputIndex0=index0;
+				this.showInputIndex1=index1;
 				event.cancelBubble=true;
-				let el=event.target.nextSibling.nextSibling,
-					val=el.innerHTML;
-
-				// el.innerHTML=`<input class="editName" type="text" value="${val}" v-on:change="changeName"/>`;
-				// style.contenteditable="true";
-				el.removeAttribute('disabled')
-				el.focus();
-				el.select();
-				console.log(el)
+				console.log(index0,index1);
+				console.log(this.showInputIndex0,this.showInputIndex1);
 			},
-			changeName:function () {
-				alert('blur');
+			changeParentDevName:function () {
+				/* body... */
 			},
-			alert:function () {
-				alert('message?: DOMString')
+			changeName:function (obj) {
+				fetch
+	      	 	      .Devcategory_Update({
+				      	 	uDevCategoryUUID:obj.uDevCategoryUUID,
+				      	 	uDevCategoryParentUUID:obj.uDevCategoryParentUUID,
+			  	 	      	uUserUUID:obj.uUserUUID,
+			  	 	      	strDevCategoryName:obj.strDevCategoryName,
+			  	 	      	strDevCategoryDesc:'',
+			  	 	      	strDevCategoryNote:''
+	      	 	      });
+			},
+			blur:function (){
+				this.showInputIndex0=-1;
+				this.showInputIndex1=-1;
+				this.parentIndex=-1;
+				this.isEdit=false;
 			}
-
 		},
 		filters:filter,
 		components:{
 			'tree-node':treeNode
 		},
+		directives:{
+			focus:{
+				inserted:function (el) {
+					el.focus();
+				}
+			}
+		},
 		beforeCreate:function () {
+			let self=this;
 			fetch
 			      .Devcategory_ListActive({
 			      	"nPageIndex": 0,
@@ -162,50 +265,53 @@
 			      	"uDevCategoryParentUUID":0,
 			      	"uUserUUID":-1})
 			      .then(data=>{
-			      	console.log(this.DevParentClass=data.obj.objectlist);
-					for(var j = 1, length2 = this.DevParentClass.length; j <= length2; j++){
-						/*fetch
-						      .Devcategory_ListActive({
-						      	"nPageIndex": 0,
-						      	"nPageSize": -1,
-						      	"uDevCategoryParentUUID":j,
-						      	"uUserUUID":-1})
-						      .then(data=>{
-						      	this.DevSubClass.push(data.obj.objectlist);
-						      });*/
-						    function getSubcategory () {
-						      	 let promise=new Promise(function (resolve,reject) {
-						      	 	fetch
-						      	 	      .Devcategory_ListActive({
-						      	 	      	"nPageIndex": 0,
-						      	 	      	"nPageSize": -1,
-						      	 	      	"uDevCategoryParentUUID":j,
-						      	 	      	"uUserUUID":-1})
-						      	 	      .then(data=>resolve(data));
-						      	 });
-						      	 return promise;
-						     }
-							    (async function () {
-							      	let value=await getSubcategory();
-							      	return value;
-							    })().then(data=>{
-							    	this.DevSubClass.push(data.obj.objectlist);
-							    	// console.log(this.DevSubClass)
-							    })
-					}
+			      	this.DevParentClass=data.obj.objectlist;
+			      	this.DevParentClass.forEach( function(element, index) {
+			      		// if(index==0) self.unfolder[0]=true;
+			      		 // else
+			      		 	self.unfolder[index]=true;
+			      	});
+				    function getSubcategory (k) {
+				    	console.log(k);
+				      	 let promise=new Promise(function (resolve,reject) {
+				      	 	fetch
+				      	 	      .Devcategory_ListActive({
+				      	 	      	"nPageIndex": 0,
+				      	 	      	"nPageSize": -1,
+				      	 	      	"uDevCategoryParentUUID":k,
+				      	 	      	"uUserUUID":-1})
+				      	 	      .then(data=>resolve(data));
+				      	 });
+				      	 return promise;
+				     }
+
+				    async function getData (k) {
+				      	let value=await getSubcategory(k);
+				      	return value;
+				    }
+				    let len=self.DevParentClass.length,
+					      k=1;
+				    function togetData (argument) {
+					    getData(k++).then(function(data){
+					    	self.DevSubClass.push(data.obj.objectlist);
+					    	if(k<=len) togetData();
+					    })
+
+				    }
+				    togetData();
+				    self.selectedCategory=self.DevParentClass[0][0];
 			      });
 
-
-		},
-		created:function () {
-			setTimeout(()=>{
-			    this.DevSubClass.forEach( function(element, index,arr) {
-					element.forEach( function(element, index) {
-						element.uShowInput=false;
-					});
-			    });
-			},300);
-			// setTimeout(()=>console.log(this.DevSubClass),1000);
+			fetch
+				.DevModel_ListActive({
+					nPageIndex:0,
+					nPageSize:-1,
+					uDevTypeUUID:-1,
+					uDevCategoryUUID:1,
+					uVendorUUID:-1,
+					uUserUUID:-1
+				})
+				.then(data=>console.log(this.DevModelList=data.obj.objectlist));
 		}
 	}
 </script>
@@ -213,29 +319,29 @@
 <style>
 	.deviceCategory{
 		font-size:.7em;
-		border:solid 1px #CBC6C6;
+		/*border:solid 1px #CBC6C6;*/
+		box-shadow: 2px 2px 5px #c6c5c7;
 		height:500px;
 		position: relative;
 	}
 	.categoryList-nav{
 		height: 100%;
-		width: 20%;
-		padding:10px ;
-		font-size:.9em;
-		/*border:solid 1px #CBC6C6;*/
-		background-color:#F7F6F6;
-		/*float: left;*/
-		overflow-y:scroll;
-		display:inline-block;
+	    max-width: 30%;
+	    min-width:25%;
+	    padding: 10px;
+	    font-size: .9em;
+	    /*background-color: #F7F6F6;*/
+	    overflow-y: scroll;
+	    display: inline-block;
 	}
 	.categoryList{
 		display: inline-block;
-	    width: 80%;
-	    /*border: solid 1px #C5C3C3;*/
-	    position: absolute;
-	    top: 0;
-	    bottom: 0;
-	    padding:15px;
+		min-width: 70%;
+		max-width: 85%;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		padding: 15px;
 	}
 	.deviceCategory,.categoryList-table{
 		width: 100%;
@@ -251,15 +357,31 @@
 	.categoryList-table tr{
 		border-bottom:solid 1px #E9E5E5;
 	}
+	.CategoryName:hover{
+		/*background-color: #F6EAEA;*/
+	}
 	.subCategoryName{
 		cursor: pointer;
 		margin-left:20px;
 	}
 	.subCategoryName:hover{
-		background-color: #E4D8D8;
+		background-color: #DFDADA;
 	}
 	.editName{
 		/*display:inline;*/
 		width: 80px;
+	}
+	.categoryNameInput{
+		width: 80px;
+		border: none;
+		background: transparent;
+	}
+	.operating-icon{
+		/*border: solid 1px;*/
+		display:none;
+		cursor: pointer;
+	}
+	.operating-icon>i{
+		margin: 2px;
 	}
 </style>

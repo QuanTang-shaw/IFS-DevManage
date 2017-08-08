@@ -79,11 +79,11 @@
 		 return result;
 	}
 
-	async  function DevModel_ListActive(){
+	async  function DevModel_ListActive(obj){
 		var result = await exec_getData(
 	              "Handler_DevModel_V1.ashx",
 	              "DevModel_ListActive",
-	              {"nPageIndex": 0,"nPageSize": -1,"uDevTypeUUID": 1});
+	              obj);
 		 return result;
 	}
 
@@ -225,6 +225,20 @@
 	}
 
 
+
+
+
+	async  function Devcategory_Update(obj){
+		await exec_getData("Handler_DevCategory_V1.ashx","DevCategory_Update",obj);
+	}
+	async  function Devcategory_Add(obj){
+		await exec_getData("Handler_DevCategory_V1.ashx","DevCategory_Add",obj);
+	}
+	async  function Devcategory_Inactive(obj){
+		await exec_getData("Handler_DevCategory_V1.ashx","DevCategory_Inactive",obj);
+	}
+
+
 	export default{
 		exec_getData,
 
@@ -236,6 +250,7 @@
 		DevType_ListActive,
 		Device_ListActive,
 		Devcategory_ListActive,
+		DevModel_ListActive,
 		Vendor_ListActive,
 
 
@@ -263,4 +278,8 @@
 		Device_Add,
 		Device_Inactive,
 		Device_Detail,
+
+		Devcategory_Update,
+		Devcategory_Add,
+		Devcategory_Inactive
 	}
