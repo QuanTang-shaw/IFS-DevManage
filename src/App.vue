@@ -12,15 +12,9 @@
               <ul class="list-group list-group-menu">
                 <li class="list-group-item" :class="{ active: menu.isActive }" v-for="(menu,index ) in routerMenu" @click="menuClick(index)">
                   <router-link class="router-link" :to="menu.path">
-                    <!-- <span>
-                      <i class="fa fa-list-alt"></i>
-                    </span> -->
                     {{menu.text}}
                   </router-link>
                 </li>
-                <!-- <li class="list-group-item active">
-                  <router-link to="/plant">厂区管理</router-link>
-                </li> -->
               </ul>
             </div>
           </div>

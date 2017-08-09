@@ -55,11 +55,23 @@
       <h2>生产设备管理</h2>
       <div class="log">
         <img class="head-icon" src="./static/img/guy-1.jpg" alt="头像" height="35">
-        <select name="" id="" class="account">
-          <option value="">我的账户</option>
-          <option value="">个人信息</option>
-          <option value="">退出</option>
-        </select>
+        <div class="btn-group">
+           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             我的账户<span class="caret"></span>
+           </button>
+           <ul class="dropdown-menu">
+             <li><a href="#">Action</a></li>
+             <li><a href="#">Another action</a></li>
+             <li><a href="#">Something else here</a></li>
+             <li role="separator" class="divider"></li>
+             <li><a href="#">Separated link</a></li>
+           </ul>
+        </div>
+       <!--  <select name="" id="" class="account">
+         <option value="">我的账户</option>
+         <option value="">个人信息</option>
+         <option value="">退出</option>
+       </select> -->
         <img class="flage" src="./static/img/flage.jpg" alt="guoqi" width="45">
       </div>
     </header>
