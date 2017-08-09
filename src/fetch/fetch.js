@@ -1,5 +1,5 @@
 
-	var exec_getData=function (str,op,obj) {
+	export const exec_getData=function (str,op,obj) {
 
 		var promise=new Promise(function (resolve,reject) {
 			var url =`http://ifs.top-link.me/ifs/${str}`,

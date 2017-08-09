@@ -46,50 +46,44 @@
 						</div>
 					</div>
 					<div class="ProModel">
-						<div>产品型号:
+						<!-- <div>产品型号:
 							<div class="btn-group">
-							  <button type="button" class="btn btn-default">所有类型</button>
+							  <button type="button" class="btn btn-default">{{selectedFactory.strFactoryName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							    <span class="caret"></span>
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
-							    <!-- <li><a href="#">Action</a></li>
-							    <li><a href="#">Another action</a></li>
-							    <li><a href="#">Something else here</a></li> -->
+							  	<li v-for="(factory,index) in factoryList" @click="toggleFactory(factory)"><a >{{factory.strFactoryName}}</a></li>
 							    <li role="separator" class="divider"></li>
-							    <li><a href="#">Separated link</a></li>
+							    <li><a href="#">全部工厂</a></li>
 							  </ul>
 							</div>
 							<div class="btn-group">
-							  <button type="button" class="btn btn-default">拓斯达</button>
+							  <button type="button" class="btn btn-default">{{selectedWorkshop.strWorkshopName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							    <span class="caret"></span>
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
-							    <!-- <li><a href="#">Action</a></li>
-							    <li><a href="#">Another action</a></li>
-							    <li><a href="#">Something else here</a></li> -->
+							  	<li v-for="(workshop,index) in workshopList"  @click="toggleWorkshop(workshop)"><a>{{workshop.strWorkshopName}}</a></li>
 							    <li role="separator" class="divider"></li>
-							    <li><a href="#">Separated link</a></li>
+							    <li><a href="#">全部厂房</a></li>
 							  </ul>
 							</div>
 							<div class="btn-group">
-							  <button type="button" class="btn btn-default">TTW1210A</button>
+							  <button type="button" class="btn btn-default">{{selectedMachine.strWorkstationName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							    <span class="caret"></span>
 							    <span class="sr-only">Toggle Dropdown</span>
 							  </button>
 							  <ul class="dropdown-menu">
-							  	<li v-for="(plant,index) in factoryList"><a >{{plant.name}}</a></li>
+							  	<li v-for="(machine,index) in machineList" @click="toggleMachine(machine)"><a >{{machine.strWorkstationName}}</a></li>
 							    <li role="separator" class="divider"></li>
-							    <li><a href="#">Separated link</a></li>
+							    <li><a href="#">全部机台</a></li>
 							  </ul>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 				<div class="col-md-2">
@@ -106,7 +100,7 @@
 							<img src="../assets/topstart/mtm-water.jpg" alt="设备图片">
 						</div>
 						<div class="specification col-md-3">
-							<p>{{device.strDeviceName}}</p>
+							<p><span>名称:</span>{{device.strDeviceName}}</p>
 							<p><span>品牌:</span>{{device.strVendorShortName}}</p>
 							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
 							<p>编号: <strong></strong> {{device.strDeviceID}}</p>
@@ -118,13 +112,13 @@
 						</div>
 						<div class="operating col-md-2">
 							<span>
-								<i class="fa fa-edit fa-lg" @click="deviceEdit(index)"></i>
+								<i class="fa fa-edit fa-lg" @click="deviceEdit(device,null)"></i>
 							</span>
 							<span>
 								<i class="fa fa-trash-o fa-lg" @click="deviceDelete(device)"></i>
 							</span>
 							<span>
-								<i class="fa fa-list-alt fa-lg"></i>
+								<!-- <i class="fa fa-list-alt fa-lg"></i> -->
 							</span>
 						</div>
 					</div>
@@ -141,6 +135,14 @@
 	import deletepop from '@/components/Delete_pop'
     import deviceEdit from '@/components/DeviceEdit'
   	import paging from '@/components/Paging'
+    import {
+    	FactoryListActive,
+    	WorkshopListActive,
+    	WorkstationListActive,
+    	DevModelListActive,
+    	DevcategoryListActive,
+    	DeviceListActive
+    } from '@/api/getData'
 
 	export default{
 		name:'machineList',
@@ -167,7 +169,9 @@
           		totalCount:0,
           		pageItems:5,
           		items:5,
-          		currentPage:0
+          		currentPage:0,
+          		options:[],
+          		selectedOptions:{}
 			}
 		},
 		components:{
@@ -244,7 +248,7 @@
 			      });
 
 			},
-			deviceEdit:function (index,addDevice) {
+			deviceEdit:function (obj,addDevice) {
 			  if (addDevice){
 			    this.isAddDevice=true;
 			    this.editDevice={
@@ -257,8 +261,7 @@
 			  }
 			  else{
 			    this.isAddDevice=false;
-			    this.editDevice=this.deviceList[index];
-			    console.log(this.editDevice)
+			    this.editDevice=obj;
 			  }
 			  	this.showDeviceEdit=true;
 			},
@@ -301,108 +304,44 @@
 				}
 			}
 		},
-		beforeCreate:function () {
+		async beforeCreate() {
 		    let self=this;
-			(async function () {
-				let factorylist=await
-				 new Promise((resolve,reject)=>{
-				 	fetch
-				        .Factory_ListActive()
-				        .then(data=>resolve(data));
-				});
-				// console.log(factorylist);
-				self.factoryList=factorylist.obj.objectlist;
-				self.selectedFactory=self.factoryList[0];
 
-				let workshoplist=await new Promise((resolve,reject)=>{
-				  fetch
-				        .Workshop_ListActive({
-				        	"nPageIndex": 0,
-				            "nPageSize": -1,
-				            "uFactoryUUID":self.selectedFactory.uFactoryUUID,
-				            "uWorkshopTypeUUID":-1,
-			  				"uWorkshopAdminUUID":-1
-				        })
-				        .then(data=>resolve(data));
-				});
-				self.workshopList=workshoplist.obj.objectlist;
-				self.selectedWorkshop=self.workshopList[0];
-				// console.log(self.selectedWorkshop);
-
-				let workstationList=await new Promise((resolve,reject)=>{
-				  fetch
-		  		        .Workstation_ListActive({
-		  	              	"nPageIndex": 0,
-		  	              	"nPageSize": -1,
-		  	              	"uPLineUUID": self.selectedWorkshop.uWorkshopUUID,
-		  	              	"uWorkstationTypeUUID":-1,
-		  	    			"uWorkstationAdminUUID":-1,
-		  	              })
-		  		        .then(data=>resolve(data));
-				});
-				return workstationList;
-			})()
-				.then(data=>{
-					self.machineList=data.obj.objectlist;
-					self.selectedMachine=self.machineList[0];
-					fetch
-					      .Device_ListActive({
+			this.factoryList=await FactoryListActive();
+			this.selectedFactory=this.factoryList[0];
+			this.workshopList=await WorkshopListActive({
+			        	"nPageIndex": 0,
+			            "nPageSize": -1,
+			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
+			            "uWorkshopTypeUUID":-1,
+		  				"uWorkshopAdminUUID":-1
+	        		});
+			this.selectedWorkshop=this.workshopList[0];
+			this.machineList=await WorkstationListActive({
+		              	"nPageIndex": 0,
+		              	"nPageSize": -1,
+		              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
+		              	"uWorkstationTypeUUID":-1,
+		    			"uWorkstationAdminUUID":-1,
+		              });
+			this.selectedMachine=this.machineList[0];
+			DeviceListActive({
 					      	"nPageIndex": 0,
 					      	"nPageSize":5,
 					      	"uDevModelUUID": -1,
-					      	"uWorkstationUUID":self.selectedMachine.uWorkstationUUID
+					      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
 					      })
 					      .then(data=>{
-					      	self.deviceList=data.obj.objectlist;
-					      	console.log(data);
-					      	self.totalCount=Math.ceil(data.obj.totalcount/self.items);
-					      	self.showPaging=true;
+					      	this.deviceList=data.obj.objectlist;
+					      	// console.log(data);
+					      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+					      	this.showPaging=true;
 					      });
-				});
 
-			/*let _this=this;
-				function *obtain () {
-					yield
-						fetch
-				            .Factory_ListActive()
-				            .then(data=>{
-				            console.log(_this.factoryList=data.obj.objectlist);
-				            	_this.selectedFactory=_this.factoryList[0];
-				            });
-		            yield
-			            fetch
-					        .Workshop_ListActive({
-					              "nPageIndex": 0,
-					              "nPageSize": -1,
-					              "uFactoryUUID":_this.selectedFactory.uFactoryUUID,
-					              "uWorkshopTypeUUID":-1,
-				  				  "uWorkshopAdminUUID":-1
-			  				  })
-					        .then(data=>{
-					        	console.log(_this.workshopList=data.obj.objectlist);
-					        	_this.selectedWorkshop=_this.workshopList[0];
-					        });
-					yield
-					    fetch
-					        .Workstation_ListActive({
-				              	"nPageIndex": 0,
-				              	"nPageSize": -1,
-				              	"uPLineUUID": _this.selectedWorkshop.uWorkshopUUID,
-				              	"uWorkstationTypeUUID":-1,
-				    			"uWorkstationAdminUUID":-1,
-				              })
-					        .then(data=>{
-					        	console.log(_this.machineList=data.obj.objectlist);
-					        	_this.selectedMachine=_this.machineList[0];
-					        });
-				}
-				var t=obtain(),
-					timer=null;
-				timer=setInterval(()=>{
-					console.log('t.next()');
-					if(t.next().done) clearInterval(timer);
-				},150);
-			*/
+		},
+		created(){
+			// console.log(this.deviceList);
+			setTimeout(()=>console.log(this.deviceList),300)
 		}
 	}
 </script>

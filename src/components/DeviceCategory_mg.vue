@@ -14,7 +14,13 @@
 						<div class="devType" @mouseenter="showIcon" @mouseleave="hideIcon">
 							<i class="fa fa-minus-square-o fa-lg"
 								style="margin-right:6px;"
-								@click="fold(index0,parentCategory)">
+								@click="fold(index0,parentCategory)"
+								v-if="index0==0">
+							</i>
+							<i class="fa fa-plus-square-o fa-lg"
+								style="margin-right:6px;"
+								@click="fold(index0,parentCategory)"
+								v-else>
 							</i>
 							<input
 								type="text"
@@ -267,9 +273,8 @@
 			      .then(data=>{
 			      	this.DevParentClass=data.obj.objectlist;
 			      	this.DevParentClass.forEach( function(element, index) {
-			      		// if(index==0) self.unfolder[0]=true;
-			      		 // else
-			      		 	self.unfolder[index]=true;
+			      		if(index==0) self.unfolder[0]=true;
+			      		 else self.unfolder[index]=false;
 			      	});
 				    function getSubcategory (k) {
 				    	console.log(k);

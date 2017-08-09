@@ -31,12 +31,6 @@
 	          <div class="form-group">
 	            <label for="inputPassword3" class="col-sm-2 control-label">设备位置</label>
 	            <div class="col-sm-10">
-	            	<!-- <el-cascader
-	            	    expand-trigger="hover"
-	            	    :options="options"
-	            	    v-model="selectedOptions2"
-	            	    @change="handleChange">
-	            	</el-cascader> -->
 					<div class="btn-group Multistage-menu-wrap">
 					  <button type="button" class="btn btn-default dropdown-toggle Multistage-menu-input" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					    {{currentFactory.strFactoryName}}<span>/</span>
@@ -46,41 +40,59 @@
 					  </button>
 					  <div class="Multistage-menu" @click="menuClick">
 						  <ul class="Multistage-menus" >
-						    <li class="menu-item menu-item-icon" v-for="(factory,$index) in factoryList" @click="toggleFactory(factory,$index)" :class="{isActive:activeFNum==$index}">{{factory.strFactoryName}} </li>
+						    <li class="menu-item menu-item-icon" v-for="(factory,$index) in factoryList" @click.stop="toggleFactory(factory,$index)" :class="{isActive:activeClassNum.FTNum==$index}">{{factory.strFactoryName}} </li>
 						  </ul>
 						  <ul class="Multistage-menus" >
-						    <li class="menu-item menu-item-icon" v-for="(workshop,$index) in workshopList" @click="toggleWorkshop(workshop,$index)" :class="{isActive:activeWNum==$index}">{{workshop.strWorkshopName}}</li>
+						    <li class="menu-item menu-item-icon" v-for="(workshop,$index) in workshopList" @click.stop="toggleWorkshop(workshop,$index)" :class="{isActive:activeClassNum.WSNum==$index}">{{workshop.strWorkshopName}}</li>
 						  </ul>
 						  <ul class="Multistage-menus">
-						    <li class="menu-item" v-for="(workstation,$index) in workstationList" @click="toggleMachine(workstation,$index)" :class="{isActive:activeMNum==$index}">{{workstation.strWorkstationName}}</li>
+						    <li class="menu-item" v-for="(workstation,$index) in workstationList" @click="toggleMachine(workstation,$index)" :class="{isActive:activeClassNum.MHNum==$index}">{{workstation.strWorkstationName}}</li>
 						  </ul>
 					  </div>
 					</div>
-					<!-- <div class="btn-group">
-					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					  {{currentWorkshop.strWorkshopName}} <span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu">
-					    <li v-for="workshop in workshopList" @click="toggleWorkshop(workshop)"><a>{{workshop.strWorkshopName}}</a></li>
-					  </ul>
-					</div>
-					<div class="btn-group">
-					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					  {{currentMachine.strWorkstationName}} <span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu">
-					    <li v-for="workstation in workstationList" @click="toggleWorkstation(workstation)"><a>{{workstation.strWorkstationName}}</a></li>
-					  </ul>
-					</div> -->
 	            </div>
 	          </div>
-	          <div class="form-group">
+	          <div class="form-group" v-if="isAddDevice">
+	            <label for="inputPassword3" class="col-sm-2 control-label">设备类别</label>
+	            <div class="col-sm-10">
+		            <div class="btn-group Multistage-menu-wrap">
+		              <button type="button" class="btn btn-default dropdown-toggle Multistage-menu-input" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		                {{curParCategory.strDevCategoryName}}<span>/</span>
+		                {{curSubCategory.strDevCategoryName}}
+		                <span class="caret"></span>
+		              </button>
+		              <div class="Multistage-menu">
+		            	  <ul class="Multistage-menus">
+		            	    <li class="menu-item menu-item-icon" v-for="(ParentCategory,$index) in DevParentCategoryList" @click.stop="toggleParCategory(ParentCategory,$index)" :class="{isActive:activeClassNum.ParCategoryNum==$index}">{{ParentCategory.strDevCategoryName}}</li>
+		            	  </ul>
+		            	  <ul class="Multistage-menus" >
+		            	    <li class="menu-item " v-for="(SubCategory,$index) in DevSubCategoryList" @click="toggleSubCagegory(SubCategory,$index)" :class="{isActive:activeClassNum.SubCategoryNum==$index}">{{SubCategory.strDevCategoryName}}</li>
+		            	  </ul>
+		              </div>
+		            </div>
+	            </div>
+	          </div>
+	          <div class="form-group" v-if="isAddDevice">
 	            <label for="inputPassword3" class="col-sm-2 control-label">设备型号</label>
 	            <div class="col-sm-10">
-
+		            <div class="btn-group Multistage-menu-wrap">
+		              <button type="button" class="btn btn-default dropdown-toggle Multistage-menu-input" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		                {{curDevVendor.strVendorShortName}}<span>/</span>
+		                {{curDevVendorModel.strDevModelName}}
+		                <span class="caret"></span>
+		              </button>
+		              <div class="Multistage-menu">
+		            	  <ul class="Multistage-menus" >
+		            	    <li class="menu-item menu-item-icon" v-for="(Vendor,$index) in DevVendorList" @click.stop="toggleVendor(Vendor,$index)" :class="{isActive:activeClassNum.VendorNum==$index}">{{Vendor.strVendorShortName}} </li>
+		            	  </ul>
+		            	  <ul class="Multistage-menus">
+		            	    <li class="menu-item" v-for="(VendorModel,$index) in DevVendorModelList" @click="toggleModel(VendorModel,$index)" :class="{isActive:activeClassNum.VendorModelNum==$index}">{{VendorModel.strDevModelName}}</li>
+		            	  </ul>
+		              </div>
+		            </div>
 	            </div>
 	          </div>
-	          <div class="form-group">
+	          <div class="form-group" >
 	            <label for="inputPassword3" class="col-sm-2 control-label">设备图片</label>
 	            <div class="col-sm-10">
 	            	<div class="fileUpload">
@@ -104,6 +116,13 @@
 
 <script>
     import fetch from '@/fetch/fetch'
+    import {
+    	FactoryListActive,
+    	WorkshopListActive,
+    	WorkstationListActive,
+    	DevModelListActive,
+    	DevcategoryListActive
+    } from '@/api/getData'
 
 	export default{
 		name:'deviceEdit',
@@ -115,7 +134,6 @@
 				currentFactory:this.selectedFactory,
 				currentWorkshop:this.selectedWorkshop,
 				currentMachine:this.selectedMachine,
-				currentCategory:{},
 				factoryList:[],
 				workshopList:[],
 				workstationList:[],
@@ -124,302 +142,29 @@
 				DevParentCategoryList:[],
 				DevSubCategoryList:[],
 				DevModelList:[],
-				currentDevModel:[],
-				activeFNum:0,
-				activeWNum:0,
-				activeMNum:0
-				/*options: [
-							{
-					          	value: '.....',
-					          	label: '指南',
-						        children: [
-							        {
-							            value: 'shejiyuanze',
-							            label: '设计原则',
-							            children: [
-								            {
-								              value: 'yizhi',
-								              label: '一致'
-								            },
-								            {
-								              value: 'fankui',
-								              label: '反馈'
-								            },
-								            {
-								              value: 'xiaolv',
-								              label: '效率'
-								            },
-								            {
-							              	  value: 'kekong',
-							              	  label: '可控'
-							            	}
-						            	]
-						          	},
-							        {
-							            value: 'daohang',
-							            label: '导航',
-							            children: [
-								            {
-								              value: 'cexiangdaohang',
-								              label: '侧向导航'
-								            },
-								            {
-								              value: 'dingbudaohang',
-								              label: '顶部导航'
-								            }
-							            ]
-							        }
-							    ]
-				        	},
-				        	{
-					          	value: 'zujian',
-					          	label: '组件',
-					          	children: [
-					          		{
-							            value: 'basic',
-							            label: 'Basic',
-							            children: [
-								            {
-								              	value: 'layout',
-								              	label: 'Layout 布局'
-								            },
-								            {
-							              		value: 'color',
-							              		label: 'Color 色彩'
-							            	},
-								            {
-								              	value: 'typography',
-								              	label: 'Typography 字体'
-								            },
-								            {
-								              	value: 'icon',
-								              	label: 'Icon 图标'
-								            },
-								            {
-								              	value: 'button',
-								              	label: 'Button 按钮'
-								            }
-						            	]
-				          			},
-							        {
-							            value: 'form',
-							            label: 'Form',
-							            children: [
-								            {
-								              value: 'radio',
-								              label: 'Radio 单选框'
-								            },
-								            {
-								              value: 'checkbox',
-								              label: 'Checkbox 多选框'
-								            },
-								            {
-								              value: 'input',
-								              label: 'Input 输入框'
-								            },
-								            {
-								              value: 'input-number',
-								              label: 'InputNumber 计数器'
-								            },
-								            {
-								              value: 'select',
-								              label: 'Select 选择器'
-								            },
-								            {
-								              value: 'cascader',
-								              label: 'Cascader 级联选择器'
-								            },
-								            {
-								              value: 'switch',
-								              label: 'Switch 开关'
-								            },
-								            {
-								              value: 'slider',
-								              label: 'Slider 滑块'
-								            },
-								            {
-								              value: 'time-picker',
-								              label: 'TimePicker 时间选择器'
-								            },
-								            {
-								              value: 'date-picker',
-								              label: 'DatePicker 日期选择器'
-								            },
-								            {
-								              value: 'datetime-picker',
-								              label: 'DateTimePicker 日期时间选择器'
-								            },
-								            {
-								              value: 'upload',
-								              label: 'Upload 上传'
-								            },
-								            {
-								              value: 'rate',
-								              label: 'Rate 评分'
-								            },
-								            {
-								              value: 'form',
-								              label: 'Form 表单'
-								            }
-							            ]
-							        },
-							        {
-							            value: 'data',
-							            label: 'Data',
-							            children: [
-								            {
-								              value: 'table',
-								              label: 'Table 表格'
-								            },
-								            {
-								              value: 'tag',
-								              label: 'Tag 标签'
-								            },
-								            {
-								              value: 'progress',
-								              label: 'Progress 进度条'
-								            },
-								            {
-								              value: 'tree',
-								              label: 'Tree 树形控件'
-								            },
-								            {
-								              value: 'pagination',
-								              label: 'Pagination 分页'
-								            },
-								            {
-								              value: 'badge',
-								              label: 'Badge 标记'
-								            }
-							            ]
-							        },
-							        {
-							            value: 'notice',
-							            label: 'Notice',
-							            children: [
-								            {
-								              value: 'alert',
-								              label: 'Alert 警告'
-								            },
-								            {
-								              value: 'loading',
-								              label: 'Loading 加载'
-								            },
-								            {
-								              value: 'message',
-								              label: 'Message 消息提示'
-								            },
-								            {
-								              value: 'message-box',
-								              label: 'MessageBox 弹框'
-								            },
-								            {
-								              value: 'notification',
-								              label: 'Notification 通知'
-								            }
-							            ]
-							        },
-							        {
-							            value: 'navigation',
-							            label: 'Navigation',
-							            children: [
-								            {
-								              value: 'menu',
-								              label: 'NavMenu 导航菜单'
-								            },
-								            {
-								              value: 'tabs',
-								              label: 'Tabs 标签页'
-								            },
-								            {
-								              value: 'breadcrumb',
-								              label: 'Breadcrumb 面包屑'
-								            },
-								            {
-								              value: 'dropdown',
-								              label: 'Dropdown 下拉菜单'
-								            },
-								            {
-								              value: 'steps',
-								              label: 'Steps 步骤条'
-								            }
-							            ]
-							        },
-							        {
-							            value: 'others',
-							            label: 'Others',
-							            children: [
-								            {
-								              value: 'dialog',
-								              label: 'Dialog 对话框'
-								            },
-								            {
-								              value: 'tooltip',
-								              label: 'Tooltip 文字提示'
-								            },
-								            {
-								              value: 'popover',
-								              label: 'Popover 弹出框'
-								            },
-								            {
-								              value: 'card',
-								              label: 'Card 卡片'
-								            },
-								            {
-								              value: 'carousel',
-								              label: 'Carousel 走马灯'
-								            },
-								            {
-								              value: 'collapse',
-								              label: 'Collapse 折叠面板'
-								            }
-							            ]
-							        }
-				          		]
-				        	},
-					        {
-					          value: 'ziyuan',
-					          label: '资源',
-					          children: [
-						          {
-						            value: 'axure',
-						            label: 'Axure Components'
-						          },
-						          {
-						            value: 'sketch',
-						            label: 'Sketch Templates'
-						          },
-						          {
-						            value: 'jiaohu',
-						            label: '组件交互文档'
-						          }
-					          ]
-					        }
-				        ],
-				selectedOptions: [],
-				selectedOptions2: []*/
-			}
-		},
-		computed:{
-			options:function () {
-				let arr=[],
-					obj=null,
-					self=this;
-				this.factoryList.forEach( function(element, index) {
-					let	obj={};
-					// statements
-					obj.value='F'+index;
-					obj.label=element.strFactoryName;
-					obj.children=[];
+				DevVendorModelList:[],
+				DevVendorList:[],
+				curParCategory:{},
+				curSubCategory:{},
+				curDevVendor:{},
+				curDevVendorModel:{},
+				activeClassNum:{
+					FTNum:0,
+					WSNum:0,
+					MHNum:0,
+					ParCategoryNum:0,
+					SubCategoryNum:0,
+					VendorNum:0,
+					VendorModelNum:0
+				}
 
-				});
 			}
 		},
 		methods:{
 			toggleFactory:function (obj,index) {
 				this.currentFactory=obj;
-				this.activeFNum=index;
-				// this.activeWNum=0;
+				this.activeClassNum.FTNum=index;
+				// this.activeClassNum.WSNum=0;
 				//更新车间列表
 				fetch
 			        .Workshop_ListActive({
@@ -436,7 +181,7 @@
 			        },()=>alert('没有查到车间!'));
 			},
 			toggleWorkshop:function (obj,index) {
-				this.activeWNum=index;
+				this.activeClassNum.WSNum=index;
 				if(obj)  this.currentWorkshop=obj;
 				// this.showPaging=false;
 				fetch
@@ -457,7 +202,7 @@
 			        });
 			},
 			toggleMachine:function (obj,index) {
-				this.activeMNum=index;
+				this.activeClassNum.MHNum=index;
 				if(obj) {
 					this.currentMachine=obj;
 					console.log($(".Multistage-menu-wrap").removeClass('open'))
@@ -477,6 +222,62 @@
 			      	this.showPaging=true;
 			      });*/
 			},
+			async toggleParCategory (obj,index){
+				// console.log(obj);
+				this.curParCategory=obj;
+				this.activeClassNum.ParCategoryNum=index;
+				this.DevSubCategoryList=await DevcategoryListActive({
+                	"nPageIndex": 0,
+                	"nPageSize": -1,
+                	"uDevCategoryParentUUID":this.curParCategory.uDevCategoryUUID,
+                	"uUserUUID":-1});
+
+			},
+			toggleSubCagegory(obj,index){
+				let self=this;
+				this.curSubCategory=obj;
+				this.activeClassNum.SubCategoryNum=index;
+				//设备型号列表
+		    	DevModelListActive({
+		    				"nPageIndex": 0,
+		    				"nPageSize": -1,
+		    				"uDevTypeUUID": -1,
+							"uDevCategoryUUID":this.curSubCategory.uDevCategoryUUID,
+							"uVendorUUID":-1,
+							"uUserUUID":-1,
+		    			})
+		    			.then(data=>{
+		    				self.DevModelList=data;
+		    				let hash={};
+	    		    		self.DevVendorList = self.DevModelList.reduce(function (item,ele) {
+	    		    			hash[ele.uVendorUUID] ? '' : hash[ele.uVendorUUID] = true && item.push(ele);
+	    		    			return item;
+	    		    		},[]);
+	    		    		self.curDevVendor=self.DevVendorList[0];
+	    		    		self.DevVendorModelList=self.DevModelList.filter(function(ele,index) {
+	    		    			if(ele.uVendorUUID==self.curDevVendor.uVendorUUID){
+	    		    				return ele
+	    		    			}
+	    		    		});
+	    		    		self.curDevVendorModel=self.DevVendorModelList[0];
+		    			});
+			},
+			toggleVendor(obj,index){
+				let self=this;
+				// console.log(obj);
+				this.curDevVendor=obj;
+				this.activeClassNum.VendorNum=index;
+				this.DevVendorModelList=this.DevModelList.filter(function(ele,index) {
+					if(ele.uVendorUUID==self.curDevVendor.uVendorUUID){
+						return ele
+					}
+				});
+			},
+			toggleModel(obj,index){
+				console.log(obj);
+				this.curDevVendorModel=obj;
+				this.activeClassNum.VendorModelNum=index;
+			},
 			closePop:function () {
 				this.$emit('submit','close');
 			},
@@ -486,10 +287,10 @@
 			confirm:function () {
 				if (this.isAddDevice){
 					fetch.Device_Add({
-						uDevModelUUID:this.editDevice.uDevModelUUID,
-						uWorkstationUUID:this.editDevice.uWorkstationUUID,
+						uDevModelUUID:this.curDevVendorModel.uDevModelUUID,
+						uWorkstationUUID:this.currentMachine.uWorkstationUUID,
 						strDeviceName:this.editDevice.strDeviceName,
-						strDeviceID:'',
+						strDeviceID:this.editDevice.strDeviceID,
 						strDeviceSN:this.editDevice.strDeviceSN,
 					}).then(()=>this.$emit('submit','confirm'));
 				}
@@ -510,109 +311,91 @@
 				event.target.nextSibling.nextSibling.click();
 			},
 			menuClick:function () {
-				event.cancelBubble=true;
+				// event.cancelBubble=true;
+				// console.log(this.activeClassNum.MHNum)
 			}
 		},
-		created:function () {
+		beforeCreate:async function () {
 			let self=this;
-			// console.log(this.editDevice);
-			fetch
-			        .Factory_ListActive()
-			        .then(data=>this.factoryList=data.obj.objectlist);
+			//工厂列表
+			this.factoryList=await FactoryListActive();
 
-		  	fetch
-	        		.Workshop_ListActive({
+		  	this.workshopList=await WorkshopListActive({
 			        	"nPageIndex": 0,
 			            "nPageSize": -1,
 			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
 			            "uWorkshopTypeUUID":-1,
 		  				"uWorkshopAdminUUID":-1
 	        		})
-		        	.then(data=>this.workshopList=data.obj.objectlist);
 
-			fetch
-			        .Workstation_ListActive({
+			this.workstationList=await WorkstationListActive({
 		              	"nPageIndex": 0,
 		              	"nPageSize": -1,
 		              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
 		              	"uWorkstationTypeUUID":-1,
 		    			"uWorkstationAdminUUID":-1,
 		              })
-			        .then(data=>this.workstationList=data.obj.objectlist);
 
-	        fetch
-	              .Devcategory_ListActive({
+			// 设备父类
+	        this.DevParentCategoryList=await DevcategoryListActive({
 	              	"nPageIndex": 0,
 	              	"nPageSize": -1,
 	              	"uDevCategoryParentUUID":0,
-	              	"uUserUUID":-1})
-	              .then(data=>{
-	              	this.DevParentCategoryList=data.obj.objectlist;
-	              	this.currentCategory=this.DevParentCategoryList[0];
+	              	"uUserUUID":-1});
+	        console.log(this.DevParentCategoryList);
+          	this.curParCategory=this.DevParentCategoryList[0];
+          	//设备子类
+	        this.DevSubCategoryList=await DevcategoryListActive({
+                	"nPageIndex": 0,
+                	"nPageSize": -1,
+                	"uDevCategoryParentUUID":this.curParCategory.uDevCategoryUUID,
+                	"uUserUUID":-1});
 
-
-			        fetch
-		                .Devcategory_ListActive({
-		                	"nPageIndex": 0,
-		                	"nPageSize": -1,
-		                	"uDevCategoryParentUUID":1,
-		                	"uUserUUID":-1})
-		                .then(data=>{
-		                	self.DevSubCategoryList=data.obj.objectlist;
-		                });
-
-	            })
-
-
-
-	    	fetch
-	    			.DevModel_ListActive({
+	        this.curSubCategory=this.DevSubCategoryList[0];
+	        //设备型号列表
+	    	DevModelListActive({
 	    				"nPageIndex": 0,
 	    				"nPageSize": -1,
 	    				"uDevTypeUUID": -1,
-						"uDevCategoryUUID":1,
+						"uDevCategoryUUID":this.curSubCategory.uDevCategoryUUID,
 						"uVendorUUID":-1,
 						"uUserUUID":-1,
 	    			})
 	    			.then(data=>{
-	    				console.log(data)
-	    			})
+	    				self.DevModelList=data;
+	    				let hash={};
+    		    		self.DevVendorList = self.DevModelList.reduce(function (item,ele) {
+    		    			hash[ele.uVendorUUID] ? '' : hash[ele.uVendorUUID] = true && item.push(ele);
+    		    			return item;
+    		    		},[]);
+    		    		self.curDevVendor=self.DevVendorList[0];
+    		    		self.DevVendorModelList=self.DevModelList.filter(function(ele,index) {
+    		    			if(ele.uVendorUUID=='1'){
+    		    				return ele
+    		    			}
+    		    		});
+    		    		self.curDevVendorModel=self.DevVendorModelList[0];
+	    			});
+
 		},
-		/*beforeCreate:function () {
-
-			let self=this
-			fetch
-			        .Factory_ListActive()
-			        .then(data=>{
-			        	console.log(this.factoryList=data.obj.objectlist);
-
-						this.factoryList.forEach((ele,index)=>{
-							self.workshopListAll[index]=[];
-							fetch
-				        		.Workshop_ListActive({
-						        	"nPageIndex": 0,
-						            "nPageSize": -1,
-						            "uFactoryUUID":ele.uFactoryUUID,
-						            "uWorkshopTypeUUID":-1,
-					  				"uWorkshopAdminUUID":-1
-				        		})
-					        	.then(data=>{
-					        		self.workshopListAll[index]=data.obj.objectlist;
-					        		console.log(self.workshopListAll);
-					        	});
-						});
-			    	});
-
-			fetch
-		        .Workstation_ListActive({
-	              	"nPageIndex": 0,
-	              	"nPageSize": -1,
-	              	"uPLineUUID": -1,
-	              	"uWorkstationTypeUUID":-1,
-	    			"uWorkstationAdminUUID":-1,
-	              })
-		        .then(data=>console.log(data))
-		}*/
+		created:function () {
+			console.log(this.editDevice);
+			if(this.isAddDevice){
+				this.curDevVendorModel.uDevModelUUID=this.editDevice.uDevModelUUID;
+			}
+			let self=this;
+			setTimeout(function () {
+				self.activeClassNum.FTNum=self.factoryList.findIndex(function (ele,index) {
+					return ele.uFactoryUUID==self.currentFactory.uFactoryUUID;
+				});
+				self.activeClassNum.WSNum=self.workshopList.findIndex(function (ele,index) {
+					return ele.uWorkshopUUID==self.currentWorkshop.uWorkshopUUID;
+				});
+				self.activeClassNum.MHNum=self.workstationList.findIndex(function (ele,index) {
+					return ele.uWorkstationUUID==self.currentMachine.uWorkstationUUID;
+				});
+			},500)
+		}
 	}
 </script>
 <style>
@@ -727,7 +510,7 @@
 	    right: 10px;
 	    margin-top: 1px;
 	}
-	.menu-item-icon.isActive{
+	.menu-item.isActive{
 		color: #fff;
 		background-color: #20a0ff;
 	}
