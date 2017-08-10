@@ -1,6 +1,17 @@
 <template>
 	<div class="machineList-mg">
-		<delete-pop v-show="showDeletePop" @delete="MachineDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
+		<Modal
+		    v-model="modal1"
+		    title="删除机台"
+		    @on-ok="ok"
+		    @on-cancel="cancel">
+		    <Alert type="warning" show-icon>
+		      <template slot="desc">
+		        删除机台后,机台所属的工位设备等信息都将删除哦
+		      </template>
+		      您确定要删除<span class="warmTitle" style="color:#FA0E0E;font-weight: bolder;">{{deletePopContent}}</span>吗?
+		    </Alert>
+		</Modal>
 		<machine-edit v-if="showMachineEdit" @Edit="EditSubmit" :editType="editTypeTxt" :edited="editedMachine" :isAdd="isAddMachine" :factoryList="factoryList" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop"></machine-edit>
 		<div class="workshopSelect" >
 			<div class="row">
@@ -13,32 +24,34 @@
 			  </div>
 			  <div class="col-md-5 selectedWorkshop-oper">
 				<div>
-					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">{{selectedFactory.strFactoryName}}</button>
-					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					    <span class="caret"></span>
-					    <span class="sr-only">Toggle Dropdown</span>
-					  </button>
-					  <ul class="dropdown-menu">
-					  	<li v-for="(factory,index) in factoryList" @click="toggleFactory(factory,index)"><a >{{factory.strFactoryName}}</a></li>
-					    <li role="separator" class="divider"></li>
-					    <li><a>全部工厂</a></li>
-					  </ul>
-					</div>
+					<label>切换工厂:
+						<Dropdown style="margin-left: 20px" @on-click="toggleFactory">
+					        <Button type="primary">
+					            {{selectedFactory.strFactoryName}}
+					            <Icon type="arrow-down-b"></Icon>
+					        </Button>
+					        <Dropdown-menu slot="list" >
+					            <Dropdown-item :name="index" v-for="(factory,index) in factoryList">
+					            	{{factory.strFactoryName}}
+					            </Dropdown-item>
+					        </Dropdown-menu>
+					    </Dropdown>
+					</label>
 				</div>
 				<div>
-					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">{{selectedWorkshop.strWorkshopName}}</button>
-					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					    <span class="caret"></span>
-					    <span class="sr-only">Toggle Dropdown</span>
-					  </button>
-					  <ul class="dropdown-menu">
-					  	<li v-for="(workshop,index) in workshopList" @click="toggleWorkshop(workshop,index)"><a >{{workshop.strWorkshopName}}</a></li>
-					    <li role="separator" class="divider"></li>
-					    <li><a>全部车间</a></li>
-					  </ul>
-					</div>
+					<label>切换车间:
+						<Dropdown style="margin-left: 20px" @on-click="toggleWorkshop">
+					        <Button type="primary">
+					            {{selectedWorkshop.strWorkshopName}}
+					            <Icon type="arrow-down-b"></Icon>
+					        </Button>
+					        <Dropdown-menu slot="list" >
+					            <Dropdown-item :name="index" v-for="(workshop,index) in workshopList">
+					            	{{workshop.strWorkshopName}}
+					            </Dropdown-item>
+					        </Dropdown-menu>
+					    </Dropdown>
+					</label>
 				</div>
 			  </div>
 			</div>
@@ -47,20 +60,20 @@
 			<table class="machineList-table" border="0" style="">
 				<thead>
 					<tr>
-						<th></th>
+						<!-- <th></th> -->
 						<th><span>机台编号</span></th>
 						<th><span>机台名称</span></th>
 						<th><span>机台主管</span></th>
 						<th><span>机台类型</span></th>
 						<th><span>操作
-							<button class="btn btn-default addMachineList" @click="machineEdit(null,'add')">
-							<i class="fa fa-plus"></i>添加机台</button>
-						</span></th>
+							<Button class="addMachineList" type="primary" icon="plus-round" @click="machineEdit(null,'add')">添加机台</Button>
+							</span>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="(machine,index) in machineList">
-						<td><input type="checkbox"></td>
+						<!-- <td><input type="checkbox"></td> -->
 						<td><span>{{machine.strWorkstationID}}</span></td>
 						<td><span>{{machine.strWorkstationName}}</span></td>
 						<td><span>{{machine.manager}}</span></td>
@@ -72,21 +85,21 @@
 							<span class="font-icon-btn" @click="MachineDelete(machine)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
 							</span>
-							<span class="font-icon-btn" title="查看详情">
+							<!-- <span class="font-icon-btn" title="查看详情">
 							  <i class="fa fa-angle-double-down fa-lg"></i>
-							</span>
+							</span> -->
 						</td>
 					</tr>
 				</tbody>
 				<tfoot>
-					<tr>
+					<!-- <tr>
 						<td><input type="checkbox"></td>
 						<td>
 							<button class="btn btn-default">
 							  <i class="fa fa-trash-o fa-sm">删除</i>
 							</button>
 						</td>
-					</tr>
+					</tr> -->
 				</tfoot>
 			</table>
 			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
@@ -99,39 +112,65 @@
   	import paging from '@/components/Paging'
   	import machineEdit from'@/components/MachineListEdit'
 	import fetch from '@/fetch/fetch'
+	import {
+    	FactoryListActive,
+    	WorkshopListActive,
+    	WorkstationListActive,
+    	Workstation_Inactive,
+    	DevModelListActive,
+    	DevcategoryListActive,
+    	DeviceListActive
+    } from '@/api/getData'
 
 	export default{
 		name:'machineList',
 		data(){
-			let	factoryList,
-				workshopList,
-				machineList;
 			return {
-			  workshopList,
-			  factoryList,
-			  machineList,
+			  workshopList:[],
+			  factoryList:[],
+			  machineList:[],
 			  selectedFactory:{},
 			  selectedWorkshop:{},
+			  editedMachine:{},
+			  deletePopContent:'',
+			  editTypeTxt:'机台',
 			  showMachineEdit:false,
-			  showDeletePop:false,
 			  showPaging:false,
 			  isAddMachine:false,
-			  deletePopContent:'',
-			  deletePopTitle:'删除机台',
-			  editTypeTxt:'机台',
-			  editedMachine:{},
 			  totalCount:0,
 			  pageItems:5,
 			  items:5,
-			  currentPage:0
+			  currentPage:0,
+			  modal1:false
 			}
 		},
 		components:{
-			'delete-pop':deletepop,
 			'machine-edit':machineEdit,
 			paging
 		},
 		methods:{
+			ok (){
+			  	let self=this;
+			  	Workstation_Inactive({uWorkstationUUID:this.DelWorkstationID})
+				           .then(function () {
+				             WorkstationListActive({
+				                   	 "nPageIndex":self.currentPage,
+					              	 "nPageSize":self.pageItems,
+					              	 "uPLineUUID":self.selectedWorkshop.uWorkshopUUID,
+					              	 "uWorkstationTypeUUID":-1,
+					    			 "uWorkstationAdminUUID":-1,
+		    						})
+				                   .then(data=>{
+				                   		console.log(self.machineList=data.obj.objectlist);
+				                   		self.totalCount=Math.ceil(data.obj.totalcount/self.items);
+			        					self.showPaging=true;
+										self.$Message.info('删除成功');
+				                   });
+				            });
+			},
+			cancel () {
+			  this.$Message.info('点击了取消');
+			},
 			togglePage:function (index) {
 				fetch
 	  		        .Workstation_ListActive({
@@ -144,8 +183,8 @@
 	  		        .then(data=>this.machineList=data.obj.objectlist);
 	  		    this.currentPage=index;
 			},
-			toggleFactory:function (factory,index) {
-				this.selectedFactory=factory;
+			toggleFactory:function (index) {
+				this.selectedFactory=this.factoryList[index];
 				//更新车间列表
 				fetch
 			        .Workshop_ListActive({
@@ -171,8 +210,8 @@
 	              })
 		        .then(data=>this.machineList=data.obj.objectlist);*/
 			},
-			toggleWorkshop:function (workshop,index) {
-				if(workshop)  this.selectedWorkshop=workshop;
+			toggleWorkshop:function (index) {
+				if(index>=0)  this.selectedWorkshop=this.workshopList[index];
 				this.showPaging=false;
 				fetch
 			        .Workstation_ListActive({
@@ -219,34 +258,9 @@
 				this.showMachineEdit=!this.showMachineEdit;
 			},
 			MachineDelete:function (obj,str) {
-				let _this=this;
-				this.showDeletePop=!this.showDeletePop;
-				if (str) {
-				  if(str=='close'||str=='cancel');
-				    else if(str=='confirm'){
-					  this.showPaging=false;
-				      fetch.Workstation_Inactive({uWorkstationUUID:this.DelWorkstationID})
-				           .then(function () {
-				             fetch
-				                   .Workstation_ListActive({
-				                   	 "nPageIndex":_this.currentPage,
-					              	 "nPageSize":_this.pageItems,
-					              	 "uPLineUUID":_this.selectedWorkshop.uWorkshopUUID,
-					              	 "uWorkstationTypeUUID":-1,
-					    			 "uWorkstationAdminUUID":-1,
-		    						})
-				                   .then(data=>{
-				                   		console.log(_this.machineList=data.obj.objectlist);
-				                   		_this.totalCount=Math.ceil(data.obj.totalcount/_this.items);
-			        					_this.showPaging=true;
-				                   });
-				            });
-				    }
-				}
-				else {
-				  this.deletePopContent=obj.strWorkstationName;
-				  this.DelWorkstationID=obj.uWorkstationUUID;
-				}
+				this.modal1 = true;
+				this.deletePopContent=obj.strWorkstationName;
+				this.DelWorkstationID=obj.uWorkstationUUID;
 			}
 		},
 		beforeCreate:function () {

@@ -1,12 +1,23 @@
 <template>
 	<div class="deviceList-mg">
+		<Modal
+		    v-model="modal1"
+		    title="删除机台"
+		    @on-ok="ok"
+		    @on-cancel="cancel">
+		    <Alert type="warning" show-icon>
+		      <template slot="desc">
+		        删除机台后,机台所属的工位设备等信息都将删除哦
+		      </template>
+		      您确定要删除<span class="warmTitle" style="color:#FA0E0E;font-weight: bolder;">{{deletePopContent}}</span>吗?
+		    </Alert>
+		</Modal>
 		<device-edit v-if='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop" :selectedMachine="selectedMachine" :factoryList="factoryList"></device-edit>
-		<delete-pop v-show='showDeletePop' @delete="deviceDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
 		<div class="Filtering">
 			<div class="row">
 				<div class="col-md-10">
 					<div class="InsLocation">
-						<div>安装位置:
+						<!-- <div>安装位置:
 							<div class="btn-group">
 							  <button type="button" class="btn btn-default">{{selectedFactory.strFactoryName}}</button>
 							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -43,7 +54,42 @@
 							    <li><a href="#">全部机台</a></li>
 							  </ul>
 							</div>
-						</div>
+						</div> -->
+						<label>安装位置:
+							<Dropdown style="margin-left: 20px" @on-click="toggleFactory">
+						        <Button type="primary">
+						            {{selectedFactory.strFactoryName}}
+						            <Icon type="arrow-down-b"></Icon>
+						        </Button>
+						        <Dropdown-menu slot="list" >
+						            <Dropdown-item :name="index" v-for="(factory,index) in factoryList">
+						            	{{factory.strFactoryName}}
+						            </Dropdown-item>
+						        </Dropdown-menu>
+						    </Dropdown>
+						    <Dropdown style="margin-left: 20px" @on-click="toggleWorkshop">
+						        <Button type="primary">
+						            {{selectedWorkshop.strWorkshopName}}
+						            <Icon type="arrow-down-b"></Icon>
+						        </Button>
+						        <Dropdown-menu slot="list" >
+						            <Dropdown-item :name="index" v-for="(workshop,index) in workshopList">
+						            	{{workshop.strWorkshopName}}
+						            </Dropdown-item>
+						        </Dropdown-menu>
+						    </Dropdown>
+						    <Dropdown style="margin-left: 20px" @on-click="toggleMachine">
+						        <Button type="primary">
+						            {{selectedMachine.strWorkstationName}}
+						            <Icon type="arrow-down-b"></Icon>
+						        </Button>
+						        <Dropdown-menu slot="list" >
+						            <Dropdown-item :name="index" v-for="(machine,index) in machineList">
+						            	{{machine.strWorkstationName}}
+						            </Dropdown-item>
+						        </Dropdown-menu>
+						    </Dropdown>
+						</label>
 					</div>
 					<div class="ProModel">
 						<!-- <div>产品型号:
@@ -87,8 +133,7 @@
 					</div>
 				</div>
 				<div class="col-md-2">
-					<button class="btn btn-default addPlant" @click="deviceEdit(null,true)">
-        			<i class="fa fa-plus"></i>添加设备</button>
+        			<Button  type="primary" icon="plus-round" @click="deviceEdit(null,true)">添加设备</Button>
 				</div>
 			</div>
 		</div>
@@ -102,11 +147,12 @@
 						<div class="specification col-md-3">
 							<p><span>名称:</span>{{device.strDeviceName}}</p>
 							<p><span>品牌:</span>{{device.strVendorShortName}}</p>
-							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
+							<p><span>型号:</span>{{device.strDevModelName}}</p>
 							<p>编号: <strong></strong> {{device.strDeviceID}}</p>
 						</div>
 						<div class="model col-md-5">
-							<strong><span></span>{{device.strDevModelName}}</strong>
+							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
+							<!-- <strong><span></span>{{device.strDevModelName}}</strong> -->
 							<span><strong></strong>{{device.strWorkshopName}}</span>
 							<span><strong>{{device.strWorkstationName}}</strong></span>
 						</div>
@@ -141,21 +187,18 @@
     	WorkstationListActive,
     	DevModelListActive,
     	DevcategoryListActive,
-    	DeviceListActive
+    	DeviceListActive,
+    	Device_Inactive
     } from '@/api/getData'
 
 	export default{
 		name:'machineList',
 		data(){
-			let	deviceList,
-				factoryList,
-				workshopList,
-				machineList;
 			return {
-				deviceList,
-				workshopList,
-				factoryList,
-				machineList,
+				factoryList:[],
+				deviceList:[],
+				workshopList:[],
+				machineList:[],
 				editDevice:{},
 				selectedFactory:{},
 				selectedWorkshop:{},
@@ -170,8 +213,7 @@
           		pageItems:5,
           		items:5,
           		currentPage:0,
-          		options:[],
-          		selectedOptions:{}
+			    modal1:false
 			}
 		},
 		components:{
@@ -180,6 +222,26 @@
 			paging
 		},
 		methods:{
+			ok (){
+			  	let self=this;
+			  	Device_Inactive({uDeviceUUID:this.DelDeviceID})
+		           .then(function () {
+			            DeviceListActive({
+						      	"nPageIndex": self.currentPage,
+						      	"nPageSize": 5,
+						      	"uDevModelUUID": -1,
+						      	"uWorkstationUUID":self.selectedMachine.uWorkstationUUID
+						      	})
+						      .then(data=>{
+						      	self.deviceList=data.obj.objectlist;
+					      		self.totalCount=Math.ceil(data.obj.totalcount/self.items);
+								self.$Message.info('删除设备成功');
+						      });
+						});
+			},
+			cancel () {
+			  this.$Message.info('点击了取消');
+			},
 			togglePage:function (index) {
 				this.currentPage=index;
 				fetch
@@ -193,8 +255,8 @@
 				      	console.log(this.deviceList=data.obj.objectlist);
 				      });
 			},
-			toggleFactory:function (obj) {
-				this.selectedFactory=obj;
+			toggleFactory:function (index) {
+				this.selectedFactory=this.factoryList[index];
 				//更新车间列表
 				fetch
 			        .Workshop_ListActive({
@@ -210,8 +272,8 @@
 					    this.toggleWorkshop();
 			        },()=>alert('没有查到车间!'));
 			},
-			toggleWorkshop:function (obj) {
-				if(obj)  this.selectedWorkshop=obj;
+			toggleWorkshop:function (index) {
+				if(index>=0)  this.selectedWorkshop=this.workshopList[index];
 				// this.showPaging=false;
 				fetch
 			        .Workstation_ListActive({
@@ -230,8 +292,8 @@
 			        	// this.showPaging=true;
 			        });
 			},
-			toggleMachine:function (obj) {
-				if(obj) this.selectedMachine=obj;
+			toggleMachine:function (index) {
+				if(index>=0) this.selectedMachine=this.machineList[index];
 			    this.showPaging=false;
 				fetch
 			      .Device_ListActive({
@@ -246,7 +308,6 @@
 			      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
 			      	this.showPaging=true;
 			      });
-
 			},
 			deviceEdit:function (obj,addDevice) {
 			  if (addDevice){
@@ -280,7 +341,11 @@
 			    }
 			},
 			deviceDelete:function (obj,str) {
-				let _this=this;
+				this.modal1 = true;
+				this.deletePopContent=obj.strDeviceName;
+				this.DelDeviceID=obj.uDeviceUUID;
+
+				/*let _this=this;
 				this.showDeletePop=!this.showDeletePop;
 				if (str) {
 				  if(str=='close'||str=='cancel');
@@ -301,7 +366,7 @@
 				else {
 				  this.deletePopContent=obj.strDeviceName;
 				  this.DelDeviceID=obj.uDeviceUUID;
-				}
+				}*/
 			}
 		},
 		async beforeCreate() {
@@ -317,13 +382,14 @@
 		  				"uWorkshopAdminUUID":-1
 	        		});
 			this.selectedWorkshop=this.workshopList[0];
-			this.machineList=await WorkstationListActive({
+			let list=await WorkstationListActive({
 		              	"nPageIndex": 0,
 		              	"nPageSize": -1,
 		              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
 		              	"uWorkstationTypeUUID":-1,
 		    			"uWorkstationAdminUUID":-1,
 		              });
+			this.machineList=list.obj.objectlist;
 			this.selectedMachine=this.machineList[0];
 			DeviceListActive({
 					      	"nPageIndex": 0,
@@ -337,7 +403,6 @@
 					      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
 					      	this.showPaging=true;
 					      });
-
 		},
 		created(){
 			// console.log(this.deviceList);

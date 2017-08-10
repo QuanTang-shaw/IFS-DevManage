@@ -1,16 +1,19 @@
 <template>
 	<div>
 		报表管理
-		<el-tree
-		  :data="data2"
-		  :props="defaultProps"
-		  show-checkbox
-		  node-key="id"
-		  default-expand-all
-		  :expand-on-click-node="false"
-		  :render-content="renderContent"
-		   class="test">
-		</el-tree>
+		<Dropdown style="margin-left: 20px" @on-click="click(123)">
+        <Button type="primary">
+            下拉菜单
+            <Icon type="arrow-down-b"></Icon>
+        </Button>
+        <Dropdown-menu slot="list" >
+            <Dropdown-item >驴打滚</Dropdown-item>
+            <Dropdown-item>炸酱面</Dropdown-item>
+            <Dropdown-item disabled>豆汁儿</Dropdown-item>
+            <Dropdown-item>冰糖葫芦</Dropdown-item>
+            <Dropdown-item divided>北京烤鸭</Dropdown-item>
+        </Dropdown-menu>
+    </Dropdown>
 	</div>
 </template>
 
@@ -62,6 +65,9 @@
       }
     },
     methods: {
+      click(t){
+        alert(t);
+      },
       append(store, data) {
         store.append({ id: id++, label: 'testtest', children: [] }, data);
       },

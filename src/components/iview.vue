@@ -2,23 +2,17 @@
     <div class="layout">
         <Row type="flex">
             <i-col span="5" class="layout-menu-left">
-                <Menu active-name="1-2" theme="dark" width="auto" :open-names="['1']">
-                    <div class="layout-logo-left"></div>
+                <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']" @on-select="router">
+                    <div class="layout-logo-left">
+                    </div>
                     <Submenu name="1">
                         <template slot="title">
                             <Icon type="ios-navigate"></Icon>
                             生产设备管理
                         </template>
-                        <Menu-item name="1-1">
-                            <router-link class="router-link" to="/">工厂管理</router-link>
-                        </Menu-item>
-                        <Menu-item name="1-2">
-                            <router-link class="router-link" to="/workshop">
-                            车间管理
-                            </router-link>
-                        </Menu-item>
-                        <Menu-item name="1-">
-                            <router-link class="router-link" to="/machineList">机台管理</router-link>
+                        <Menu-item :name="`1-${index+1}`" v-for="(menu,index) in routerMenu.factoryDevManage" >
+                            {{menu.text}}
+                            <!-- <router-link class="router-link" to="/">工厂管理</router-link> -->
                         </Menu-item>
                     </Submenu>
                     <Submenu name="2">
@@ -26,18 +20,17 @@
                             <Icon type="ios-keypad"></Icon>
                             报表管理
                         </template>
-                        <Menu-item name="2-1">选项 1</Menu-item>
-                        <Menu-item name="2-2">选项 2</Menu-item>
+                        <Menu-item :name="`2-${index+1}`" v-for="(menu,index) in routerMenu.reportManage">{{menu.text}}</Menu-item>
                     </Submenu>
                 </Menu>
             </i-col>
             <i-col span="19">
-                <div class="layout-header"></div>
+                <!-- <div class="layout-header"></div> -->
                 <div class="layout-breadcrumb">
                     <Breadcrumb>
-                        <Breadcrumb-item href="#">首页</Breadcrumb-item>
-                        <Breadcrumb-item href="#">应用中心</Breadcrumb-item>
-                        <Breadcrumb-item>某应用</Breadcrumb-item>
+                        <!-- <Breadcrumb-item href="#">首页</Breadcrumb-item> -->
+                        <Breadcrumb-item href="#">{{BreadcrumbText}}</Breadcrumb-item>
+                        <Breadcrumb-item>{{SubBreadcrumbText}}</Breadcrumb-item>
                     </Breadcrumb>
                 </div>
                 <div class="layout-content">
@@ -54,6 +47,72 @@
 </template>
 <script>
     export default {
+        data(){
+            return{
+                routerMenu:{
+                    factoryDevManage:[
+                      {
+                        path:'/',
+                        text:'工厂管理',
+                        isActive:false
+                      },
+                      {
+                        path:'/workshop',
+                        text:'车间管理',
+                        isActive:false
+                      },
+                      {
+                        path:'/machineList',
+                        text:'机台管理',
+                        isActive:false
+                      },
+                      {
+                        path:'/deviceCategory',
+                        text:'设备类别',
+                        isActive:false
+                      },
+                      {
+                        path:'/deviceManufacturers',
+                        text:'设备厂商',
+                        isActive:false
+                      },
+                      {
+                        path:'/deviceList',
+                        text:'设备列表',
+                        isActive:false
+                      }
+                    ],
+                    reportManage:[{
+                         path:'/report',
+                         text:'报表管理',
+                         isActive:false
+                    }]
+                },
+                BreadcrumbText:'生产设备管理',
+                SubBreadcrumbText:'工厂管理',
+            }
+        },
+        methods:{
+            router:function(name){
+                let str=name.split(''),
+                    item0=parseInt(str.shift()),
+                    item1=parseInt(str.pop());
+                if(item0==1){
+                    this.$router.push(this.routerMenu.factoryDevManage[item1-1].path);
+                    this.BreadcrumbText='生产设备管理';
+                    this.SubBreadcrumbText=this.routerMenu.factoryDevManage[item1-1].text;
+                }
+                else{
+                    this.$router.push(this.routerMenu.reportManage[item1-1].path);
+                    this.BreadcrumbText='报表管理';
+                    this.SubBreadcrumbText=this.routerMenu.reportManage[item1-1].text;
+                }
+                console.log(this.$router)
+            }
+        },
+        created(){
+            this.$router.push(this.routerMenu.factoryDevManage[0].path);
+        }
     }
 </script>
 <style scoped>
@@ -61,6 +120,8 @@
         border: 1px solid #d7dde4;
         background: #f5f7f9;
         position: relative;
+        /*width:90%;*/
+        /*margin:0 auto;*/
     }
     .layout-breadcrumb{
         padding: 10px 15px 0;
@@ -74,6 +135,7 @@
     }
     .layout-content-main{
         padding: 10px;
+        font-size:20px;
     }
     .layout-copy{
         text-align: center;
@@ -94,5 +156,11 @@
         background: #5b6270;
         border-radius: 3px;
         margin: 15px auto;
+    }
+    .viewTwo{
+        min-height:490px;
+    }
+    .warmTitle{
+        color: #FC0808;
     }
 </style>

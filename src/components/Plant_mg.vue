@@ -1,14 +1,24 @@
 <template>
   <div class="plantManagement">
     <plant-edit v-if='showPlantEdit' @submit="plantEditSub" :editPlant="editPlant" :isAddPlant="isAddPlant"> </plant-edit>
-    <delete-pop v-show='showDeletePop' @delete="plantDelete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
+    <Modal
+        v-model="modal1"
+        title="删除工厂"
+        @on-ok="ok"
+        @on-cancel="cancel">
+        <Alert type="warning" show-icon>
+          <template slot="desc">
+            删除工厂后,工厂所属的车间、机台、设备等信息都将删除
+          </template>
+          您确定要删除<span class="warmTitle" style="color:#FA0E0E;font-weight: bolder;">{{deletePopContent}}</span>吗?
+        </Alert>
+    </Modal>
     <div>
-      <div class="btn-group plantManagement-toggle" role="group" aria-label="...">
-        <button type="button" class="btn btn-default">厂区列表</button>
-        <button type="button" class="btn btn-default">厂区地图</button>
-      </div>
-      <button class="btn btn-default addPlant" @click="plantEdit(null,true)">
-        <i class="fa fa-plus"></i>添加工厂</button>
+      <Button-group class=" plantManagement-toggle">
+          <Button type="primary">厂区列表</Button>
+          <Button>厂区地图</Button>
+      </Button-group>
+      <Button class="addPlant" type="primary" icon="plus-round" @click="plantEdit(null,true)">添加工厂</Button>
     </div>
     <div class="plant-list">
       <ul class="list-group">
@@ -34,9 +44,9 @@
                 <span class="font-icon-btn" @click="plantDelete(plant)">
                   <i class="fa fa-trash-o fa-lg" title="删除"></i>
                 </span>
-                <span class="font-icon-btn" title="查看详情">
+                <!-- <span class="font-icon-btn" title="查看详情">
                   <i class="fa fa-list-alt fa-lg"></i>
-                </span>
+                </span> -->
             </div>
           </div>
         </li>
@@ -49,35 +59,40 @@
   import store from '@/store/store'
   import fetch from '@/fetch/fetch'
   import plantEdit from '@/components/PlantEdit'
-  // import addplant from '@/components/AddPlant'
-  import deletepop from '@/components/Delete_pop'
+  import {FactoryListActive} from '@/api/getData'
   export default {
     name: 'plantList',
     data () {
-      let editPlant={},
-          plantList,
-          showPlantEdit=false,
-          showDeletePop=false,
-          deletePopTitle='删除工厂',
-          deletePopContent='';
       return {
-        plantList,
-        showPlantEdit,
-        showDeletePop,
-        deletePopTitle,
-        deletePopContent,
-        editPlant,
-        test:null,
+        plantList:[],
+        deletePopContent:'',
+        editPlant:{},
+        showPlantEdit:false,
+        showDeletePop:false,
         isAddPlant:false,
-        DelFactoryID:null
+        DelFactoryID:null,
+        modal1: false
       }
     },
     components:{
-      'plant-edit':plantEdit,
-      'delete-pop':deletepop,
-      // addplant
+      'plant-edit':plantEdit
     },
     methods:{
+      ok (){
+        let self=this;
+        fetch.Factory_Inactive({uFactoryUUID:this.DelFactoryID})
+                   .then(function (a) {
+                     fetch
+                           .Factory_ListActive()
+                           .then(data=>{
+                            console.log(self.plantList=data.obj.objectlist);
+                            self.$Message.info('删除成功');
+                          });
+                    });
+      },
+      cancel () {
+        this.$Message.info('点击了取消');
+      },
       plantEdit:function (index,addplant) {
         if (addplant){
           this.isAddPlant=true;
@@ -102,42 +117,18 @@
           else if(str=='confirm'){
           }
       },
-      plantDelete:function (obj,str) {
-        let _this=this;
-        this.showDeletePop=!this.showDeletePop;
-        if (str) {
-          if(str=='close'||str=='cancel');
-            else if(str=='confirm'){
-              fetch.Factory_Inactive({uFactoryUUID:this.DelFactoryID})
-                   .then(function (a) {
-                     fetch
-                           .Factory_ListActive()
-                           .then(data=>console.log(_this.plantList=data.obj.objectlist));
-                    });
-            }
-        }
-        else {
-          this.deletePopContent=obj.strFactoryName;
-          this.DelFactoryID=obj.uFactoryUUID;
-        }
-      },
-      addPlant:function () {
-        this.showPlantEdit=true;
+      plantDelete:function (obj) {
+        this.modal1 = true;
+        this.deletePopContent=obj.strFactoryName;
+        this.DelFactoryID=obj.uFactoryUUID;
       }
     },
-    created:function () {
-
-    },
-    beforeCreate:function () {
-      fetch
-            .Factory_ListActive()
-            .then(data=>console.log(this.plantList=data.obj.objectlist));
-      fetch.Factory_Detail({uFactoryUUID:98})
-           .then(da=>console.log(da),err=>console.log(err));
+    async beforeCreate() {
+      this.plantList=await FactoryListActive();
     }
   }
 </script>
-<style>
+<style >
   .plantManagement{
     /*border:solid 1px;*/
     font-size:.7em;

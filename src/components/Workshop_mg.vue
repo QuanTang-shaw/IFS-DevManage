@@ -1,7 +1,18 @@
 <template>
 	<div class="workshopManagement">
-		<delete-pop v-show='showDeletePop' @delete="wsDeletePop" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></delete-pop>
 		<workshop-edit v-if='showWSEdit'  @Edit="EditSubmit" :editType="editTypeTxt" :isAdd="isAdd" :edited="editedWorkshop" :factoryList="factoryList" :selectedFactory="selectedPlant"></workshop-edit>
+		<Modal
+		    v-model="modal1"
+		    title="删除车间"
+		    @on-ok="ok"
+		    @on-cancel="cancel">
+		    <Alert type="warning" show-icon>
+		      <template slot="desc">
+		        删除工厂后,工厂所属的车间、机台、设备等信息都将删除
+		      </template>
+		      您确定要删除<span class="warmTitle" style="color:#FA0E0E;font-weight: bolder;">{{deletePopContent}}</span>吗?
+		    </Alert>
+		</Modal>
 		<div class="workshop-plantSelect">
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
@@ -12,26 +23,16 @@
 			    <p><span>地址:</span> {{selectedPlant.strFactoryAddress}}</p>
 			  </div>
 			  <div class="col-md-5 selectedPlant-oper">
-				<!-- <label for="">切换厂区:
-					<select name="selectPlant" id="" v-model="selectedIndex" @change="togglePlant">
-						<option :value="index" v-for="(plant,index) in factoryList">{{plant.name}}</option>
-					</select>
-				</label> -->
 				<label>切换工厂:
-					<div class="btn-group">
-					  <button type="button" class="buttonDown btn btn-default">{{selectedPlant.strFactoryName}}</button>
-					  <button type="button" class="buttonDown btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					    <span class="caret"></span>
-					    <span class="sr-only">Toggle Dropdown</span>
-					  </button>
-					  <ul class="dropdown-menu">
-					  	<li v-for="(factory,index) in factoryList" @click="togglePlant(index)">
-					  		<a>{{factory.strFactoryName}}</a>
-					  	</li>
-					    <li role="separator" class="divider"></li>
-					    <li><a>全部工厂</a></li>
-					  </ul>
-					</div>
+					<Dropdown style="margin-left: 20px" @on-click="togglePlant">
+				        <Button type="primary">
+				            {{selectedPlant.strFactoryName}}
+				            <Icon type="arrow-down-b"></Icon>
+				        </Button>
+				        <Dropdown-menu slot="list" >
+				            <Dropdown-item :name="index" v-for="(factory,index) in factoryList">{{factory.strFactoryName}}</Dropdown-item>
+				        </Dropdown-menu>
+				    </Dropdown>
 				</label>
 			  </div>
 			</div>
@@ -40,20 +41,21 @@
 			<table class="workshopTable" border="0">
 				<thead>
 					<tr>
-						<th></th>
+						<!-- <th></th> -->
 						<th>车间编号</th>
 						<th>车间名称</th>
 						<th>车间主管</th>
 						<th>车间类型</th>
 						<th> <span>操作</span>
-							<button class="btn btn-default addWorkshop" @click="WsEdit(null,'add')">
-							<i class="fa fa-plus"></i>添加车间</button>
+							<!-- <button class="btn btn-default addWorkshop" @click="WsEdit(null,'add')">
+							<i class="fa fa-plus"></i>添加车间</button> -->
+							<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button>
 						</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="(workshop,index) in workshopList">
-						<td><input type="checkbox"></td>
+						<!-- <td><input type="checkbox"></td> -->
 						<td>
 							<span>
 								{{workshop.strWorkshopID}}
@@ -87,16 +89,6 @@
 						</td>
 					</tr>
 				</tbody>
-				<tfoot>
-					<tr>
-						<td style="text-align:;"><input type="checkbox">全选</td>
-						<td>
-							<button class="btn btn-default">
-							  <i class="fa fa-trash-o fa-sm">删除</i>
-							</button>
-						</td>
-					</tr>
-				</tfoot>
 			</table>
 			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
 		</div>
@@ -108,38 +100,61 @@
   	import paging from '@/components/Paging'
 	import deletepop from '@/components/Delete_pop'
 	import workshopEdit from '@/components/WorkshopEdit'
-
+	import {
+    	FactoryListActive,
+    	WorkshopListActive,
+    	WorkshopInactive,
+    	WorkstationListActive,
+    	DevModelListActive,
+    	DevcategoryListActive,
+    	DeviceListActive
+    } from '@/api/getData'
 	export default{
 		name:'workshoplist',
 		data () {
-		  let workshopList,
-		  	  factoryList,
-		  	  deletePopContent='';
-		  return {
-		    workshopList,
-		    factoryList,
-		    selectedIndex:0,
-		    selectedPlant:{},
-		    showWSEdit:false,
-		    showDeletePop:false,
-		    isAdd:false,
-		    showPaging:false,
-		    deletePopTitle:'删除车间',
-		    editTypeTxt:'车间',
-		    deletePopContent:'',
-		    editedWorkshop:{},
-		    totalcount:0,
-		    pageItems:5,
-		    items:5,
-		    currentPage:0
-		  }
+			return {
+			    workshopList:[],
+			    factoryList:[],
+			    selectedPlant:{},
+			    editedWorkshop:{},
+			    showWSEdit:false,
+			    showDeletePop:false,
+			    isAdd:false,
+			    showPaging:false,
+			    editTypeTxt:'车间',
+			    deletePopContent:'',
+			    totalcount:0,
+			    pageItems:5,
+			    items:5,
+			    currentPage:0,
+			    modal1:false
+			}
 		},
 		components:{
 			paging,
-			'delete-pop':deletepop,
 			'workshop-edit':workshopEdit
 		},
 		methods:{
+			ok (){
+			  	let self=this;
+			  	WorkshopInactive({uWorkshopUUID:this.DelWorkshopID})
+		           .then(function (a) {
+		             fetch
+		                   .Workshop_ListActive({
+				              "nPageIndex":self.currentPage,
+    			              "nPageSize":self.items,
+    			              "uFactoryUUID":self.selectedPlant.uFactoryUUID,
+    			              "uWorkshopTypeUUID":-1,
+    		  				  "uWorkshopAdminUUID":-1})
+		                   .then(data=>{
+		                   		self.workshopList=data.obj.objectlist;
+			  					self.$Message.info('删除成功');
+		                   });
+		            });
+			},
+			cancel () {
+			  this.$Message.info('点击了取消');
+			},
 			togglePlant:function (index) {
 		  	 	this.selectedPlant=this.factoryList[index];
     			this.showPaging=false;
@@ -174,28 +189,9 @@
 			    this.currentPage=index;
 			},
 			wsDeletePop:function (obj,str) {
-				let _this=this;
-				this.showDeletePop=!this.showDeletePop;
-				if (str) {
-				  if(str=='close'||str=='cancel');
-				    else if(str=='confirm'){
-				      fetch.Workshop_Inactive({uWorkshopUUID:this.DelWorkshopID})
-				           .then(function (a) {
-				             fetch
-				                   .Workshop_ListActive({
-						              "nPageIndex":_this.currentPage,
-		    			              "nPageSize":_this.items,
-		    			              "uFactoryUUID":_this.selectedPlant.uFactoryUUID,
-		    			              "uWorkshopTypeUUID":-1,
-		    		  				  "uWorkshopAdminUUID":-1})
-				                   .then(data=>console.log(_this.workshopList=data.obj.objectlist));
-				            });
-				    }
-				}
-				else {
-				  this.deletePopContent=obj.strWorkshopName;
-				  this.DelWorkshopID=obj.uWorkshopUUID;
-				}
+				this.modal1 = true;
+				this.deletePopContent=obj.strWorkshopName;
+				this.DelWorkshopID=obj.uWorkshopUUID;
 			},
 			WsEdit:function (index,add) {
 				if(add){
@@ -225,28 +221,22 @@
 				this.showWSEdit=!this.showWSEdit;
 			}
 		},
-		beforeCreate:function () {
+		async beforeCreate() {
 			//初始化,获取工厂一下面的车间
-
-		  fetch
-		        .Factory_ListActive()
+		  	this.factoryList=await FactoryListActive();
+			this.selectedPlant=this.factoryList[0];
+			fetch
+		        .Workshop_ListActive({
+		              "nPageIndex": 0,
+		              "nPageSize": this.items,
+		              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+		              "uWorkshopTypeUUID":-1,
+	  				  "uWorkshopAdminUUID":-1
+  				  })
 		        .then(data=>{
-		        	console.log(this.factoryList=data.obj.objectlist);
-		        	this.selectedPlant=this.factoryList[0];
-
-	    			fetch
-    			        .Workshop_ListActive({
-    			              "nPageIndex": 0,
-    			              "nPageSize": this.items,
-    			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
-    			              "uWorkshopTypeUUID":-1,
-    		  				  "uWorkshopAdminUUID":-1
-    	  				  })
-    			        .then(data=>{
-    			        	console.log(this.workshopList=data.obj.objectlist);
-    			        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-    			        	this.showPaging=true;
-    			        });
+		        	this.workshopList=data.obj.objectlist;
+		        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
+		        	this.showPaging=true;
 		        });
 		}
 	}

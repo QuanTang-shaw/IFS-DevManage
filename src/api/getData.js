@@ -39,7 +39,7 @@ import {exec_getData as get} from '@/fetch/fetch'
 	              "Handler_Workstation_V1.ashx",
 	              "Workstation_ListActive",
 	              obj);
-		 return result.obj.objectlist;
+		 return result;
 	}
 
 	export const  WorkstationTypeListActive = async function(obj){
@@ -84,7 +84,7 @@ import {exec_getData as get} from '@/fetch/fetch'
 		 return result.obj.objectlist;
 	}
 
-	export const  VendorListActive = async function(obj){
+	export const  Vendor_ListActive = async function(obj){
 		var result = await get(
 	              "Handler_Vendor_V1.ashx",
 	              "Vendor_ListActive",

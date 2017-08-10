@@ -1,24 +1,36 @@
 <template>
 	<div class="companyList">
-		<deletepop v-show="showDeletePop" @delete="Delete" :popTitle="deletePopTitle" :contentTxt="deletePopContent"></deletepop>
+		<Modal
+		    v-model="modal1"
+		    title="删除机台"
+		    @on-ok="ok"
+		    @on-cancel="cancel">
+		    <Alert type="warning" show-icon>
+		      <template slot="desc">
+		        删除机台后,机台所属的工位设备等信息都将删除哦
+		      </template>
+		      您确定要删除<span class="warmTitle" style="color:#FA0E0E;font-weight: bolder;">{{deletePopContent}}</span>吗?
+		    </Alert>
+		</Modal>
 		<mf-edit v-show="showManufaEdit" @Edit="EditSubmit" :edited="editedManufa" :isAdd="isAddManufa"></mf-edit>
 		<table border="0" class="companyList-table" >
 			<thead>
 				<tr>
-					<th></th>
+					<!-- <th></th> -->
 					<th>名称</th>
 					<th>英文</th>
 					<th>全称</th>
 					<th>所在地</th>
-					<th><span>操作
-							<button class="btn btn-default addMachineList" @click="ManufaEdit(null,'add')">
-							<i class="fa fa-plus"></i>添加厂商</button>
-						</span></th>
+					<th>
+						<span>操作
+							<Button  type="primary" icon="plus-round" @click="ManufaEdit(null,'add')">添加厂商</Button>
+						</span>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-for="(company,index) in companyList">
-					<td><input type="checkbox"></td>
+					<!-- <td><input type="checkbox"></td> -->
 					<td>{{company.strVendorShortName}}</td>
 					<td>{{company.strVendorShortName_EN}}</td>
 					<td>{{company.strVendorName}}</td>
@@ -30,9 +42,9 @@
 						<span title="删除" @click="Delete(company)">
 							<i class="fa fa-trash-o fa-lg"></i>
 						</span>
-						<span title="详情">
+						<!-- <span title="详情">
 							<i class="fa fa-list-alt fa-lg"></i>
-						</span>
+						</span> -->
 					</td>
 				</tr>
 			</tbody>
@@ -47,54 +59,59 @@
   	import paging from '@/components/Paging'
 	import deletepop from '@/components/Delete_pop'
 	import manufaEdit from '@/components/ManufacturersEdit'
+	import { Vendor_Inactive,Vendor_ListActive } from '@/api/getData'
 
 	export default{
 		name:'devicManufacturers',
 		data(){
-			let	companyList;
 			return {
-				companyList,
-				showManufaEdit:false,
-				showDeletePop:false,
-				showPaging:false,
-				editTypeTxt:'机台',
-				deletePopTitle:'删除厂商',
-				deletePopContent:'',
+				companyList:[],
 				editedManufa:{},
+				editTypeTxt:'机台',
+				deletePopContent:'',
+				showManufaEdit:false,
+				showPaging:false,
 				isAddManufa:false,
 				totalCount:0,
 				items:5,
-				pageItems:5
+				pageItems:5,
+				currentPage:0,
+				modal1:false
 			}
 		},
 		methods:{
-			togglePage:function (index) {
-				fetch
-		        	.Vendor_ListActive({"nPageIndex": index,"nPageSize":5,"uUserUUID":-1})
-		        	.then(data=>{
-			        	this.companyList=data.obj.objectlist;
-		        	});
+			ok (){
+			  	let self=this;
+				this.showPaging=false;
+			  	Vendor_Inactive({uVendorUUID:this.DelVendorID})
+		           .then(function () {
+		            		Vendor_ListActive({"nPageIndex": self.currentPage,"nPageSize":5,"uUserUUID":-1})
+					        .then(data=>{
+					        	console.log(data);
+					        	self.companyList=data.obj.objectlist;
+					        	self.totalCount=Math.ceil(data.obj.totalcount/self.items);
+			    				self.showPaging=true;
+								self.$Message.info('删除成功');
+					        });
+		            });
 			},
-			Delete:function (obj,str) {
-				let _this=this;
-				this.showDeletePop=!this.showDeletePop;
-				if (str) {
-				  if(str=='close'||str=='cancel');
-				    else if(str=='confirm'){
-				      fetch.Vendor_Inactive({uVendorUUID:this.DelVendorID})
-				           .then(function () {
-				             fetch
-				                   .Vendor_ListActive()
-				                   .then(data=>console.log(_this.companyList=data.obj.objectlist));
-				            });
-				    }
-				}
-				else {
-				  this.deletePopContent=obj.strVendorName;
-				  this.DelVendorID=obj.uVendorUUID;
-				}
+			cancel () {
+			  this.$Message.info('点击了取消');
 			},
-			ManufaEdit:function (index,add) {
+			async togglePage(index) {
+	        	this.currentPage=index;
+				let list=await Vendor_ListActive({
+					"nPageIndex": this.currentPage,
+					"nPageSize":5,
+					"uUserUUID":-1})
+	        	this.companyList=list.obj.objectlist;
+			},
+			Delete(obj) {
+				this.modal1 = true;
+				this.deletePopContent=obj.strVendorName;
+				this.DelVendorID=obj.uVendorUUID;
+			},
+			ManufaEdit(index,add) {
 				if(add){
 					this.isAddManufa=true;
 					this.editedManufa={};
@@ -119,19 +136,13 @@
 		},
 		components:{
 			paging,
-			deletepop,
 			"mf-edit":manufaEdit
 		},
-		beforeCreate:function () {
-			// err
-		  fetch
-		        .Vendor_ListActive({"nPageIndex": 0,"nPageSize":5,"uUserUUID":-1})
-		        .then(data=>{
-		        	console.log(data);
-		        	this.companyList=data.obj.objectlist;
-		        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-    				this.showPaging=true;
-		        });
+		beforeCreate:async function () {
+			let list=await Vendor_ListActive({"nPageIndex": 0,"nPageSize":5,"uUserUUID":-1});
+        	this.companyList=list.obj.objectlist;
+        	this.totalCount=Math.ceil(list.obj.totalcount/this.items);
+			this.showPaging=true;
 		}
 	}
 </script>
