@@ -49,17 +49,22 @@
 				</tr>
 			</tbody>
 		</table>
-		<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
+		<div class="page">
+			<Page
+				@on-change="togglePage"
+				@on-page-size-change="togglePageNum"
+				:total="totalCount"
+				:page-size="pageSize"
+				:page-size-opts="pageSizeOpts"
+				show-sizer>
+			</Page>
+		</div>
 	</div>
 </template>
 
 <script>
-  	import store from '@/store/store'
-	import fetch from '@/fetch/fetch'
-  	import paging from '@/components/Paging'
-	import deletepop from '@/components/Delete_pop'
-	import manufaEdit from '@/components/ManufacturersEdit'
-	import { Vendor_Inactive,Vendor_ListActive } from '@/api/getData'
+	import manufaEdit from '@/modalEdit/ManufacturersEdit'
+	import {Vendor_Inactive,Vendor_ListActive } from '@/api/getData'
 
 	export default{
 		name:'devicManufacturers',
@@ -73,8 +78,8 @@
 				showPaging:false,
 				isAddManufa:false,
 				totalCount:0,
-				items:5,
-				pageItems:5,
+				pageSize:5,
+				pageSizeOpts:[5,10,15],
 				currentPage:0,
 				modal1:false
 			}
@@ -82,29 +87,32 @@
 		methods:{
 			ok (){
 			  	let self=this;
-				this.showPaging=false;
 			  	Vendor_Inactive({uVendorUUID:this.DelVendorID})
-		           .then(function () {
-		            		Vendor_ListActive({"nPageIndex": self.currentPage,"nPageSize":5,"uUserUUID":-1})
-					        .then(data=>{
-					        	console.log(data);
-					        	self.companyList=data.obj.objectlist;
-					        	self.totalCount=Math.ceil(data.obj.totalcount/self.items);
-			    				self.showPaging=true;
-								self.$Message.info('删除成功');
-					        });
+		           .then(async function () {
+	            		let list=await Vendor_ListActive({
+	            			"nPageIndex": self.currentPage,
+	            			"nPageSize":self.pageSize,
+	            			"uUserUUID":-1});
+			        	self.companyList=list.obj.objectlist;
+			        	self.totalCount=list.obj.totalcount;
+						self.$Message.info('删除成功');
 		            });
 			},
 			cancel () {
 			  this.$Message.info('点击了取消');
 			},
 			async togglePage(index) {
-	        	this.currentPage=index;
+	        	if(index) this.currentPage=index-1;
 				let list=await Vendor_ListActive({
 					"nPageIndex": this.currentPage,
-					"nPageSize":5,
-					"uUserUUID":-1})
+					"nPageSize":this.pageSize,
+					"uUserUUID":-1});
 	        	this.companyList=list.obj.objectlist;
+	        	this.totalCount=list.obj.totalcount;
+			},
+			async togglePageNum(pageSizeNum) {
+				this.pageSize=pageSizeNum;
+				this.togglePage();
 			},
 			Delete(obj) {
 				this.modal1 = true;
@@ -122,11 +130,14 @@
 				}
 				this.showManufaEdit=!this.showManufaEdit;
 			},
-			EditSubmit:function (str) {
+			async EditSubmit(str) {
 				if(str=='confirm'){
-					fetch
-					      .Vendor_ListActive()
-					      .then(data=>console.log(this.companyList=data.obj.objectlist));
+					let list=await Vendor_ListActive({
+					"nPageIndex": this.currentPage,
+					"nPageSize":this.pageSize,
+					"uUserUUID":-1});
+		        	this.companyList=list.obj.objectlist;
+		        	// this.totalCount=list.obj.totalcount;
 				}
 				else if(str=='cancel'||str=='close'){
 
@@ -135,14 +146,15 @@
 			}
 		},
 		components:{
-			paging,
 			"mf-edit":manufaEdit
 		},
-		beforeCreate:async function () {
-			let list=await Vendor_ListActive({"nPageIndex": 0,"nPageSize":5,"uUserUUID":-1});
+		async created(){
+			let list=await Vendor_ListActive({
+				"nPageIndex": this.currentPage,
+				"nPageSize":this.pageSize,
+				"uUserUUID":-1});
         	this.companyList=list.obj.objectlist;
-        	this.totalCount=Math.ceil(list.obj.totalcount/this.items);
-			this.showPaging=true;
+        	this.totalCount=list.obj.totalcount;
 		}
 	}
 </script>

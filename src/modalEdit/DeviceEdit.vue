@@ -118,7 +118,7 @@
     import fetch from '@/fetch/fetch'
     import {
     	FactoryListActive,
-    	WorkshopListActive,
+    	Workshop_ListActive,
     	WorkstationListActive,
     	DevModelListActive,
     	DevcategoryListActive
@@ -247,7 +247,7 @@
 							"uUserUUID":-1,
 		    			})
 		    			.then(data=>{
-		    				self.DevModelList=data;
+		    				self.DevModelList=data.obj.objectlist;
 		    				let hash={};
 	    		    		self.DevVendorList = self.DevModelList.reduce(function (item,ele) {
 	    		    			hash[ele.uVendorUUID] ? '' : hash[ele.uVendorUUID] = true && item.push(ele);
@@ -320,7 +320,7 @@
 			//工厂列表
 			this.factoryList=await FactoryListActive();
 
-		  	this.workshopList=await WorkshopListActive({
+		  	this.workshopList=await Workshop_ListActive({
 			        	"nPageIndex": 0,
 			            "nPageSize": -1,
 			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
@@ -362,7 +362,7 @@
 						"uUserUUID":-1,
 	    			})
 	    			.then(data=>{
-	    				self.DevModelList=data;
+	    				self.DevModelList=data.obj.objectlist;
 	    				let hash={};
     		    		self.DevVendorList = self.DevModelList.reduce(function (item,ele) {
     		    			hash[ele.uVendorUUID] ? '' : hash[ele.uVendorUUID] = true && item.push(ele);

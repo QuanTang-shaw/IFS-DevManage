@@ -9,14 +9,6 @@ import deviceManufacturers from '@/components/DeviceManufacturers_mg'
 import deviceList from '@/components/DeviceList_mg'
 import report from '@/components/Report_mg'
 
-import navPlant from '@/components/NavPlant'
-// import navworkshop from '@/components/NavWorkshop'
-// import navMachineList from '@/components/NavMachineList'
-// import navDeviceCategory from '@/components/NavDeviceCategory'
-// import navDeviceManufacturers from '@/components/NavDeviceManufacturers'
-// import navDeviceList from '@/components/NavDeviceList'
-// import navReport from '@/components/NavReport'
-
 Vue.use(Router)
 
 export default new Router({
@@ -25,8 +17,8 @@ export default new Router({
       path: '/',
       name: 'plantMg',
       components:{
-      	default:navPlant,
-        a:navPlant,
+      	// default:navPlant,
+        // a:navPlant,
       	b:plant
       }
     },

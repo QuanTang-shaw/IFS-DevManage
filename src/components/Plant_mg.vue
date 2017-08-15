@@ -56,10 +56,8 @@
 </template>
 
 <script>
-  import store from '@/store/store'
-  import fetch from '@/fetch/fetch'
-  import plantEdit from '@/components/PlantEdit'
-  import {FactoryListActive} from '@/api/getData'
+  import plantEdit from '@/modalEdit/PlantEdit'
+  import {FactoryListActive,FactoryInactive} from '@/api/getData'
   export default {
     name: 'plantList',
     data () {
@@ -78,22 +76,18 @@
       'plant-edit':plantEdit
     },
     methods:{
-      ok (){
+      async ok (){
         let self=this;
-        fetch.Factory_Inactive({uFactoryUUID:this.DelFactoryID})
-                   .then(function (a) {
-                     fetch
-                           .Factory_ListActive()
-                           .then(data=>{
-                            console.log(self.plantList=data.obj.objectlist);
-                            self.$Message.info('删除成功');
-                          });
-                    });
+        FactoryInactive({uFactoryUUID:this.DelFactoryID})
+          .then(async function () {
+            self.plantList=await FactoryListActive();
+            self.$Message.info('删除成功');
+          });
       },
       cancel () {
         this.$Message.info('点击了取消');
       },
-      plantEdit:function (index,addplant) {
+      plantEdit(index,addplant) {
         if (addplant){
           this.isAddPlant=true;
           this.editPlant={
@@ -108,14 +102,12 @@
         }
         this.showPlantEdit=true;
       },
-      plantEditSub:function (str) {
+      async plantEditSub(str) {
         this.showPlantEdit=false;
-         fetch
-               .Factory_ListActive()
-               .then(data=>console.log(this.plantList=data.obj.objectlist));
+        this.plantList=await FactoryListActive();
         if(str=='close'||str=='cancel');
-          else if(str=='confirm'){
-          }
+        else if(str=='confirm'){
+        }
       },
       plantDelete:function (obj) {
         this.modal1 = true;

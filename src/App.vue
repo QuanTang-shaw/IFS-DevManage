@@ -2,7 +2,6 @@
   <div id="app">
     <!-- <router-view class="viewOne"  name="a"></router-view> -->
       <div class="row wraper">
-        <!-- <pagetitle :message="titleText"></pagetitle> -->
         <div class="col-md-2 deviceMg-wraper" >
           <div class="panel panel-default deviceMg-nav" data-toggle="panel-collapse" data-open="true">
             <div class="panel-heading deviceMg-nav-head">
@@ -27,8 +26,6 @@
   </div>
 </template>
 <script>
-  import store from './store/store.js'
-  import pagetitle from './components/pageTitle.vue'
   export default {
     name: 'app',
     data() {
@@ -74,12 +71,6 @@
         routerMenu,
         titleText
       }
-    },
-    created:function () {
-      store.initStorage();
-    },
-    components:{
-      pagetitle
     },
     methods:{
       menuClick:function (index) {

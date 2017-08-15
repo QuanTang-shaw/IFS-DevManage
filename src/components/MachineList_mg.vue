@@ -31,7 +31,7 @@
 					            <Icon type="arrow-down-b"></Icon>
 					        </Button>
 					        <Dropdown-menu slot="list" >
-					            <Dropdown-item :name="index" v-for="(factory,index) in factoryList">
+					            <Dropdown-item :name="index" :key="factory.uFactoryUUID" v-for="(factory,index) in factoryList">
 					            	{{factory.strFactoryName}}
 					            </Dropdown-item>
 					        </Dropdown-menu>
@@ -46,7 +46,7 @@
 					            <Icon type="arrow-down-b"></Icon>
 					        </Button>
 					        <Dropdown-menu slot="list" >
-					            <Dropdown-item :name="index" v-for="(workshop,index) in workshopList">
+					            <Dropdown-item :name="index" :key="workshop.uWorkshopUUID" v-for="(workshop,index) in workshopList">
 					            	{{workshop.strWorkshopName}}
 					            </Dropdown-item>
 					        </Dropdown-menu>
@@ -91,30 +91,25 @@
 						</td>
 					</tr>
 				</tbody>
-				<tfoot>
-					<!-- <tr>
-						<td><input type="checkbox"></td>
-						<td>
-							<button class="btn btn-default">
-							  <i class="fa fa-trash-o fa-sm">删除</i>
-							</button>
-						</td>
-					</tr> -->
-				</tfoot>
 			</table>
-			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
+			<div class="page">
+				<Page
+					@on-change="togglePage"
+					@on-page-size-change="togglePageNum"
+					:total="totalCount"
+					:page-size="pageSize"
+					:page-size-opts="pageSizeOpts"
+					show-sizer>
+				</Page>
+			</div>
 		</div>
 	</div>
 </template>
 <script>
-  	import store from '@/store/store'
-	import deletepop from '@/components/Delete_pop'
-  	import paging from '@/components/Paging'
-  	import machineEdit from'@/components/MachineListEdit'
-	import fetch from '@/fetch/fetch'
+  	import machineEdit from'@/modalEdit/MachineListEdit'
 	import {
     	FactoryListActive,
-    	WorkshopListActive,
+    	Workshop_ListActive,
     	WorkstationListActive,
     	Workstation_Inactive,
     	DevModelListActive,
@@ -138,95 +133,85 @@
 			  showPaging:false,
 			  isAddMachine:false,
 			  totalCount:0,
-			  pageItems:5,
-			  items:5,
+			  pageSize:5,
+			  pageSizeOpts:[5,10,15],
 			  currentPage:0,
 			  modal1:false
 			}
 		},
 		components:{
 			'machine-edit':machineEdit,
-			paging
 		},
 		methods:{
 			ok (){
 			  	let self=this;
 			  	Workstation_Inactive({uWorkstationUUID:this.DelWorkstationID})
-				           .then(function () {
-				             WorkstationListActive({
-				                   	 "nPageIndex":self.currentPage,
-					              	 "nPageSize":self.pageItems,
-					              	 "uPLineUUID":self.selectedWorkshop.uWorkshopUUID,
-					              	 "uWorkstationTypeUUID":-1,
-					    			 "uWorkstationAdminUUID":-1,
-		    						})
-				                   .then(data=>{
-				                   		console.log(self.machineList=data.obj.objectlist);
-				                   		self.totalCount=Math.ceil(data.obj.totalcount/self.items);
-			        					self.showPaging=true;
-										self.$Message.info('删除成功');
-				                   });
-				            });
+		           .then(async function () {
+			            let list=await WorkstationListActive({
+			                   	 "nPageIndex":self.currentPage,
+				              	 "nPageSize":self.pageSize,
+				              	 "uPLineUUID":self.selectedWorkshop.uWorkshopUUID,
+				              	 "uWorkstationTypeUUID":-1,
+				    			 "uWorkstationAdminUUID":-1,
+	    					});
+                   		self.machineList=data.obj.objectlist;
+                   		self.totalCount=data.obj.totalcount;
+						self.$Message.info('删除成功');
+    					// self.showPaging=true;
+		            });
 			},
 			cancel () {
 			  this.$Message.info('点击了取消');
 			},
-			togglePage:function (index) {
-				fetch
-	  		        .Workstation_ListActive({
-	  	              	"nPageIndex":index,
-	  	              	"nPageSize":this.items,
+			async togglePage(index) {
+	  		    this.currentPage=index-1;
+				let list=await WorkstationListActive({
+	  	              	"nPageIndex":index-1,
+	  	              	"nPageSize":this.pageSize,
 	  	              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
 	  	              	"uWorkstationTypeUUID":-1,
 	  	    			"uWorkstationAdminUUID":-1,
-	  	              })
-	  		        .then(data=>this.machineList=data.obj.objectlist);
-	  		    this.currentPage=index;
+	  	              });
+	  		    this.machineList=list.obj.objectlist;
 			},
-			toggleFactory:function (index) {
+			async togglePageNum(sizeNum){
+				this.pageSize=sizeNum;
+				let workstationList=await WorkstationListActive({
+	  	              	"nPageIndex": this.currentPage,
+	  	              	"nPageSize": this.pageSize,
+	  	              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
+	  	              	"uWorkstationTypeUUID":-1,
+	  	    			"uWorkstationAdminUUID":-1,
+		  	    	});
+				this.machineList=workstationList.obj.objectlist;
+				this.totalCount=workstationList.obj.totalcount;
+			},
+			async toggleFactory(index) {
 				this.selectedFactory=this.factoryList[index];
 				//更新车间列表
-				fetch
-			        .Workshop_ListActive({
+				let list=await Workshop_ListActive({
 			        	"nPageIndex": 0,
 			            "nPageSize": -1,
 			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
 			            "uWorkshopTypeUUID":-1,
 		  				"uWorkshopAdminUUID":-1
-			        })
-			        .then(data=>{
-			        	this.workshopList=data.obj.objectlist;
-			        	this.selectedWorkshop=this.workshopList[0];
-					    this.toggleWorkshop();
-			        },()=>alert('没有查到车间!'));
-			    //更新机台列表
-			    /*fetch
-		        .Workstation_ListActive({
-	              	"nPageIndex": 0,
-	              	"nPageSize": -1,
-	              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
-	              	"uWorkstationTypeUUID":-1,
-	    			"uWorkstationAdminUUID":-1,
-	              })
-		        .then(data=>this.machineList=data.obj.objectlist);*/
+			        });
+	        	this.workshopList=list.obj.objectlist;
+	        	this.selectedWorkshop=this.workshopList[0];
+			    this.toggleWorkshop();
 			},
-			toggleWorkshop:function (index) {
+			async toggleWorkshop(index) {
 				if(index>=0)  this.selectedWorkshop=this.workshopList[index];
 				this.showPaging=false;
-				fetch
-			        .Workstation_ListActive({
-		              	"nPageIndex": 0,
-		              	"nPageSize":this.pageItems,
+				let list=await WorkstationListActive({
+		              	"nPageIndex": this.currentPage,
+		              	"nPageSize":this.pageSize,
 		              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
 		              	"uWorkstationTypeUUID":-1,
 		    			"uWorkstationAdminUUID":-1,
-		              })
-			        .then(data=>{
-			        	console.log(data)
-			        	console.log(this.machineList=data.obj.objectlist);
-			        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-			        	this.showPaging=true;
-			        });
+		              });
+	        	this.machineList=list.obj.objectlist;
+	        	this.totalCount=list.obj.totalcount;
 			},
 			machineEdit:function (index,add) {
 				if(add){
@@ -240,21 +225,17 @@
 				}
 				this.showMachineEdit=!this.showMachineEdit;
 			},
-			EditSubmit:function (str) {
+			async EditSubmit(str) {
 				if(str=='confirm'){
-					// alert(this.currentPage)
-					fetch
-					      .Workstation_ListActive({
+					let list=await WorkstationListActive({
 					      	"nPageIndex":this.currentPage,
-		              		"nPageSize":this.pageItems,
+		              		"nPageSize":this.pageSize,
 		              		"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
 		              		"uWorkstationTypeUUID":-1,
-		    				"uWorkstationAdminUUID":-1,})
-					      .then(data=>console.log(this.machineList=data.obj.objectlist));
+		    				"uWorkstationAdminUUID":-1,});
+					this.machineList=list.obj.objectlist;
 				}
-				else if(str=='cancel'||str=='close'){
-
-				}
+				else if(str=='cancel'||str=='close');
 				this.showMachineEdit=!this.showMachineEdit;
 			},
 			MachineDelete:function (obj,str) {
@@ -263,82 +244,28 @@
 				this.DelWorkstationID=obj.uWorkstationUUID;
 			}
 		},
-		beforeCreate:function () {
-
+		async beforeCreate() {
 		    let self=this;
-			(async function () {
-				let factorylist=await
-				 new Promise((resolve,reject)=>{
-				 	fetch
-				        .Factory_ListActive()
-				        .then(data=>resolve(data));
-				});
-				// console.log(factorylist);
-				self.factoryList=factorylist.obj.objectlist;
-				self.selectedFactory=self.factoryList[0];
-
-				let workshoplist=await new Promise((resolve,reject)=>{
-				  fetch
-				        .Workshop_ListActive({
+		    this.factoryList=await FactoryListActive();
+			this.selectedFactory=this.factoryList[0];
+			let workshoplist=await Workshop_ListActive({
 				        	"nPageIndex": 0,
 				            "nPageSize": -1,
-				            "uFactoryUUID":self.selectedFactory.uFactoryUUID,
+				            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
 				            "uWorkshopTypeUUID":-1,
 			  				"uWorkshopAdminUUID":-1
-				        })
-				        .then(data=>resolve(data));
 				});
-				self.workshopList=workshoplist.obj.objectlist;
-				self.selectedWorkshop=self.workshopList[0];
-				console.log(self.selectedWorkshop);
-
-				let workstationList=await new Promise((resolve,reject)=>{
-				  fetch
-		  		        .Workstation_ListActive({
+			this.workshopList=workshoplist.obj.objectlist;
+			this.selectedWorkshop=this.workshopList[0];
+			let workstationList=await WorkstationListActive({
 		  	              	"nPageIndex": 0,
 		  	              	"nPageSize": 5,
-		  	              	"uPLineUUID": self.selectedWorkshop.uWorkshopUUID,
+		  	              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
 		  	              	"uWorkstationTypeUUID":-1,
 		  	    			"uWorkstationAdminUUID":-1,
-		  	              })
-		  		        .then(data=>resolve(data));
-				});
-				// console.log(workstationList);
-				self.machineList=workstationList.obj.objectlist;
-				self.totalCount=Math.ceil(workstationList.obj.totalcount/self.items);
-    			self.showPaging=true;
-			})();
-
-
-			/*
-			  fetch
-			        .Workstation_ListActive({
-		              	"nPageIndex": 0,
-		              	"nPageSize": -1,
-		              	"uPLineUUID": 1,
-		              	"uWorkstationTypeUUID":-1,
-		    			"uWorkstationAdminUUID":-1,
-		              })
-			        .then(data=>console.log(this.machineList=data.obj.objectlist));
-			  fetch
-			        .Factory_ListActive()
-			        .then(data=>{
-			        	console.log(this.factoryList=data.obj.objectlist);
-			        	this.selectedFactory=this.factoryList[0];
-			        });
-			  fetch
-			        .Workshop_ListActive({
-			        	"nPageIndex": 0,
-			            "nPageSize": -1,
-			            "uFactoryUUID":1,
-			            "uWorkshopTypeUUID":-1,
-		  				"uWorkshopAdminUUID":-1
-			        })
-			        .then(data=>{
-			        	console.log(this.workshopList=data.obj.objectlist);
-			        	this.selectedWorkshop=this.workshopList[0];
-			        });
-			*/
+		  	    });
+			this.machineList=workstationList.obj.objectlist;
+			this.totalCount=workstationList.obj.totalcount;
 		}
 	}
 </script>

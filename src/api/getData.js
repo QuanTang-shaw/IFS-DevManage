@@ -1,6 +1,21 @@
 
-import {exec_getData as get} from '@/fetch/fetch'
-
+// import {exec_getData as get} from '@/fetch/fetch'
+	const get=function (str,op,obj) {
+		var promise=new Promise(function (resolve,reject) {
+			var url =`http://ifs.top-link.me/ifs/${str}`,
+				req = new TRequest();
+			req.exec(url,op,obj,
+			    // success:
+			    function (json) {
+			    	resolve(json);
+			    },
+			    // error:
+			    function (json) {
+			        reject(json);
+			    });
+		});
+		return promise;
+	}
 
 	export const FactoryListActive = async  function (){
 		var result = await get(
@@ -16,12 +31,12 @@ import {exec_getData as get} from '@/fetch/fetch'
 		 return result.obj.objectlist;
 	}
 
-	export const  WorkshopListActive = async function(obj){
+	export const  Workshop_ListActive = async function(obj){
 		var result = await get(
 	              "Handler_Workshop_V1.ashx",
 	              "Workshop_ListActive",
 	              obj);
-		 return result.obj.objectlist;
+		 return result;
 	}
 
 
@@ -63,7 +78,7 @@ import {exec_getData as get} from '@/fetch/fetch'
 	              "Handler_DevModel_V1.ashx",
 	              "DevModel_ListActive",
 	              obj);
-		 return result.obj.objectlist;
+		 return result;
 	}
 
 
@@ -215,4 +230,16 @@ import {exec_getData as get} from '@/fetch/fetch'
 	}
 	export const  Devcategory_Inactive = async function(obj){
 		await get("Handler_DevCategory_V1.ashx","DevCategory_Inactive",obj);
+	}
+
+
+
+	export const  DevModel_Update = async function(obj){
+		await get("Handler_DevModel_V1.ashx","DevModel_Update",obj);
+	}
+	export const  DevModel_Add = async function(obj){
+		await get("Handler_DevModel_V1.ashx","DevModel_Add",obj);
+	}
+	export const  DevModel_Inactive = async function(obj){
+		await get("Handler_DevModel_V1.ashx","DevModel_Inactive",obj);
 	}

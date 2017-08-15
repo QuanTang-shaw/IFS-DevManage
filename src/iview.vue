@@ -1,6 +1,6 @@
 <template>
     <div class="layout">
-        <Row type="flex">
+        <Row type="flex" class="layout-wrap">
             <i-col span="5" class="layout-menu-left">
                 <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']" @on-select="router">
                     <div class="layout-logo-left">
@@ -10,7 +10,7 @@
                             <Icon type="ios-navigate"></Icon>
                             生产设备管理
                         </template>
-                        <Menu-item :name="`1-${index+1}`" v-for="(menu,index) in routerMenu.factoryDevManage" >
+                        <Menu-item :name="`1-${index+1}`" :key="index" v-for="(menu,index) in routerMenu.factoryDevManage" >
                             {{menu.text}}
                             <!-- <router-link class="router-link" to="/">工厂管理</router-link> -->
                         </Menu-item>
@@ -20,7 +20,7 @@
                             <Icon type="ios-keypad"></Icon>
                             报表管理
                         </template>
-                        <Menu-item :name="`2-${index+1}`" v-for="(menu,index) in routerMenu.reportManage">{{menu.text}}</Menu-item>
+                        <Menu-item :name="`2-${index+1}`" :key="index" v-for="(menu,index) in routerMenu.reportManage">{{menu.text}}</Menu-item>
                     </Submenu>
                 </Menu>
             </i-col>
@@ -39,7 +39,8 @@
                     </div>
                 </div>
                 <div class="layout-copy">
-                    2011-2016 &copy; TalkingData
+                    <span>CopyRight(C)TOP-LINK 智能制造2025</span>
+                    <span style="margin-left:25px;">深圳市拓联智能信息技术有限公司</span>
                 </div>
             </i-col>
         </Row>
@@ -107,7 +108,7 @@
                     this.BreadcrumbText='报表管理';
                     this.SubBreadcrumbText=this.routerMenu.reportManage[item1-1].text;
                 }
-                console.log(this.$router)
+                // console.log(this.$router);
             }
         },
         created(){
@@ -123,6 +124,7 @@
         /*width:90%;*/
         /*margin:0 auto;*/
     }
+    .layout-wrap{min-height:694px;}
     .layout-breadcrumb{
         padding: 10px 15px 0;
     }
@@ -136,11 +138,17 @@
     .layout-content-main{
         padding: 10px;
         font-size:20px;
+        min-height: 590px;
     }
     .layout-copy{
         text-align: center;
         padding: 10px 0 20px;
         color: #9ea7b4;
+        bottom: 0;
+        /*position: absolute;*/
+        right: 0;
+        left: 0;
+        background-color: #d4e1ec;
     }
     .layout-menu-left{
         background: #464c5b;

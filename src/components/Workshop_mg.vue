@@ -30,7 +30,7 @@
 				            <Icon type="arrow-down-b"></Icon>
 				        </Button>
 				        <Dropdown-menu slot="list" >
-				            <Dropdown-item :name="index" v-for="(factory,index) in factoryList">{{factory.strFactoryName}}</Dropdown-item>
+				            <Dropdown-item :name="index" :key="factory.uFactoryUUID" v-for="(factory,index) in factoryList">{{factory.strFactoryName}}</Dropdown-item>
 				        </Dropdown-menu>
 				    </Dropdown>
 				</label>
@@ -90,19 +90,25 @@
 					</tr>
 				</tbody>
 			</table>
-			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
+			<!-- <paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging> -->
+			<div class="page">
+				<Page
+					@on-change="togglePage"
+					@on-page-size-change="togglePageNum"
+					:total="totalCount"
+					:page-size="pageSize"
+					:page-size-opts="pageSizeOpts"
+					show-sizer>
+				</Page>
+			</div>
 		</div>
 	</div>
 </template>
 <script>
-  	import store from '@/store/store'
-  	import fetch from '@/fetch/fetch'
-  	import paging from '@/components/Paging'
-	import deletepop from '@/components/Delete_pop'
-	import workshopEdit from '@/components/WorkshopEdit'
+	import workshopEdit from '@/modalEdit/WorkshopEdit'
 	import {
     	FactoryListActive,
-    	WorkshopListActive,
+    	Workshop_ListActive,
     	WorkshopInactive,
     	WorkstationListActive,
     	DevModelListActive,
@@ -123,70 +129,75 @@
 			    showPaging:false,
 			    editTypeTxt:'车间',
 			    deletePopContent:'',
-			    totalcount:0,
-			    pageItems:5,
-			    items:5,
+			    totalCount:0,
+			    pageSize:5,
+			    pageSizeOpts:[5,10,15],
 			    currentPage:0,
 			    modal1:false
 			}
 		},
 		components:{
-			paging,
 			'workshop-edit':workshopEdit
 		},
 		methods:{
 			ok (){
 			  	let self=this;
 			  	WorkshopInactive({uWorkshopUUID:this.DelWorkshopID})
-		           .then(function (a) {
-		             fetch
-		                   .Workshop_ListActive({
-				              "nPageIndex":self.currentPage,
-    			              "nPageSize":self.items,
-    			              "uFactoryUUID":self.selectedPlant.uFactoryUUID,
-    			              "uWorkshopTypeUUID":-1,
-    		  				  "uWorkshopAdminUUID":-1})
-		                   .then(data=>{
-		                   		self.workshopList=data.obj.objectlist;
-			  					self.$Message.info('删除成功');
-		                   });
+		           .then(async function(a) {
+			            let list=await Workshop_ListActive({
+					              "nPageIndex":self.currentPage,
+	    			              "nPageSize":self.pageSize,
+	    			              "uFactoryUUID":self.selectedPlant.uFactoryUUID,
+	    			              "uWorkshopTypeUUID":-1,
+	    		  				  "uWorkshopAdminUUID":-1});
+                   		self.workshopList=list.obj.objectlist;
+			        	self.totalCount=list.obj.totalcount;
+			        	if(self.workshopList.length==0) {
+			        		// self.togglePage(self.currentPage);
+			        	}
+	  					self.$Message.info('删除成功');
 		            });
 			},
 			cancel () {
 			  this.$Message.info('点击了取消');
 			},
-			togglePlant:function (index) {
+			async togglePlant(index) {
 		  	 	this.selectedPlant=this.factoryList[index];
     			this.showPaging=false;
 		  	 	//获取选中的厂房列表
-		  	 	fetch
-		        .Workshop_ListActive({
+		  	 	let list=await Workshop_ListActive({
 		              "nPageIndex": 0,
-		              "nPageSize":this.items,
+		              "nPageSize":this.pageSize,
 		              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
 		              "uWorkshopTypeUUID":-1,
 	  				  "uWorkshopAdminUUID":-1
-  				  })
-		        .then(data=>{
-			        console.log(this.workshopList=data.obj.objectlist);
-    			    this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-    			    this.showPaging=true;
-		        	console.log(this.totalCount);
-		        });
+  				  });
+		        this.workshopList=list.obj.objectlist;
+			    this.totalCount=list.obj.totalcount;
 			},
-			togglePage:function (index) {
-				fetch
-			        .Workshop_ListActive({
-			              "nPageIndex": index,
-			              "nPageSize": this.items,
+			async togglePage(index) {
+			    this.currentPage=index-1;
+				let list=await Workshop_ListActive({
+			              "nPageIndex": index-1,
+			              "nPageSize": this.pageSize,
 			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
 			              "uWorkshopTypeUUID":-1,
 		  				  "uWorkshopAdminUUID":-1
-	  				  })
-			        .then(data=>{
-			        	console.log(this.workshopList=data.obj.objectlist);
-			        });
-			    this.currentPage=index;
+	  				  });
+				this.workshopList=list.obj.objectlist;
+	        	this.totalCount=list.obj.totalcount;
+			},
+			async togglePageNum(sizeNum){
+				this.pageSize=sizeNum;
+				let list=await Workshop_ListActive({
+			              "nPageIndex": this.currentPage,
+			              "nPageSize": this.pageSize,
+			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+			              "uWorkshopTypeUUID":-1,
+		  				  "uWorkshopAdminUUID":-1
+	  				  });
+				this.workshopList=list.obj.objectlist;
+	        	this.totalCount=list.obj.totalcount;
 			},
 			wsDeletePop:function (obj,str) {
 				this.modal1 = true;
@@ -204,20 +215,18 @@
 				}
 				this.showWSEdit=!this.showWSEdit;
 			},
-			EditSubmit:function (str) {
+			async EditSubmit(str) {
 				if(str=='confirm'){
-					fetch
-					      .Workshop_ListActive({
+					let list=await Workshop_ListActive({
 					      	  "nPageIndex":this.currentPage,
-    			              "nPageSize":this.items,
+    			              "nPageSize":this.pageSize,
     			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
     			              "uWorkshopTypeUUID":-1,
-    		  				  "uWorkshopAdminUUID":-1})
-					      .then(data=>console.log(this.workshopList=data.obj.objectlist));
+    		  				  "uWorkshopAdminUUID":-1});
+					this.workshopList=list.obj.objectlist;
+		        	this.totalCount=list.obj.totalcount;
 				}
-				else if(str=='cancel'||str=='close'){
-
-				}
+				else if(str=='cancel'||str=='close') ;
 				this.showWSEdit=!this.showWSEdit;
 			}
 		},
@@ -225,19 +234,15 @@
 			//初始化,获取工厂一下面的车间
 		  	this.factoryList=await FactoryListActive();
 			this.selectedPlant=this.factoryList[0];
-			fetch
-		        .Workshop_ListActive({
+			let list=await Workshop_ListActive({
 		              "nPageIndex": 0,
-		              "nPageSize": this.items,
+		              "nPageSize": this.pageSize,
 		              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
 		              "uWorkshopTypeUUID":-1,
 	  				  "uWorkshopAdminUUID":-1
-  				  })
-		        .then(data=>{
-		        	this.workshopList=data.obj.objectlist;
-		        	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-		        	this.showPaging=true;
-		        });
+  				});
+        	this.workshopList=list.obj.objectlist;
+        	this.totalCount=list.obj.totalcount;
 		}
 	}
 </script>

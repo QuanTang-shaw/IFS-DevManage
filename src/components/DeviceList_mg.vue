@@ -62,7 +62,7 @@
 						            <Icon type="arrow-down-b"></Icon>
 						        </Button>
 						        <Dropdown-menu slot="list" >
-						            <Dropdown-item :name="index" v-for="(factory,index) in factoryList">
+						            <Dropdown-item :name="index" :key="factory.uFactoryUUID" v-for="(factory,index) in factoryList">
 						            	{{factory.strFactoryName}}
 						            </Dropdown-item>
 						        </Dropdown-menu>
@@ -73,7 +73,7 @@
 						            <Icon type="arrow-down-b"></Icon>
 						        </Button>
 						        <Dropdown-menu slot="list" >
-						            <Dropdown-item :name="index" v-for="(workshop,index) in workshopList">
+						            <Dropdown-item :name="index" :key="workshop.uWorkshopUUID" v-for="(workshop,index) in workshopList">
 						            	{{workshop.strWorkshopName}}
 						            </Dropdown-item>
 						        </Dropdown-menu>
@@ -84,7 +84,7 @@
 						            <Icon type="arrow-down-b"></Icon>
 						        </Button>
 						        <Dropdown-menu slot="list" >
-						            <Dropdown-item :name="index" v-for="(machine,index) in machineList">
+						            <Dropdown-item :name="index" :key="machine.uWorkstationUUID" v-for="(machine,index) in machineList">
 						            	{{machine.strWorkstationName}}
 						            </Dropdown-item>
 						        </Dropdown-menu>
@@ -170,27 +170,30 @@
 					</div>
 				</li>
 			</ul>
-			<paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging>
+			<div class="page">
+				<Page
+					@on-change="togglePage"
+					@on-page-size-change="togglePageNum"
+					:total="totalCount"
+					:page-size="pageSize"
+					:page-size-opts="pageSizeOpts"
+					show-sizer>
+				</Page>
+			</div>
 		</div>
 	</div>
 </template>
-
 <script>
-  	import store from '@/store/store'
-	import fetch from '@/fetch/fetch'
-	import deletepop from '@/components/Delete_pop'
-    import deviceEdit from '@/components/DeviceEdit'
-  	import paging from '@/components/Paging'
+    import deviceEdit from '@/modalEdit/DeviceEdit'
     import {
     	FactoryListActive,
-    	WorkshopListActive,
+    	Workshop_ListActive,
     	WorkstationListActive,
     	DevModelListActive,
     	DevcategoryListActive,
     	DeviceListActive,
-    	Device_Inactive
+    	vice_Inactive
     } from '@/api/getData'
-
 	export default{
 		name:'machineList',
 		data(){
@@ -210,106 +213,88 @@
 				deletePopTitle:'删除工厂',
           		deletePopContent:'',
           		totalCount:0,
-          		pageItems:5,
+          		pageSize:5,
+          		pageSizeOpts:[5,10,15],
           		items:5,
           		currentPage:0,
 			    modal1:false
 			}
 		},
 		components:{
-			"delete-pop":deletepop,
 			"device-edit":deviceEdit,
-			paging
 		},
 		methods:{
 			ok (){
 			  	let self=this;
 			  	Device_Inactive({uDeviceUUID:this.DelDeviceID})
-		           .then(function () {
-			            DeviceListActive({
-						      	"nPageIndex": self.currentPage,
-						      	"nPageSize": 5,
-						      	"uDevModelUUID": -1,
-						      	"uWorkstationUUID":self.selectedMachine.uWorkstationUUID
-						      	})
-						      .then(data=>{
-						      	self.deviceList=data.obj.objectlist;
-					      		self.totalCount=Math.ceil(data.obj.totalcount/self.items);
-								self.$Message.info('删除设备成功');
-						      });
+		           .then(async function () {
+			            let list=await DeviceListActive({
+					      	"nPageIndex": self.currentPage,
+					      	"nPageSize": self.pageSize,
+					      	"uDevModelUUID": -1,
+					      	"uWorkstationUUID":self.selectedMachine.uWorkstationUUID
 						});
+				      	self.deviceList=list.obj.objectlist;
+			      		self.totalCount=list.obj.totalcount;
+						self.$Message.info('删除设备成功');
+					});
 			},
 			cancel () {
 			  this.$Message.info('点击了取消');
 			},
-			togglePage:function (index) {
-				this.currentPage=index;
-				fetch
-				      .Device_ListActive({
-				      	"nPageIndex": index,
-				      	"nPageSize":5,
+			async togglePage(index) {
+				if(index) this.currentPage=index-1;
+				let list=await DeviceListActive({
+				      	"nPageIndex": this.currentPage,
+				      	"nPageSize":this.pageSize,
 				      	"uDevModelUUID":-1,
 				      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
-				      })
-				      .then(data=>{
-				      	console.log(this.deviceList=data.obj.objectlist);
-				      });
+					});
+				this.deviceList=list.obj.objectlist;
 			},
-			toggleFactory:function (index) {
+			async togglePageNum(pageSizeNum){
+				this.pageSize=pageSizeNum;
+				this.togglePage();
+			},
+			async toggleFactory(index) {
 				this.selectedFactory=this.factoryList[index];
 				//更新车间列表
-				fetch
-			        .Workshop_ListActive({
-			        	"nPageIndex": 0,
-			            "nPageSize": -1,
-			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
-			            "uWorkshopTypeUUID":-1,
-		  				"uWorkshopAdminUUID":-1
-			        })
-			        .then(data=>{
-			        	this.workshopList=data.obj.objectlist;
-			        	this.selectedWorkshop=this.workshopList[0];
-					    this.toggleWorkshop();
-			        },()=>alert('没有查到车间!'));
+				let list=await Workshop_ListActive({
+		        	"nPageIndex": 0,
+		            "nPageSize": -1,
+		            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
+		            "uWorkshopTypeUUID":-1,
+	  				"uWorkshopAdminUUID":-1
+			    });
+	        	this.workshopList=list.obj.objectlist;
+	        	this.selectedWorkshop=this.workshopList[0];
+			    this.toggleWorkshop();
 			},
-			toggleWorkshop:function (index) {
+			async toggleWorkshop(index) {
 				if(index>=0)  this.selectedWorkshop=this.workshopList[index];
-				// this.showPaging=false;
-				fetch
-			        .Workstation_ListActive({
+				let list=await WorkstationListActive({
 		              	"nPageIndex": 0,
 		              	"nPageSize":-1,
 		              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
 		              	"uWorkstationTypeUUID":-1,
 		    			"uWorkstationAdminUUID":-1,
-		              })
-			        .then(data=>{
-			        	console.log(this.machineList=data.obj.objectlist);
-			        	this.selectedMachine=this.machineList[0];
-			        	this.toggleMachine();
-			        	// console.log(data)
-			        	// this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-			        	// this.showPaging=true;
-			        });
+		              });
+			    this.machineList=list.obj.objectlist;
+	        	this.selectedMachine=this.machineList[0];
+	        	this.toggleMachine();
 			},
-			toggleMachine:function (index) {
+			async toggleMachine(index) {
 				if(index>=0) this.selectedMachine=this.machineList[index];
-			    this.showPaging=false;
-				fetch
-			      .Device_ListActive({
+				let list=await DeviceListActive({
 			      	"nPageIndex": 0,
-			      	"nPageSize":5,
+			      	"nPageSize":this.pageSize,
 			      	"uDevModelUUID":-1,
 			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
-			      })
-			      .then(data=>{
-			      	console.log(this.deviceList=data.obj.objectlist);
-			      	// console.log(data);
-			      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-			      	this.showPaging=true;
 			      });
+		      	this.deviceList=list.obj.objectlist;
+		      	this.totalCount=list.obj.totalcount;
 			},
-			deviceEdit:function (obj,addDevice) {
+			deviceEdit(obj,addDevice) {
 			  if (addDevice){
 			    this.isAddDevice=true;
 			    this.editDevice={
@@ -326,87 +311,55 @@
 			  }
 			  	this.showDeviceEdit=true;
 			},
-			deviceEditSub:function (str) {
-			  this.showDeviceEdit=false;
-			   fetch
-			      .Device_ListActive({
+			async deviceEditSub(str) {
+				this.showDeviceEdit=false;
+				let list=await Device_ListActive({
 			      	"nPageIndex": this.currentPage,
-			      	"nPageSize": 5,
+			      	"nPageSize": this.pageSize,
 			      	"uDevModelUUID": -1,
 			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
-			      })
-			      .then(data=>console.log(this.deviceList=data.obj.objectlist));
-			  if(str=='close'||str=='cancel');
-			    else if(str=='confirm'){
-			    }
+				});
+				this.deviceList=list.obj.objectlist;
+				if(str=='close'||str=='cancel');
+				else if(str=='confirm'){
+				}
 			},
-			deviceDelete:function (obj,str) {
+			deviceDelete(obj,str) {
 				this.modal1 = true;
 				this.deletePopContent=obj.strDeviceName;
 				this.DelDeviceID=obj.uDeviceUUID;
-
-				/*let _this=this;
-				this.showDeletePop=!this.showDeletePop;
-				if (str) {
-				  if(str=='close'||str=='cancel');
-				    else if(str=='confirm'){
-				      fetch.Device_Inactive({uDeviceUUID:this.DelDeviceID})
-				           .then(function () {
-				             fetch
-							      .Device_ListActive({
-							      	"nPageIndex": _this.currentPage,
-							      	"nPageSize": 5,
-							      	"uDevModelUUID": -1,
-							      	"uWorkstationUUID":_this.selectedMachine.uWorkstationUUID
-							      	})
-							      .then(data=>console.log(_this.deviceList=data.obj.objectlist));
-							});
-					}
-				}
-				else {
-				  this.deletePopContent=obj.strDeviceName;
-				  this.DelDeviceID=obj.uDeviceUUID;
-				}*/
 			}
 		},
 		async beforeCreate() {
 		    let self=this;
-
 			this.factoryList=await FactoryListActive();
 			this.selectedFactory=this.factoryList[0];
-			this.workshopList=await WorkshopListActive({
-			        	"nPageIndex": 0,
-			            "nPageSize": -1,
-			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
-			            "uWorkshopTypeUUID":-1,
-		  				"uWorkshopAdminUUID":-1
-	        		});
+			let wsList=await Workshop_ListActive({
+		        	"nPageIndex": 0,
+		            "nPageSize": -1,
+		            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
+		            "uWorkshopTypeUUID":-1,
+	  				"uWorkshopAdminUUID":-1
+	        	});
+			this.workshopList=wsList.obj.objectlist;
 			this.selectedWorkshop=this.workshopList[0];
 			let list=await WorkstationListActive({
-		              	"nPageIndex": 0,
-		              	"nPageSize": -1,
-		              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
-		              	"uWorkstationTypeUUID":-1,
-		    			"uWorkstationAdminUUID":-1,
-		              });
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
+	              	"uWorkstationTypeUUID":-1,
+	    			"uWorkstationAdminUUID":-1,
+		        });
 			this.machineList=list.obj.objectlist;
 			this.selectedMachine=this.machineList[0];
-			DeviceListActive({
-					      	"nPageIndex": 0,
-					      	"nPageSize":5,
-					      	"uDevModelUUID": -1,
-					      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
-					      })
-					      .then(data=>{
-					      	this.deviceList=data.obj.objectlist;
-					      	// console.log(data);
-					      	this.totalCount=Math.ceil(data.obj.totalcount/this.items);
-					      	this.showPaging=true;
-					      });
-		},
-		created(){
-			// console.log(this.deviceList);
-			setTimeout(()=>console.log(this.deviceList),300)
+			let DevList=await DeviceListActive({
+			      	"nPageIndex": 0,
+			      	"nPageSize":this.pageSize,
+			      	"uDevModelUUID": -1,
+			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
+				});
+	      	this.deviceList=DevList.obj.objectlist;
+	      	this.totalCount=DevList.obj.totalcount;
 		}
 	}
 </script>

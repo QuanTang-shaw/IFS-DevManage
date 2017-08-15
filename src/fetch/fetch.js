@@ -20,9 +20,6 @@
 		return promise;
 	}
 
-
-
-
 	async  function Factory_ListActive(){
 		var result = await exec_getData(
 	              "Handler_Factory_V1.ashx",
