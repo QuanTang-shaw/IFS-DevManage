@@ -296,6 +296,9 @@
 	.machineList-table{
 		/*border:solid 1px #DFDFDF;*/
 	}
+	.machineList-table tbody tr:hover{
+		background-color: #D6ECFA;
+	}
 	.machineList-table tr{
 		border-bottom:solid 1px #E3E1E1;
 	}

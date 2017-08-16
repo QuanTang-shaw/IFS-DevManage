@@ -148,21 +148,15 @@
 							<p><span>名称:</span>{{device.strDeviceName}}</p>
 							<p><span>品牌:</span>{{device.strVendorShortName}}</p>
 							<p><span>型号:</span>{{device.strDevModelName}}</p>
-							<p>编号: <strong></strong> {{device.strDeviceID}}</p>
 						</div>
 						<div class="model col-md-5">
 							<p>序列号: <strong></strong> {{device.strDeviceSN}}</p>
+							<p>编号: <strong></strong> {{device.strDeviceID}}</p>
 							<!-- <strong><span></span>{{device.strDevModelName}}</strong> -->
 							<span><strong></strong>{{device.strWorkshopName}}</span>
 							<span><strong>{{device.strWorkstationName}}</strong></span>
 						</div>
 						<div class="operating col-md-2">
-							<!-- <span>
-								<i class="fa fa-edit fa-lg" @click="deviceEdit(device,null)"></i>
-							</span>
-							<span>
-								<i class="fa fa-trash-o fa-lg" @click="deviceDelete(device)"></i>
-							</span> -->
 							<Button shape="circle" size="small" icon="edit" @click="deviceEdit(device,null)">编辑</Button>
 			                <Button shape="circle" size="small" icon="trash-a" @click="deviceDelete(device)">删除</Button>
 						</div>

@@ -254,7 +254,10 @@
   				});
         	this.workshopList=list.obj.objectlist;
         	this.totalCount=list.obj.totalcount;
-        	console.log(this.workshopList)
+        	console.log(this.workshopList);
+        	this.workshopList.forEach( function(elem, index) {
+        		// statements
+        	});
 		}
 	}
 </script>
@@ -287,6 +290,9 @@
 		/*border:solid 1px #D9D4D4;*/
 		width:100%;
 		/*margin-top: 20px;*/
+	}
+	.workshopTable tbody tr:hover{
+		background-color: #D6ECFA;
 	}
 	.workshopTable tr{
 		border-bottom:solid 1px #E6E0E0;

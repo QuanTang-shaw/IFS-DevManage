@@ -188,6 +188,9 @@
 	.companyList-table{
 		/*border: solid 1px #D2CDCD;*/
 	}
+	.companyList-table tbody tr:hover{
+		background-color: #D6ECFA;
+	}
 	.companyList-table th,.companyList-table td{
 		padding:15px 25px;
 		text-align: center;

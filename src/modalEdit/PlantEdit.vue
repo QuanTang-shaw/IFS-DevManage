@@ -89,7 +89,6 @@
 			},
 			confirm:function () {
 				if (this.isAddPlant){
-					console.log(typeof this.editPlant.strFactoryAddress)
 					fetch.Factory_Add({
 						uParkUUID        : 1,     //从属园区编码
 						strFactoryName   : this.editPlant.strFactoryName,    //工厂名称

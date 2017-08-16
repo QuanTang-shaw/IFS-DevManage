@@ -731,6 +731,9 @@
 		/*border: solid 1px #D1CCCC;*/
 		/*text-align: center;*/
 	}
+	.categoryList-table tbody tr:hover{
+		background-color: #D6ECFA;
+	}
 	.categoryList-table th,.categoryList-table td{
 		text-align: center;
 		padding:10px 0;
