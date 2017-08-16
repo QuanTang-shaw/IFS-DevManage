@@ -38,12 +38,14 @@
                 <i class="fa fa-trash-o fa-lg"></i> Delete</a>
               <a class="btn btn-default" href="#">
                 <i class="fa fa-cog fa-lg"></i> Settings</a> -->
-                <span class="font-icon-btn" @click="plantEdit(index)">
+                <!-- <span class="font-icon-btn" @click="plantEdit(index)">
                   <i class="fa fa-edit fa-lg" title="编辑"></i>
-                </span>
-                <span class="font-icon-btn" @click="plantDelete(plant)">
+                </span> -->
+                <Button  icon="edit" @click="plantEdit(index)">编辑</Button>
+                <Button  icon="trash-a" @click="plantDelete(plant)">删除</Button>
+                <!-- <span class="font-icon-btn" @click="plantDelete(plant)">
                   <i class="fa fa-trash-o fa-lg" title="删除"></i>
-                </span>
+                </span> -->
                 <!-- <span class="font-icon-btn" title="查看详情">
                   <i class="fa fa-list-alt fa-lg"></i>
                 </span> -->

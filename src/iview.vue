@@ -4,7 +4,13 @@
             <i-col span="5" class="layout-menu-left">
                 <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']" @on-select="router">
                     <div class="layout-logo-left">
+                        <!-- <img src="../static/img/53007d5b00000.png" alt="LOGO"> -->
+                        <img src="../static/img/TOP-STAR-LOGO.png" alt="LOGO">
                     </div>
+                    <!-- <Menu-item name="0">
+                        <Icon type="home"></Icon>
+                        首页
+                    </Menu-item> -->
                     <Submenu name="1">
                         <template slot="title">
                             <Icon type="ios-navigate"></Icon>
@@ -25,7 +31,30 @@
                 </Menu>
             </i-col>
             <i-col span="19">
-                <!-- <div class="layout-header"></div> -->
+                <div class="layout-header" style="background-color:#f8f8f9;">
+                    <Row :gutter="16" type="flex" justify="center" align="middle" class="code-row-bg" style="height:100%;">
+                        <Col span="10" style="border:solid 0px;">
+                            <h1 style="color:#0B0303; font-size:35px;">智能工厂管理系统</h1>
+                        </Col>
+                        <Col span="7" style="border:solid 0px;">
+                            <Input icon="search" placeholder="请输入点什么..."></Input>
+                        </Col>
+                        <Col span="3" style="border:solid 0px;">
+                            <Dropdown style="margin-left: 20px">
+                                <img src="../static/img/guy-3.jpg" alt="" style="border-radius:50px;width:35px;">
+                                <Dropdown-menu slot="list">
+                                    <Dropdown-item>个人信息</Dropdown-item>
+                                    <Dropdown-item>账号管理</Dropdown-item>
+                                    <Dropdown-item>密码管理</Dropdown-item>
+                                    <Dropdown-item divided>退出</Dropdown-item>
+                                </Dropdown-menu>
+                            </Dropdown>
+                        </Col>
+                        <Col span="2">
+                            <img src="../static/img/flage.jpg" alt="" style="height:30px;">
+                        </Col>
+                    </Row>
+                </div>
                 <div class="layout-breadcrumb">
                     <Breadcrumb>
                         <!-- <Breadcrumb-item href="#">首页</Breadcrumb-item> -->
@@ -134,9 +163,10 @@
         overflow: hidden;
         background: #fff;
         border-radius: 4px;
+        overflow: visible;
     }
     .layout-content-main{
-        padding: 10px;
+        padding: 25px 10px 25px;
         font-size:20px;
         min-height: 590px;
     }
@@ -160,13 +190,21 @@
     }
     .layout-logo-left{
         width: 90%;
-        height: 30px;
+        height: 40px;
         background: #5b6270;
         border-radius: 3px;
         margin: 15px auto;
     }
+    .layout-logo-left img{
+        height:100%;
+    }
     .viewTwo{
         min-height:490px;
+        /*border: solid 1px #E3DFDF;*/
+        position: relative;
+    }
+    .viewTwo .page{
+        margin:30px 10px;
     }
     .warmTitle{
         color: #FC0808;

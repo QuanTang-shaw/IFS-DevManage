@@ -25,7 +25,7 @@
 			  <div class="col-md-5 selectedPlant-oper">
 				<label>切换工厂:
 					<Dropdown style="margin-left: 20px" @on-click="togglePlant">
-				        <Button type="primary">
+				        <Button >
 				            {{selectedPlant.strFactoryName}}
 				            <Icon type="arrow-down-b"></Icon>
 				        </Button>
@@ -37,9 +37,22 @@
 			  </div>
 			</div>
 		</div>
+		<div style="margin-top:20px;">
+			<Row type="flex" justify="space-around">
+		        <Col span="15">
+					<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button>
+		        </Col>
+		        <Col span="4">
+		        	<Input  placeholder="请输入..."></Input>
+		        </Col>
+		        <Col span="2">
+					<Button type="ghost" shape="circle" icon="ios-search">搜索</Button>
+		        </Col>
+			</Row>
+		</div>
 		<div class="workshopManagement-table">
 			<table class="workshopTable" border="0">
-				<thead>
+				<thead style="background-color:#F0EDED">
 					<tr>
 						<!-- <th></th> -->
 						<th>车间编号</th>
@@ -49,7 +62,7 @@
 						<th> <span>操作</span>
 							<!-- <button class="btn btn-default addWorkshop" @click="WsEdit(null,'add')">
 							<i class="fa fa-plus"></i>添加车间</button> -->
-							<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button>
+							<!-- <Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button> -->
 						</th>
 					</tr>
 				</thead>
@@ -77,30 +90,28 @@
 							</span>
 						</td>
 						<td class="workshop-oper">
-							<span class="font-icon-btn" @click="WsEdit(index)">
+							<!-- <span class="font-icon-btn" @click="WsEdit(index)">
 							  <i class="fa fa-edit fa-lg" title="编辑"></i>
 							</span>
 							<span class="font-icon-btn" @click="wsDeletePop(workshop)">
 							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
-							</span>
-							<!-- <span class="font-icon-btn" title="查看详情">
-							  <i class="fa fa-angle-double-down fa-lg"></i>
 							</span> -->
+			                <Button  shape="circle" size="small" icon="edit" @click="WsEdit(index)">编辑</Button>
+			                <Button  shape="circle" size="small" icon="trash-a" @click="wsDeletePop(workshop)">删除</Button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-			<!-- <paging v-if="showPaging" :totalcount="totalCount" :items="pageItems" @togglePage="togglePage"></paging> -->
-			<div class="page">
-				<Page
-					@on-change="togglePage"
-					@on-page-size-change="togglePageNum"
-					:total="totalCount"
-					:page-size="pageSize"
-					:page-size-opts="pageSizeOpts"
-					show-sizer>
-				</Page>
-			</div>
+		</div>
+		<div class="page">
+			<Page
+				@on-change="togglePage"
+				@on-page-size-change="togglePageNum"
+				:total="totalCount"
+				:page-size="pageSize"
+				:page-size-opts="pageSizeOpts"
+				show-sizer>
+			</Page>
 		</div>
 	</div>
 </template>
@@ -130,8 +141,8 @@
 			    editTypeTxt:'车间',
 			    deletePopContent:'',
 			    totalCount:0,
-			    pageSize:5,
-			    pageSizeOpts:[5,10,15],
+			    pageSize:10,
+			    pageSizeOpts:[10,15,20],
 			    currentPage:0,
 			    modal1:false
 			}
@@ -243,12 +254,13 @@
   				});
         	this.workshopList=list.obj.objectlist;
         	this.totalCount=list.obj.totalcount;
+        	console.log(this.workshopList)
 		}
 	}
 </script>
 <style>
 	.workshopManagement{
-		margin-top:30px;
+		/*margin-top:30px;*/
 		font-size: .7em;
 	}
 	.workshopManagement,.workshopManagement-table{
@@ -258,11 +270,13 @@
 	.workshop-plantSelect{
 		border:solid 1px #DAD2D2;
 		padding:5px 10px;
+	    border-radius: 5px;
 	}
 	.workshopManagement-table{
 		box-shadow: 2px 2px 5px #c6c5c7;
-		padding: 10px;
+		/*padding: 10px;*/
 		margin-top:20px;
+	    border-radius: 3px;
 	}
 	.workshopManagement-table th,.workshopManagement-table td{
 		padding:10px 0;
@@ -314,4 +328,7 @@
 		width:100%;
 		max-width:120px;
 	}
+	.page{
+        margin:30px 10px;
+    }
 </style>

@@ -57,7 +57,7 @@
 						</div> -->
 						<label>安装位置:
 							<Dropdown style="margin-left: 20px" @on-click="toggleFactory">
-						        <Button type="primary">
+						        <Button >
 						            {{selectedFactory.strFactoryName}}
 						            <Icon type="arrow-down-b"></Icon>
 						        </Button>
@@ -68,7 +68,7 @@
 						        </Dropdown-menu>
 						    </Dropdown>
 						    <Dropdown style="margin-left: 20px" @on-click="toggleWorkshop">
-						        <Button type="primary">
+						        <Button >
 						            {{selectedWorkshop.strWorkshopName}}
 						            <Icon type="arrow-down-b"></Icon>
 						        </Button>
@@ -79,7 +79,7 @@
 						        </Dropdown-menu>
 						    </Dropdown>
 						    <Dropdown style="margin-left: 20px" @on-click="toggleMachine">
-						        <Button type="primary">
+						        <Button >
 						            {{selectedMachine.strWorkstationName}}
 						            <Icon type="arrow-down-b"></Icon>
 						        </Button>
@@ -157,15 +157,14 @@
 							<span><strong>{{device.strWorkstationName}}</strong></span>
 						</div>
 						<div class="operating col-md-2">
-							<span>
+							<!-- <span>
 								<i class="fa fa-edit fa-lg" @click="deviceEdit(device,null)"></i>
 							</span>
 							<span>
 								<i class="fa fa-trash-o fa-lg" @click="deviceDelete(device)"></i>
-							</span>
-							<span>
-								<!-- <i class="fa fa-list-alt fa-lg"></i> -->
-							</span>
+							</span> -->
+							<Button shape="circle" size="small" icon="edit" @click="deviceEdit(device,null)">编辑</Button>
+			                <Button shape="circle" size="small" icon="trash-a" @click="deviceDelete(device)">删除</Button>
 						</div>
 					</div>
 				</li>
@@ -366,6 +365,7 @@
 <style>
 	.Filtering{
 		border:solid 1px #CFCCCC;
+		border-radius:5px;
 		font-size:.7em;
 		padding: 15px 15px;
 	}

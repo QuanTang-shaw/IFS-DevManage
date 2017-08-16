@@ -13,42 +13,56 @@
 		    </Alert>
 		</Modal>
 		<mf-edit v-show="showManufaEdit" @Edit="EditSubmit" :edited="editedManufa" :isAdd="isAddManufa"></mf-edit>
-		<table border="0" class="companyList-table" >
-			<thead>
-				<tr>
-					<!-- <th></th> -->
-					<th>名称</th>
-					<th>英文</th>
-					<th>全称</th>
-					<th>所在地</th>
-					<th>
-						<span>操作
-							<Button  type="primary" icon="plus-round" @click="ManufaEdit(null,'add')">添加厂商</Button>
-						</span>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="(company,index) in companyList">
-					<!-- <td><input type="checkbox"></td> -->
-					<td>{{company.strVendorShortName}}</td>
-					<td>{{company.strVendorShortName_EN}}</td>
-					<td>{{company.strVendorName}}</td>
-					<td>{{company.strVendorAddress}}</td>
-					<td class="companyList-oper">
-						<span title="编辑" @click="ManufaEdit(index)">
-							<i class="fa fa-edit fa-lg"></i>
-						</span>
-						<span title="删除" @click="Delete(company)">
-							<i class="fa fa-trash-o fa-lg"></i>
-						</span>
-						<!-- <span title="详情">
-							<i class="fa fa-list-alt fa-lg"></i>
-						</span> -->
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div style="margin:20px 0;">
+			<Row type="flex" justify="space-around">
+		        <Col span="15">
+					<Button  type="primary" icon="plus-round" @click="ManufaEdit(null,'add')">添加厂商</Button>
+		        </Col>
+		        <Col span="4">
+		        	<Input  placeholder="请输入..."></Input>
+		        </Col>
+		        <Col span="2">
+					<Button type="ghost" shape="circle" icon="ios-search">搜索</Button>
+		        </Col>
+			</Row>
+		</div>
+		<div class="vendorList">
+			<table border="0" class="companyList-table" >
+				<thead>
+					<tr>
+						<th>LOGO</th>
+						<th>名称</th>
+						<th>英文</th>
+						<th>全称</th>
+						<th>所在地</th>
+						<th>
+							<span>操作
+								<!-- <Button  type="primary" icon="plus-round" @click="ManufaEdit(null,'add')">添加厂商</Button> -->
+							</span>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(company,index) in companyList">
+						<td><img src="../../static/img/TOP-STAR-LOGO.png" height="25px;" alt=""></td>
+						<td>{{company.strVendorShortName}}</td>
+						<td>{{company.strVendorShortName_EN}}</td>
+						<td>{{company.strVendorName}}</td>
+						<td>{{company.strVendorAddress}}</td>
+						<td class="companyList-oper">
+							<!-- <span title="编辑" @click="ManufaEdit(index)">
+								<i class="fa fa-edit fa-lg"></i>
+							</span>
+							<span title="删除" @click="Delete(company)">
+								<i class="fa fa-trash-o fa-lg"></i>
+							</span> -->
+							<Button shape="circle" size="small" icon="edit" @click="ManufaEdit(index)">编辑</Button>
+			                <Button shape="circle" size="small" icon="trash-a" @click="Delete(company)">删除</Button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 		<div class="page">
 			<Page
 				@on-change="togglePage"
@@ -78,8 +92,8 @@
 				showPaging:false,
 				isAddManufa:false,
 				totalCount:0,
-				pageSize:5,
-				pageSizeOpts:[5,10,15],
+				pageSize:10,
+				pageSizeOpts:[10,15,20],
 				currentPage:0,
 				modal1:false
 			}
@@ -161,8 +175,12 @@
 <style>
 	.companyList{
 		font-size:.75em;
-		box-shadow: 2px 2px 5px #c6c5c7;
 		padding:10px;
+	}
+	.vendorList{
+		padding: 10px 15px;
+		box-shadow: 2px 2px 5px #c6c5c7;
+		border-radius:5px;
 	}
 	.companyList,.companyList-table{
 		width: 100%;
@@ -180,4 +198,7 @@
 	.companyList-oper span{
 		margin-left:15px;
 	}
+	.page{
+        margin:30px 10px;
+    }
 </style>

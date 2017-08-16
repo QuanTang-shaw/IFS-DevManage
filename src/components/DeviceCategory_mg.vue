@@ -48,118 +48,124 @@
 	        @on-cancel="cancel">
 	        <Input v-model="newParCagegoryName" placeholder="请输入新的设备类型名称" style="width: 300px"></Input>
     	</Modal>
-		<div class="categoryList-nav">
-			<div>
-				<div @mouseenter="showIcon" @mouseleave="hideIcon">
-					<i class="fa fa-minus-square-o  fa-lg" @click="foldAll"></i>
-					<span>设备类别</span>
-					<span class="operating-icon">
-							<i class="fa fa-plus fa-sm" @click="render"></i>
-						<!-- <Button @click="render" icon="plus-round" size="small">
-						</Button> -->
-					</span>
-				</div>
-				<ul style="margin-left:20px;" v-show="showTree">
-					<li class="CategoryName" v-for="(parentCategory,index0) in DevParentClass" style="position:relative;">
-						<div class="devType" @mouseenter="showIcon" @mouseleave="hideIcon">
-							<i class="fa fa-minus-square-o fa-lg"
-								style="margin-right:6px;"
-								@click="fold(index0,parentCategory)"
-								v-if="index0==0">
-							</i>
-							<i class="fa fa-plus-square-o fa-lg"
-								style="margin-right:6px;"
-								@click="fold(index0,parentCategory)"
-								v-else>
-							</i>
-							<input
-								type="text"
-								class="categoryNameInput"
-								v-model="parentCategory.strDevCategoryName"
-								@change="changeCategoryName(parentCategory)"
-								v-if="parentIndex==index0"
-								@blur="blur"
-								v-focus>
-							<span v-else style="font-weight:bolder">{{parentCategory.strDevCategoryName}}</span>
-							<span class="operating-icon">
-								<i class="fa fa-edit fa-sm" @click.stop="parentNameEdit(index0)"></i>
-								<i class="fa fa-plus fa-sm" @click="addSubCategory(parentCategory,index0)"></i>
-								<i class="fa fa-remove fa-sm" @click="delParCategory(parentCategory,{index0},'parent')"></i>
-							</span>
-						</div>
-						<ul style="border:solid 0px;" v-if="unfolder[index0]">
-							<li class="subCategoryName" v-for="(subCategory,$index1) in DevSubClass[index0]" @click="categoryClick(subCategory)" style="padding-left:15px;" @mouseleave="devNameOut" @mouseenter="devNameOver">
-									<input
-										type="text"
-										class="categoryNameInput"
-										v-model="subCategory.strDevCategoryName"
-										@change="changeCategoryName(subCategory)"
-										v-if="showInputIndex0==index0&&showInputIndex1==$index1"
-										@blur="blur"
+    	<div class="devModel-mg">
+			<div class="categoryList-nav">
+				<div>
+					<div @mouseenter="showIcon" @mouseleave="hideIcon">
+						<i class="fa fa-minus-square-o  fa-lg" @click="foldAll"></i>
+						<span>设备类别</span>
+						<span class="operating-icon">
+								<i class="fa fa-plus fa-sm" @click="render"></i>
+							<!-- <Button @click="render" icon="plus-round" size="small">
+							</Button> -->
+						</span>
+					</div>
+					<ul style="margin-left:20px;" v-show="showTree">
+						<li class="CategoryName" v-for="(parentCategory,index0) in DevParentClass" style="position:relative;">
+							<div class="devType" @mouseenter="showIcon" @mouseleave="hideIcon">
+								<i class="fa fa-minus-square-o fa-lg"
+									style="margin-right:6px;"
+									@click="fold(index0,parentCategory)"
+									v-if="index0==0">
+								</i>
+								<i class="fa fa-plus-square-o fa-lg"
+									style="margin-right:6px;"
+									@click="fold(index0,parentCategory)"
+									v-else>
+								</i>
+								<input
+									type="text"
+									class="categoryNameInput"
+									v-model="parentCategory.strDevCategoryName"
+									@change="changeCategoryName(parentCategory)"
+									v-if="parentIndex==index0"
+									@blur="blur"
 									v-focus>
-									<span v-else>{{subCategory.strDevCategoryName}}</span>
-									<span class="operating-icon">
-										<i class="fa fa-trash  fa-sm"  @click="delSubCategory(subCategory,{index0,$index1},'sub')"></i>
-										<i class="fa fa-edit fa-sm" @click.stop="devNameEdit(index0,$index1)"></i>
+								<span v-else style="font-weight:bolder">{{parentCategory.strDevCategoryName}}</span>
+								<span class="operating-icon">
+									<i class="fa fa-edit fa-sm" @click.stop="parentNameEdit(index0)"></i>
+									<i class="fa fa-plus fa-sm" @click="addSubCategory(parentCategory,index0)"></i>
+									<i class="fa fa-remove fa-sm" @click="delParCategory(parentCategory,{index0},'parent')"></i>
+								</span>
+							</div>
+							<ul style="border:solid 0px;" v-if="unfolder[index0]">
+								<li class="subCategoryName" v-for="(subCategory,$index1) in DevSubClass[index0]" @click="categoryClick(subCategory)" style="padding-left:15px;" @mouseleave="devNameOut" @mouseenter="devNameOver">
+										<input
+											type="text"
+											class="categoryNameInput"
+											v-model="subCategory.strDevCategoryName"
+											@change="changeCategoryName(subCategory)"
+											v-if="showInputIndex0==index0&&showInputIndex1==$index1"
+											@blur="blur"
+										v-focus>
+										<span v-else>{{subCategory.strDevCategoryName}}</span>
+										<span class="operating-icon">
+											<i class="fa fa-trash  fa-sm"  @click="delSubCategory(subCategory,{index0,$index1},'sub')"></i>
+											<i class="fa fa-edit fa-sm" @click.stop="devNameEdit(index0,$index1)"></i>
+										</span>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="devModelList">
+				<div class="categoryList">
+					<table class="categoryList-table" border="0">
+						<thead style="background-color:#F0EDED">
+							<tr>
+								<!-- <th><input type="checkbox"></th> -->
+								<th><span>设备型号</span></th>
+								<th><span>设备名称</span></th>
+								<th><span>设备厂商</span></th>
+								<th><span>设备数量</span></th>
+								<th>
+									<span>操作</span>
+									<Button  type="primary" icon="plus-round" @click="DevModelEdit">添加型号</Button>
+								</th>
+							</tr>
+						</thead>
+						<tbody style="border:solid 1px #F2F1F1;">
+							<tr v-for="(device,index) in DevModelList">
+								<!-- <td><input type="checkbox"></td> -->
+								<td>
+									<span>{{device.strDevModelName}}</span>
+								</td>
+								<td>
+									<span>{{device.strDevCategoryName}}</span>
+								</td>
+								<td>
+									<span>{{device.strVendorShortName}}</span>
+								</td>
+								<td>
+									<span>15</span>
+								</td>
+								<td class="DevCagegory-oper">
+									<!-- <span title="编辑">
+										<i class="fa fa-edit fa-lg" @click="DevModelEdit(device,index)"></i>
 									</span>
-							</li>
-						</ul>
-					</li>
-				</ul>
+									<span title="删除">
+										<i class="fa fa-trash-o fa-lg" @click="DevModelDelete(device,index)"></i>
+									</span> -->
+									<Button shape="circle" size="small" icon="edit" @click="DevModelEdit(device,index)">编辑</Button>
+			                		<Button shape="circle" size="small" icon="trash-a" @click="DevModelDelete(device,index)">删除</Button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="page">
+					<Page
+						@on-change="togglePage"
+						@on-page-size-change="togglePageNum"
+						:total="totalCount"
+						:page-size="pageSize"
+						:page-size-opts="pageSizeOpts"
+						show-sizer>
+					</Page>
+				</div>
 			</div>
-		</div>
-		<div class="categoryList">
-			<table class="categoryList-table" border="0">
-				<thead>
-					<tr>
-						<!-- <th><input type="checkbox"></th> -->
-						<th><span>设备型号</span></th>
-						<th><span>设备名称</span></th>
-						<th><span>设备厂商</span></th>
-						<th><span>设备数量</span></th>
-						<th>
-							<span>操作</span>
-							<Button  type="primary" icon="plus-round" @click="DevModelEdit">添加型号</Button>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(device,index) in DevModelList">
-						<!-- <td><input type="checkbox"></td> -->
-						<td>
-							<span>{{device.strDevModelName}}</span>
-						</td>
-						<td>
-							<span>{{device.strDevCategoryName}}</span>
-						</td>
-						<td>
-							<span>{{device.strVendorShortName}}</span>
-						</td>
-						<td>
-							<span>15</span>
-						</td>
-						<td class="DevCagegory-oper">
-							<span title="编辑">
-								<i class="fa fa-edit fa-lg" @click="DevModelEdit(device,index)"></i>
-							</span>
-							<span title="删除">
-								<i class="fa fa-trash-o fa-lg" @click="DevModelDelete(device,index)"></i>
-							</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="page">
-				<Page
-					@on-change="togglePage"
-					@on-page-size-change="togglePageNum"
-					:total="totalCount"
-					:page-size="pageSize"
-					:page-size-opts="pageSizeOpts"
-					show-sizer>
-				</Page>
-			</div>
-		</div>
+    	</div>
 	</div>
 </template>
 
@@ -637,7 +643,7 @@
 	      		if(index==0) self.unfolder[0]=true;
 	      		 else self.unfolder[index]=false;
 	      	});
-	      	console.log(this.DevParentClass)
+	      	// console.log(this.DevParentClass);
 
 		    let len=self.DevParentClass.length,
 			      k=0;
@@ -650,7 +656,6 @@
 			      	"uUserUUID":-1
 			    });
 			    k++;
-			    // console.log(k);
 			    if(k<len) togetData();
 			    else  self.selectedCategory=self.DevSubClass[0][0];
 		    }
@@ -666,7 +671,7 @@
 				});
 			this.DevModelList=list.obj.objectlist;
 			this.totalCount=list.obj.totalcount;
-			console.log(this.DevModelList)
+			// console.log(this.DevModelList);
 		},
 		created(){
 			setTimeout(()=>{
@@ -689,9 +694,9 @@
 </script>
 
 <style>
-	.deviceCategory{
-		font-size:.7em;
+	.devModel-mg{
 		/*border:solid 1px #CBC6C6;*/
+		font-size:.7em;
 		box-shadow: 2px 2px 5px #c6c5c7;
 		height:500px;
 		position: relative;
@@ -707,7 +712,7 @@
 	    border: solid 1px #E7E2E2;
 	    display: inline-block;
 	}
-	.categoryList{
+	.devModelList{
 		display: inline-block;
 		min-width: 70%;
 		max-width: 80%;
@@ -715,6 +720,9 @@
 		top: 0;
 		bottom: 0;
 		padding: 15px;
+	}
+	.categoryList{
+		margin:0 auto;
 	}
 	.deviceCategory,.categoryList-table{
 		width: 100%;
@@ -761,8 +769,6 @@
 		margin-left:15px;
 	}
 	.page{
-		/* position: absolute;
-		bottom: 30px;
-		z-index:1000; */
-	}
+        margin:30px 10px;
+    }
 </style>

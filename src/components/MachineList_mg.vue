@@ -26,7 +26,7 @@
 				<div>
 					<label>切换工厂:
 						<Dropdown style="margin-left: 20px" @on-click="toggleFactory">
-					        <Button type="primary">
+					        <Button >
 					            {{selectedFactory.strFactoryName}}
 					            <Icon type="arrow-down-b"></Icon>
 					        </Button>
@@ -41,7 +41,7 @@
 				<div>
 					<label>切换车间:
 						<Dropdown style="margin-left: 20px" @on-click="toggleWorkshop">
-					        <Button type="primary">
+					        <Button >
 					            {{selectedWorkshop.strWorkshopName}}
 					            <Icon type="arrow-down-b"></Icon>
 					        </Button>
@@ -56,9 +56,22 @@
 			  </div>
 			</div>
 		</div>
+		<div style="margin-top:20px;">
+			<Row type="flex" justify="space-around">
+		        <Col span="15">
+					<Button class="addMachineList" type="primary" icon="plus-round" @click="machineEdit(null,'add')">添加机台</Button>
+		        </Col>
+		        <Col span="4">
+		        	<Input  placeholder="请输入..."></Input>
+		        </Col>
+		        <Col span="2">
+					<Button type="ghost" shape="circle" icon="ios-search">搜索</Button>
+		        </Col>
+			</Row>
+		</div>
 		<div class="machineList">
 			<table class="machineList-table" border="0" style="">
-				<thead>
+				<thead style="background-color:#F0EDED">
 					<tr>
 						<!-- <th></th> -->
 						<th><span>机台编号</span></th>
@@ -66,7 +79,7 @@
 						<th><span>机台主管</span></th>
 						<th><span>机台类型</span></th>
 						<th><span>操作
-							<Button class="addMachineList" type="primary" icon="plus-round" @click="machineEdit(null,'add')">添加机台</Button>
+							<!-- <Button class="addMachineList" type="primary" icon="plus-round" @click="machineEdit(null,'add')">添加机台</Button> -->
 							</span>
 						</th>
 					</tr>
@@ -79,29 +92,22 @@
 						<td><span>{{machine.manager}}</span></td>
 						<td><span>{{machine.strWorkstationTypeName}}</span></td>
 						<td class="machineList-oper">
-							<span class="font-icon-btn" @click="machineEdit(index)">
-							  <i class="fa fa-edit fa-lg" title="编辑"></i>
-							</span>
-							<span class="font-icon-btn" @click="MachineDelete(machine)">
-							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
-							</span>
-							<!-- <span class="font-icon-btn" title="查看详情">
-							  <i class="fa fa-angle-double-down fa-lg"></i>
-							</span> -->
+							<Button shape="circle" size="small" icon="edit" @click="machineEdit(index)">编辑</Button>
+			                <Button shape="circle" size="small" icon="trash-a" @click="MachineDelete(machine)">删除</Button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-			<div class="page">
-				<Page
-					@on-change="togglePage"
-					@on-page-size-change="togglePageNum"
-					:total="totalCount"
-					:page-size="pageSize"
-					:page-size-opts="pageSizeOpts"
-					show-sizer>
-				</Page>
-			</div>
+		</div>
+		<div class="page">
+			<Page
+				@on-change="togglePage"
+				@on-page-size-change="togglePageNum"
+				:total="totalCount"
+				:page-size="pageSize"
+				:page-size-opts="pageSizeOpts"
+				show-sizer>
+			</Page>
 		</div>
 	</div>
 </template>
@@ -133,8 +139,8 @@
 			  showPaging:false,
 			  isAddMachine:false,
 			  totalCount:0,
-			  pageSize:5,
-			  pageSizeOpts:[5,10,15],
+			  pageSize:10,
+			  pageSizeOpts:[10,15,20],
 			  currentPage:0,
 			  modal1:false
 			}
@@ -259,7 +265,7 @@
 			this.selectedWorkshop=this.workshopList[0];
 			let workstationList=await WorkstationListActive({
 		  	              	"nPageIndex": 0,
-		  	              	"nPageSize": 5,
+		  	              	"nPageSize": this.pageSize,
 		  	              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
 		  	              	"uWorkstationTypeUUID":-1,
 		  	    			"uWorkstationAdminUUID":-1,
@@ -275,6 +281,7 @@
 	}
 	.workshopSelect{
 		/*font-size:20px;*/
+		border-radius:5px;
 		border:solid 1px #DEDADA;
 		padding:5px 10px;
 	}
@@ -282,7 +289,7 @@
 		width: 100%;
 	}
 	.machineList{
-		padding: 10px;
+		/*padding: 10px;*/
 		box-shadow:2px 2px 5px #c6c5c7;
 		margin-top:25px;
 	}
@@ -326,4 +333,7 @@
 		width:100%;
 		max-width:120px;
 	}
+	.page{
+        margin:30px 10px;
+    }
 </style>
