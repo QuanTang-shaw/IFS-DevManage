@@ -5,7 +5,7 @@
                 <img src="../static/img/TOP-STAR-LOGO.png" alt="" height="40px;">
             </Col>
             <Col span="9" style="border:solid 0px;">
-                <h1 style="color:#0B0303; font-size:35px;">智能工厂管理系统</h1>
+                <h1 style="color:#4A4343; font-size:35px;">智能工厂管理系统</h1>
             </Col>
             <Col span="7" style="border:solid 0px;">
                 <Input icon="search" placeholder="请输入点什么..."></Input>

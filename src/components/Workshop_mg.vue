@@ -1,6 +1,6 @@
 <template>
 	<div class="workshopManagement">
-		<workshop-edit v-if='showWSEdit'  @Edit="EditSubmit" :editType="editTypeTxt" :isAdd="isAdd" :edited="editedWorkshop" :factoryList="factoryList" :selectedFactory="selectedPlant"></workshop-edit>
+		<!-- <workshop-edit v-if='showWSEdit'  @Edit="EditSubmit" :editType="editTypeTxt" :isAdd="isAdd" :edited="editedWorkshop" :factoryList="factoryList" :selectedFactory="selectedPlant"></workshop-edit> -->
 		<Modal
 		    v-model="modal1"
 		    title="删除车间"
@@ -87,7 +87,7 @@
 		<div style="margin-top:20px;">
 			<Row type="flex" justify="space-around">
 		        <Col span="15">
-					<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,null,'add')">添加车间</Button>
+					<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button>
 		        </Col>
 		        <Col span="4">
 		        	<Input  placeholder="请输入..."></Input>
@@ -137,7 +137,7 @@
 							</span>
 						</td>
 						<td class="workshop-oper">
-			                <Button  shape="circle" size="small" icon="edit" @click="WsEdit(workshop,index)">编辑</Button>
+			                <Button  shape="circle" size="small" icon="edit" @click="WsEdit(workshop)">编辑</Button>
 			                <Button  shape="circle" size="small" icon="trash-a" @click="wsDeletePop(workshop)">删除</Button>
 						</td>
 					</tr>
@@ -250,6 +250,7 @@
 			},
 			close(){
 				this.modal2=false;
+				this.$Message.info('点击了取消');
 			},
 			handleSubmit (name) {
                 this.$refs[name].validate(async (valid) => {
@@ -342,7 +343,7 @@
 				this.deletePopContent=obj.strWorkshopName;
 				this.DelWorkshopID=obj.uWorkshopUUID;
 			},
-			WsEdit:function (obj,index,add) {
+			WsEdit:function (obj,add) {
 				if(add){
 					this.isAdd=true;
 					this.editedWorkshop={};
