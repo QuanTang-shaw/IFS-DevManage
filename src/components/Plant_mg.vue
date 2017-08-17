@@ -16,7 +16,6 @@
     <Modal
         v-model="modal2"
         title="工厂编辑"
-        @on-ok="submitEdit"
         @on-cancel="cancel"
         :footer-hide="true">
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -156,8 +155,6 @@
                     strFactoryID     : self.editPlant.strFactoryID,//工厂ID
                     strFactoryAddress: self.formValidate.address,  //工厂地址
                   });
-                  self.plantList=await FactoryListActive();
-                  self.modal2=false;
                 }
                 else{
                   await FactoryUpdate({
@@ -174,9 +171,9 @@
                     fFactoryLongitude:-1,
                     fFactoryAltitude :-1
                   });
-                  self.plantList=await FactoryListActive();
-                  self.modal2=false;
                 }
+                self.plantList=await FactoryListActive();
+                self.modal2=false;
             }
             else {
                 self.$Message.error('表单验证失败!');
@@ -194,14 +191,12 @@
             self.$Message.info('删除成功');
           });
       },
-      submitEdit(){
-
-      },
       cancel () {
         this.$Message.info('点击了取消');
       },
       close(){
         this.modal2=false;
+        this.$Message.info('点击了取消');
       },
       upPic(){
         event.target.nextSibling.nextSibling.click();

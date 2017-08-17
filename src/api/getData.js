@@ -45,7 +45,7 @@
 	              "Handler_WorkshopType_V1.ashx",
 	              "WorkshopType_ListActive",
 	              obj);
-		 return result;
+		 return result.obj.objectlist;
 	}
 
 

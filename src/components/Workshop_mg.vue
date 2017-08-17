@@ -13,6 +13,53 @@
 		      您确定要删除<span class="warmTitle" style="color:#FA0E0E;font-weight: bolder;">{{deletePopContent}}</span>吗?
 		    </Alert>
 		</Modal>
+		<Modal
+		    v-model="modal2"
+		    title="车间编辑"
+		    @on-cancel="cancel"
+		    :footer-hide="true">
+		    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+		            <Form-item label="编号" prop="numbering">
+		                <Input v-model="formValidate.numbering" placeholder="请输入车间编号"></Input>
+		            </Form-item>
+		            <Form-item label="名称" prop="name">
+		                <Input v-model="formValidate.name" placeholder="请输入车间名称"></Input>
+		            </Form-item>
+		            <Form-item label="主管" prop="mail">
+		                <Select v-model="formValidate.charge" placeholder="请选择车间主管">
+	                        <Option value="1" >主管1</Option>
+	                        <Option value="2" >主管2</Option>
+	                        <Option value="3" >主管3</Option>
+	                        <Option value="4" >主管4</Option>
+	                        <Option value="5" >主管5</Option>
+		                </Select>
+		            </Form-item>
+		            <Form-item label="类型" prop="workshopType">
+		                <Select v-model="formValidate.workshopType" placeholder="请选择车间类型">
+	                        <Option :key="wsType.uWorkshopTypeUUID" :value="wsType.uWorkshopTypeUUID" v-for="wsType in workshopTypelist">{{wsType.strWorkshopTypeName}}</Option>
+		                </Select>
+		            </Form-item>
+		            <Form-item label="所属工厂" prop="Ownedfactory">
+		                <Select v-model="formValidate.Ownedfactory" placeholder="请选择车间所属工厂">
+	                        <Option :key="factory.uFactoryUUID" :value="factory.uFactoryUUID" v-for="factory in factoryList">{{factory.strFactoryName}}</Option>
+		                </Select>
+		            </Form-item>
+		            <Form-item label="车间描述" prop="desc">
+		                <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入..."></Input>
+		            </Form-item>
+		            <Form-item label="图片" >
+		              <div class="fileUpload">
+		                <img src="../assets/plant1.jpg" alt="图片" @click="upPic">
+		                <input type="file" style="display:none;">
+		              </div>
+		            </Form-item>
+		            <Form-item>
+		                <Button type="ghost" @click="close" >取消</Button>
+		                <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left: 8px">提交</Button>
+		                <Button type="primary" @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+		            </Form-item>
+		    </Form>
+		</Modal>
 		<div class="workshop-plantSelect">
 			<div class="row">
 			  <div class="col-md-2 selectedPlant-pic">
@@ -40,7 +87,7 @@
 		<div style="margin-top:20px;">
 			<Row type="flex" justify="space-around">
 		        <Col span="15">
-					<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button>
+					<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,null,'add')">添加车间</Button>
 		        </Col>
 		        <Col span="4">
 		        	<Input  placeholder="请输入..."></Input>
@@ -90,13 +137,7 @@
 							</span>
 						</td>
 						<td class="workshop-oper">
-							<!-- <span class="font-icon-btn" @click="WsEdit(index)">
-							  <i class="fa fa-edit fa-lg" title="编辑"></i>
-							</span>
-							<span class="font-icon-btn" @click="wsDeletePop(workshop)">
-							  <i class="fa fa-trash-o fa-lg" title="删除"></i>
-							</span> -->
-			                <Button  shape="circle" size="small" icon="edit" @click="WsEdit(index)">编辑</Button>
+			                <Button  shape="circle" size="small" icon="edit" @click="WsEdit(workshop,index)">编辑</Button>
 			                <Button  shape="circle" size="small" icon="trash-a" @click="wsDeletePop(workshop)">删除</Button>
 						</td>
 					</tr>
@@ -120,7 +161,10 @@
 	import {
     	FactoryListActive,
     	Workshop_ListActive,
+    	WorkshopTypeListActive,
     	WorkshopInactive,
+    	WorkshopAdd,
+    	WorkshopUpdate,
     	WorkstationListActive,
     	DevModelListActive,
     	DevcategoryListActive,
@@ -132,6 +176,7 @@
 			return {
 			    workshopList:[],
 			    factoryList:[],
+			    workshopTypelist:[],
 			    selectedPlant:{},
 			    editedWorkshop:{},
 			    showWSEdit:false,
@@ -144,7 +189,38 @@
 			    pageSize:10,
 			    pageSizeOpts:[10,15,20],
 			    currentPage:0,
-			    modal1:false
+			    modal1:false,
+			    modal2:false,
+			    formValidate: {
+			      numbering:'',
+			      name: '',
+			      charge:'',
+			      workshopType:'',
+			      Ownedfactory:'',
+			      desc: ''
+			    },
+			    ruleValidate: {
+			        numbering: [
+			            { required: true, message: '地址不能为空', trigger: 'blur' },
+			        ],
+			        name: [
+			            { required: true, message: '名称不能为空', trigger: 'blur' }
+			        ],
+			        workshopType: [
+			            { required: true, message: '请选择车间类型', trigger: 'blur' }
+			        ],
+			        Ownedfactory: [
+			            { required: true, message: '请选择所属工厂', trigger: 'blur' }
+			        ],
+			        interest: [
+			            { required: true, type: 'array', min: 1, message: '至少选择一个爱好', trigger: 'change' },
+			            { type: 'array', max: 2, message: '最多选择两个爱好', trigger: 'change' }
+			        ],
+			        desc: [
+			            // { required: true, message: '请输入工厂详细信息', trigger: 'blur' },
+			            { type: 'string', min: 5, message: '介绍不能少于5字', trigger: 'blur' }
+			        ]
+			    }
 			}
 		},
 		components:{
@@ -172,6 +248,57 @@
 			cancel () {
 			  this.$Message.info('点击了取消');
 			},
+			close(){
+				this.modal2=false;
+			},
+			handleSubmit (name) {
+                this.$refs[name].validate(async (valid) => {
+                    if (valid) {
+                        if(this.isAdd){
+                        	await WorkshopAdd({
+    							uFactoryUUID: this.formValidate.Ownedfactory,
+    							uWorkshopTypeUUID:this.formValidate.workshopType,
+    							uWorkshopAdminUUID: -1,
+    							strWorkshopID: this.formValidate.numbering,
+    							strWorkshopName: this.formValidate.name,
+								strWorkshopDesc: this.formValidate.desc
+                        	});
+                        }
+                        else{
+                        	await WorkshopUpdate({
+								uWorkshopUUID: this.editedWorkshop.uWorkshopUUID,
+								uFactoryUUID: this.formValidate.Ownedfactory,
+								uWorkshopTypeUUID:this.formValidate.workshopType,
+								uWorkshopAdminUUID : 1,
+								strWorkshopName:this.formValidate.name,
+								strWorkshopID :this.formValidate.numbering,
+								strWorkshopDesc: this.formValidate.desc,
+								strWorkshopNote: ""
+                        	});
+                        }
+                        let list=await Workshop_ListActive({
+			              "nPageIndex": 0,
+			              "nPageSize": this.pageSize,
+			              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+			              "uWorkshopTypeUUID":-1,
+		  				  "uWorkshopAdminUUID":-1
+            	  		});
+            	        this.workshopList=list.obj.objectlist;
+            	        this.totalCount=list.obj.totalcount;
+                        this.$Message.success('提交成功!');
+                        this.modal2=false;
+                    }
+                    else {
+                        this.$Message.error('表单验证失败!');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            },
+            upPic(){
+              event.target.nextSibling.nextSibling.click();
+            },
 			async togglePlant(index) {
 		  	 	this.selectedPlant=this.factoryList[index];
     			this.showPaging=false;
@@ -215,16 +342,27 @@
 				this.deletePopContent=obj.strWorkshopName;
 				this.DelWorkshopID=obj.uWorkshopUUID;
 			},
-			WsEdit:function (index,add) {
+			WsEdit:function (obj,index,add) {
 				if(add){
 					this.isAdd=true;
 					this.editedWorkshop={};
+					this.formValidate.numbering='';
+					this.formValidate.name='';
+					this.formValidate.workshopType='';
+					this.formValidate.Ownedfactory='';
+					this.formValidate.desc='';
 				}
 				else{
 					this.isAdd=false;
-					this.editedWorkshop=this.workshopList[index];
+					this.editedWorkshop=obj;
+					this.formValidate.numbering=obj.strWorkshopID;
+					this.formValidate.name=obj.strWorkshopName;
+					this.formValidate.workshopType=obj.uWorkshopTypeUUID;
+					this.formValidate.Ownedfactory=obj.uFactoryUUID;
+					this.formValidate.desc=obj.strWorkshopDesc;
+					// console.log(obj);
 				}
-				this.showWSEdit=!this.showWSEdit;
+				this.modal2=true;
 			},
 			async EditSubmit(str) {
 				if(str=='confirm'){
@@ -254,10 +392,11 @@
   				});
         	this.workshopList=list.obj.objectlist;
         	this.totalCount=list.obj.totalcount;
-        	console.log(this.workshopList);
-        	this.workshopList.forEach( function(elem, index) {
-        		// statements
-        	});
+        	this.workshopTypelist=await WorkshopTypeListActive({
+              	"nPageIndex":0,
+              	"nPageSize":-1
+	        });
+        	// console.log(this.workshopTypelist);
 		}
 	}
 </script>
