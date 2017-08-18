@@ -21,25 +21,27 @@
 	            <Form-item label="名称" prop="name">
 	                <Input v-model="formValidate.name" placeholder="请输入厂商名称"></Input>
 	            </Form-item>
-	            <Form-item label="编号" prop="ENName">
-	                <Input v-model="formValidate.ENName" placeholder="请输入设备编号"></Input>
+	            <Form-item label="编号" prop="numbering">
+	                <Input v-model="formValidate.numbering" placeholder="请输入设备编号"></Input>
 	            </Form-item>
-	            <Form-item label="序列号" prop="fullName">
-	                <Input v-model="formValidate.fullName" placeholder="请输入设备序列号"></Input>
+	            <Form-item label="序列号" prop="serialNumber">
+	                <Input v-model="formValidate.serialNumber" placeholder="请输入设备序列号"></Input>
 	            </Form-item>
-	            <Form-item label="设备类型" prop="fullName">
+	            <Form-item label="设备类型" prop="DevType">
+		            <Cascader :data="casDataCategory" v-model="formValidate.DevType" @on-change="changeCategory"></Cascader>
 	            </Form-item>
-	            <Form-item label="设备型号" prop="fullName">
+	            <Form-item label="设备型号" prop="DevModel">
+		            <Cascader :data="casDataModel" v-model="formValidate.DevModel" placeholder="请先选择设备类型"></Cascader>
 	            </Form-item>
-	            <Form-item label="设备所属机台" prop="fullName">
-		            <Cascader :data="cascadeData" ></Cascader>
+	            <Form-item label="设备所属机台" prop="OwnedMachine">
+		            <Cascader :data="casDataMachine" v-model="formValidate.OwnedMachine"></Cascader>
 	            </Form-item>
 	            <Form-item label="设备描述" prop="desc">
 	                <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入设备描述信息..."></Input>
 	            </Form-item>
 	            <Form-item label="图片" >
 	              <div class="fileUpload">
-	                <img src="../../static/img/TOP-STAR-LOGO.png" alt="图片" @click="upPic">
+	                <img src="../assets/topstart/mtm-water.jpg" alt="图片" @click="upPic">
 	                <input type="file" style="display:none;">
 	              </div>
 	            </Form-item>
@@ -50,7 +52,7 @@
 	            </Form-item>
 		    </Form>
 		</Modal>
-		<device-edit v-if='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop" :selectedMachine="selectedMachine" :factoryList="factoryList"></device-edit>
+		<!-- <device-edit v-if='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop" :selectedMachine="selectedMachine" :factoryList="factoryList"></device-edit> -->
 		<div class="Filtering">
 			<div class="row">
 				<div class="col-md-10">
@@ -215,8 +217,8 @@
 					        </Col>
 					        <Col span="6" style="border:solid 0px;">
 					        	<p>安装位置</p>
-						        <p><strong>车间:</strong>{{device.strWorkshopName}}</p>
-						        <p><strong>机台:</strong>{{device.strWorkstationName}}</p>
+						        <p>车间:<strong></strong>{{device.strWorkshopName}}</p>
+						        <p>机台:<strong></strong>{{device.strWorkstationName}}</p>
 					        </Col>
 					        <Col span="3" style="border:solid 0px;">
 		        				<Button shape="circle" size="small" icon="edit" @click="deviceEdit(device,null)">编辑</Button>
@@ -248,7 +250,9 @@
     	DevcategoryListActive,
     	DevModelListActive,
     	DeviceListActive,
-    	Device_Inactive
+    	Device_Inactive,
+    	Device_Add,
+    	Device_Update
     } from '@/api/getData'
 	export default{
 		name:'machineList',
@@ -258,10 +262,12 @@
 				deviceList:[],
 				workshopList:[],
 				machineList:[],
+				DevModelList:[],
 				editDevice:{},
 				selectedFactory:{},
 				selectedWorkshop:{},
 				selectedMachine:{},
+				currentCategory:'',
 				showDeletePop:false,
 				showDeviceEdit:false,
 				showPaging:false,
@@ -275,26 +281,36 @@
           		currentPage:0,
 			    modal1:false,
 			    modal2:false,
-			    cascadeData:[],
+			    casDataMachine:[],
+			    casDataCategory:[],
+			    casDataModel:[],
 			    formValidate: {
 				    name: '',
-				    ENName:'',
-				    fullName:'',
-				    address:'',
-				    desc: ''
+				    numbering:'',
+				    serialNumber:'',
+				    DevType:[],
+				    DevModel:[],
+				    OwnedMachine:[],
+				    desc:''
 			  	},
 			  	ruleValidate: {
 			    	name: [
 			          { required: true, message: '名称不能为空', trigger: 'blur' }
 			        ],
-			    	ENName: [
+			    	numbering: [
 			          { required: true, message: '英文不能为空', trigger: 'blur' },
 			        ],
-			    	fullName: [
-			          { required: true, message: '厂商全称不能为空', trigger: 'blur' }
+			    	serialNumber: [
+			          { required: true, message: '请选择设备序列号', trigger: 'blur' }
 			        ],
-			        address: [
-			          { required: true, message: '厂商地址不能为空', trigger: 'blur' }
+			        DevType: [
+			          { required: true,type:'array', message: '请选择设备类型', trigger: 'blur' }
+			        ],
+			        DevModel: [
+			          { required: true,type:'array', message: '请选择设备型号', trigger: 'blur' }
+			        ],
+			        OwnedMachine: [
+			          { required: true,type:'array', message: '请选择所属机台', trigger: 'blur' }
 			        ],
 			    	desc: [
 			          // { type: 'string', min: 5, message: '介绍不能少于5字', trigger: 'blur'}
@@ -324,6 +340,60 @@
 			cancel () {
 			  this.$Message.info('点击了取消');
 			},
+			close(){
+				this.modal2=false;
+				this.$Message.info('点击了取消');
+			},
+			handleSubmit (name) {
+                this.$refs[name].validate(async(valid) => {
+                    if (valid) {
+                        if(this.isAddDevice){
+                        	await Device_Add({
+    							uDevModelUUID:this.formValidate.DevModel[1],
+    							uWorkstationUUID:this.formValidate.OwnedMachine[1],
+    							strDeviceName:this.formValidate.name,
+    							strDeviceID:this.formValidate.numbering,
+    							strDeviceSN:this.formValidate.serialNumber,
+    						});
+                        }
+                        else{
+                        	await Device_Update({
+    							uDeviceUUID: this.editDevice.uDeviceUUID,
+    							uDevModelUUID:this.formValidate.DevModel[1],
+    							uWorkstationUUID:this.formValidate.OwnedMachine[1],
+    							strDeviceName:this.formValidate.name,
+    							strDeviceID:this.formValidate.numbering,
+    							strDeviceSN:this.formValidate.serialNumber,
+    							strDeviceDesc:this.formValidate.desc,
+    							strDeviceNote:''
+    						});
+                        }
+                    	let list=await DeviceListActive({
+                          	"nPageIndex": this.currentPage,
+                          	"nPageSize": this.pageSize,
+                          	"uDevModelUUID": -1,
+                          	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
+                    	});
+                    	this.deviceList=list.obj.objectlist;
+				      	this.totalCount=list.obj.totalcount;
+                        this.modal2=false;
+                        this.$Message.success('提交成功!');
+                    }
+                    else {
+                        this.$Message.error('表单验证失败!');
+                    }
+                })
+            },
+			handleReset (name) {
+                this.$refs[name].resetFields();
+            },
+			upPic(){
+              event.target.nextSibling.nextSibling.click();
+            },
+            changeCategory(category){
+            	// alert(category)
+            	this.getModalList(category[1]);
+            },
 			async togglePage(index) {
 				if(index) this.currentPage=index-1;
 				let list=await DeviceListActive({
@@ -377,22 +447,78 @@
 		      	this.totalCount=list.obj.totalcount;
 			},
 			deviceEdit(obj,addDevice) {
-			  if (addDevice){
-			    this.isAddDevice=true;
-			    this.editDevice={
-			    	uDevModelUUID:1,
-			     	uWorkstationUUID:1,
-			      	strDeviceName:'',
-			      	strDeviceID:'',
-			      	strDeviceSN:''
-			    };
-			  }
-			  else{
-			    this.isAddDevice=false;
-			    this.editDevice=obj;
-			  }
-			  	// this.showDeviceEdit=true;
+				if (addDevice){
+				    this.isAddDevice=true;
+				    this.editDevice={};
+				    this.formValidate.name='';
+				    this.formValidate.numbering='';
+				    this.formValidate.serialNumber='';
+				    this.formValidate.DevType=[];
+				    this.formValidate.DevModel=[];
+				    this.formValidate.OwnedMachine=[];
+				    this.casDataModel=[];
+				}
+				else{
+				    this.isAddDevice=false;
+				    this.editDevice=obj;
+				    this.formValidate.name=obj.strDeviceName;
+				    this.formValidate.numbering=obj.strDeviceID;
+				    this.formValidate.serialNumber=obj.strDeviceSN;
+				    this.formValidate.DevType=[obj.uDevCategoryParentUUID,obj.uDevCategoryUUID];
+				    this.formValidate.DevModel=[obj.uVendorUUID,obj.uDevModelUUID];
+				    this.formValidate.OwnedMachine=[
+				    	this.selectedFactory.uFactoryUUID,
+				    	this.selectedWorkshop.uWorkshopUUID,
+				    	this.selectedMachine.uWorkstationUUID
+				    	];
+				    let curCategory=obj.uDevCategoryUUID;
+				    this.casDataModel=[];
+				    this.getModalList(curCategory);
+				}
 			  	this.modal2=true;
+			  	// console.log(obj);
+			},
+			async getModalList(curCategory){
+			    let List=[],
+			    	curList=[],
+			    	vendorList=[],
+			    	modelList=[],
+			    	hash={};
+			    	List=await DevModelListActive({
+				    	"nPageIndex": 0,
+						"nPageSize": -1,
+						"uDevTypeUUID": -1,
+						"uDevCategoryUUID":curCategory,
+						"uVendorUUID":-1,
+						"uUserUUID":-1,
+			    	});
+			    curList=List.obj.objectlist;
+			    vendorList=curList.reduce(function (item,ele) {
+		    		hash[ele.uVendorUUID] ? '' : hash[ele.uVendorUUID] = true && item.push(ele);
+		    		return item;
+			    },[]);
+		        modelList=vendorList.map((ele0,index0)=>{
+			    	let curArr=[];
+			    	curArr=curList.filter((ele1,index1,arr)=>{
+			    		if (ele1.uVendorUUID==ele0.uVendorUUID){
+			    			return ele1;
+			    		}
+			    	});
+		    		return curArr;
+		    	});
+			    vendorList.forEach((ele0,index0)=>{
+			    	let obj1={};
+			    	obj1.value=ele0.uVendorUUID;
+			    	obj1.label=ele0.strVendorShortName;
+			    	obj1.children=[];
+			    	modelList[index0].forEach((ele1,index1)=>{
+			    		let obj2={};
+			    		obj2.value=ele1.uDevModelUUID;
+			    		obj2.label=ele1.strDevModelName;
+			    		obj1.children.push(obj2);
+			    	});
+			    	this.casDataModel.push(obj1);
+			    });
 			},
 			async deviceEditSub(str) {
 				this.showDeviceEdit=false;
@@ -423,7 +549,7 @@
 		            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
 		            "uWorkshopTypeUUID":-1,
 	  				"uWorkshopAdminUUID":-1
-	        	});
+	        });
 			this.workshopList=wsList.obj.objectlist;
 			this.selectedWorkshop=this.workshopList[0];
 			let list=await WorkstationListActive({
@@ -432,7 +558,7 @@
 	              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
 	              	"uWorkstationTypeUUID":-1,
 	    			"uWorkstationAdminUUID":-1,
-		        });
+		    });
 			this.machineList=list.obj.objectlist;
 			this.selectedMachine=this.machineList[0];
 			let DevList=await DeviceListActive({
@@ -440,30 +566,73 @@
 			      	"nPageSize":this.pageSize,
 			      	"uDevModelUUID": -1,
 			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
-				});
+			});
 	      	this.deviceList=DevList.obj.objectlist;
 	      	this.totalCount=DevList.obj.totalcount;
 		},
 		async created(){
 			this.factoryList=await FactoryListActive();
-
-		  	let wsList=await Workshop_ListActive({
+			this.factoryList.forEach(async(ele,index)=>{
+				let obj1={};
+				obj1.value=ele.uFactoryUUID;
+				obj1.label=ele.strFactoryName;
+				obj1.children=[];
+			  	let list1=await Workshop_ListActive({
 			        	"nPageIndex": 0,
 			            "nPageSize": -1,
-			            "uFactoryUUID":this.selectedFactory.uFactoryUUID,
+			            "uFactoryUUID":ele.uFactoryUUID,
 			            "uWorkshopTypeUUID":-1,
 		  				"uWorkshopAdminUUID":-1
-	        });
-	        this.workshopList=wsList.obj.objectlist
-
-			let machineList=await WorkstationListActive({
+		        });
+		        let wsList=list1.obj.objectlist;
+		        wsList.forEach(async(ele,index)=>{
+		        	let obj2={};
+		        	obj2.value=ele.uWorkshopUUID;
+		        	obj2.label=ele.strWorkshopName;
+		        	obj2.children=[];
+		        	let list2=await WorkstationListActive({
 		              	"nPageIndex": 0,
 		              	"nPageSize": -1,
-		              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
+		              	"uPLineUUID": ele.uWorkshopUUID,
 		              	"uWorkstationTypeUUID":-1,
 		    			"uWorkstationAdminUUID":-1,
-		    });
-		    this.workstationList=machineList.obj.objectlist;
+		    		});
+				    let machineList=list2.obj.objectlist;
+				    machineList.forEach((ele,index)=>{
+				    	let obj3={};
+				    	obj3.value=ele.uWorkstationUUID;
+				    	obj3.label=ele.strWorkstationName;
+				    	obj2.children.push(obj3);
+				    });
+			    	obj1.children.push(obj2);
+		        });
+		        this.casDataMachine.push(obj1);
+			});
+			let ParCategoryList=await DevcategoryListActive({
+	              	"nPageIndex": 0,
+	              	"nPageSize": -1,
+	              	"uDevCategoryParentUUID":0,
+	              	"uUserUUID":-1
+	            });
+			ParCategoryList.forEach(async(ele,index)=>{
+				let obj1={};
+				obj1.value=ele.uDevCategoryUUID;
+				obj1.label=ele.strDevCategoryName;
+				obj1.children=[];
+				let SubCategoryList=await DevcategoryListActive({
+                	"nPageIndex": 0,
+                	"nPageSize": -1,
+                	"uDevCategoryParentUUID":ele.uDevCategoryUUID,
+                	"uUserUUID":-1
+                });
+                SubCategoryList.forEach((ele,index)=>{
+                	let obj2={};
+                	obj2.value=ele.uDevCategoryUUID;
+					obj2.label=ele.strDevCategoryName;
+					obj1.children.push(obj2);
+                });
+                this.casDataCategory.push(obj1);
+			});
 		}
 	}
 </script>

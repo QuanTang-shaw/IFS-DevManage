@@ -61,7 +61,7 @@
 						</span>
 					</div>
 					<ul style="margin-left:20px;" v-show="showTree">
-						<li class="CategoryName" v-for="(parentCategory,index0) in DevParentClass" style="position:relative;">
+						<li class="CategoryName" v-for="(parentCategory,index0) in DevParentClass" style="position:relative;margin-top:5px;">
 							<div class="devType" @mouseenter="showIcon" @mouseleave="hideIcon">
 								<i class="fa fa-minus-square-o fa-lg"
 									style="margin-right:6px;"
@@ -81,7 +81,7 @@
 									v-if="parentIndex==index0"
 									@blur="blur"
 									v-focus>
-								<span v-else style="font-weight:bolder">{{parentCategory.strDevCategoryName}}</span>
+								<span v-else style="">{{parentCategory.strDevCategoryName}}</span>
 								<span class="operating-icon">
 									<i class="fa fa-edit fa-sm" @click.stop="parentNameEdit(index0)"></i>
 									<i class="fa fa-plus fa-sm" @click="addSubCategory(parentCategory,index0)"></i>
@@ -89,7 +89,7 @@
 								</span>
 							</div>
 							<ul style="border:solid 0px;" v-if="unfolder[index0]">
-								<li class="subCategoryName" v-for="(subCategory,$index1) in DevSubClass[index0]" @click="categoryClick(subCategory)" style="padding-left:15px;" @mouseleave="devNameOut" @mouseenter="devNameOver">
+								<li class="subCategoryName" v-for="(subCategory,$index1) in DevSubClass[index0]" @click="categoryClick(subCategory)" style="padding-left:15px;margin-top:6px;" @mouseleave="devNameOut" @mouseenter="devNameOver">
 										<input
 											type="text"
 											class="categoryNameInput"
@@ -706,7 +706,7 @@
 	    max-width: 30%;
 	    min-width:20%;
 	    padding: 10px;
-	    font-size: .9em;
+	    font-size:1.2em;
 	    /*background-color: #F7F6F6;*/
 	    overflow-y: scroll;
 	    border: solid 1px #E7E2E2;
