@@ -7,10 +7,12 @@
 			req.exec(url,op,obj,
 			    // success:
 			    function (json) {
+			        // console.log(json);
 			    	resolve(json);
 			    },
 			    // error:
 			    function (json) {
+			        console.log('err');
 			        reject(json);
 			    });
 		});

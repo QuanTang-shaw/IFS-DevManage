@@ -77,7 +77,8 @@
 				            <Icon type="arrow-down-b"></Icon>
 				        </Button>
 				        <Dropdown-menu slot="list" >
-				            <Dropdown-item :name="index" :key="factory.uFactoryUUID" v-for="(factory,index) in factoryList">{{factory.strFactoryName}}</Dropdown-item>
+				            <Dropdown-item :selected="currentIndex==index" :name="index" :key="factory.uFactoryUUID" v-for="(factory,index) in factoryList">{{factory.strFactoryName}}</Dropdown-item>
+				            <Dropdown-item divided>未指定工厂</Dropdown-item>
 				        </Dropdown-menu>
 				    </Dropdown>
 				</label>
@@ -90,7 +91,7 @@
 					<Button class="addWorkshop" type="primary" icon="plus-round" @click="WsEdit(null,'add')">添加车间</Button>
 		        </Col>
 		        <Col span="4">
-		        	<Input  placeholder="请输入..."></Input>
+		        	<Input v-model="searchTxt"  placeholder="请输入..."></Input>
 		        </Col>
 		        <Col span="2">
 					<Button type="ghost" shape="circle" icon="ios-search">搜索</Button>
@@ -114,7 +115,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="(workshop,index) in workshopList">
+					<tr v-for="(workshop,index) in computeList">
 						<!-- <td><input type="checkbox"></td> -->
 						<td>
 							<span>
@@ -185,6 +186,8 @@
 			    showPaging:false,
 			    editTypeTxt:'车间',
 			    deletePopContent:'',
+			    searchTxt:'',
+			    currentIndex:-1,
 			    totalCount:0,
 			    pageSize:10,
 			    pageSizeOpts:[10,15,20],
@@ -301,13 +304,26 @@
               event.target.nextSibling.nextSibling.click();
             },
 			async togglePlant(index) {
-		  	 	this.selectedPlant=this.factoryList[index];
     			this.showPaging=false;
+	        	this.currentIndex=index;
+	        	let UUID=-1,
+	        		list=[];
+	        	if(index!=undefined) {
+			  	 	this.selectedPlant=this.factoryList[index];
+	        		UUID=this.selectedPlant.uFactoryUUID;
+	        	}
+	        	else {
+	        		UUID=-1;
+	        		this.selectedPlant={
+	        			strFactoryName:"未指定工厂",
+	        			uFactoryUUID:-1
+	        		}
+	        	}
 		  	 	//获取选中的厂房列表
-		  	 	let list=await Workshop_ListActive({
+		  	 	list=await Workshop_ListActive({
 		              "nPageIndex": 0,
 		              "nPageSize":this.pageSize,
-		              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+		              "uFactoryUUID":UUID,
 		              "uWorkshopTypeUUID":-1,
 	  				  "uWorkshopAdminUUID":-1
   				  });
@@ -383,11 +399,19 @@
 		async beforeCreate() {
 			//初始化,获取工厂一下面的车间
 		  	this.factoryList=await FactoryListActive();
-			this.selectedPlant=this.factoryList[0];
+        	// this.currentIndex=this.factoryList.length;
+			this.selectedPlant={
+				strFactoryName:"未指定工厂",
+				uFactoryUUID:-1
+			}
+			// this.selectedPlant=this.factoryList[0];
+        	// console.log(this.workshopTypelist);
+		},
+		async created(){
 			let list=await Workshop_ListActive({
 		              "nPageIndex": 0,
 		              "nPageSize": this.pageSize,
-		              "uFactoryUUID":this.selectedPlant.uFactoryUUID,
+		              "uFactoryUUID":-1,
 		              "uWorkshopTypeUUID":-1,
 	  				  "uWorkshopAdminUUID":-1
   				});
@@ -397,7 +421,21 @@
               	"nPageIndex":0,
               	"nPageSize":-1
 	        });
-        	// console.log(this.workshopTypelist);
+			console.log(list)
+		},
+		computed:{
+			computeList(){
+				const self=this;
+				self.searchTxt=self.searchTxt.trim();
+				return this.workshopList.filter(function(ele,index) {
+					if((ele.strWorkshopName.indexOf(self.searchTxt) > -1 ||
+                        ele.strWorkshopTypeName.indexOf(self.searchTxt) > -1)
+                        ){
+                        return ele;
+                    }
+				});
+			}
+
 		}
 	}
 </script>

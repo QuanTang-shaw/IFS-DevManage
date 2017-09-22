@@ -14,7 +14,7 @@
 		</Modal>
 		<Modal
 	        v-model="modal2"
-	        title="对话框标题"
+	        title="设备型号编辑"
 	        @on-ok="ModelEditOk"
 	        @on-cancel="closeEdit">
 		    <Form ref="formValidate"  :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -141,12 +141,6 @@
 									<span>15</span>
 								</td>
 								<td class="DevCagegory-oper">
-									<!-- <span title="编辑">
-										<i class="fa fa-edit fa-lg" @click="DevModelEdit(device,index)"></i>
-									</span>
-									<span title="删除">
-										<i class="fa fa-trash-o fa-lg" @click="DevModelDelete(device,index)"></i>
-									</span> -->
 									<Button shape="circle" size="small" icon="edit" @click="DevModelEdit(device,index)">编辑</Button>
 			                		<Button shape="circle" size="small" icon="trash-a" @click="DevModelDelete(device,index)">删除</Button>
 								</td>
@@ -613,15 +607,15 @@
 					this.formValidate.categoryType=[];
 					this.formValidate.categoryType.push(obj.uDevCategoryParentUUID);
 					this.formValidate.categoryType.push(obj.uDevCategoryUUID);
-					this.formValidate.ModelName=obj.strDevModelName
-					// console.log(this.formValidate.vendor)
+					this.formValidate.ModelName=obj.strDevModelName;
+					// console.log(this.formValidate.vendor);
 					// this.formValidate.vendor=obj.strVendorShortName;
 				}
 			},
 			async changeCategory(value){
 				// alert(value);
 				// alert(this.formValidate.categoryType);
-				// console.log(this.formValidate.categoryType[0])
+				// console.log(this.formValidate.categoryType[0]);
 			}
 		},
 		directives:{
@@ -634,10 +628,11 @@
 		async beforeCreate() {
 			let self=this;
 			this.DevParentClass=await DevcategoryListActive({
-			      	"nPageIndex": 0,
-			      	"nPageSize": -1,
-			      	"uDevCategoryParentUUID":0,
-			      	"uUserUUID":-1});
+		      	"nPageIndex": 0,
+		      	"nPageSize": -1,
+		      	"uDevCategoryParentUUID":0,
+		      	"uUserUUID":-1
+		    });
 	      	// this.DevParentClass=list.obj.objectlist;
 	      	this.DevParentClass.forEach( function(element, index) {
 	      		if(index==0) self.unfolder[0]=true;
@@ -646,8 +641,10 @@
 	      	// console.log(this.DevParentClass);
 
 		    let len=self.DevParentClass.length,
-			      k=0;
+			      k=0,
+			      temp=0;
 		    async function  togetData  (argument) {
+		    	temp=k;
 			    self.DevSubClass[k]=[];
 			    self.DevSubClass[k]=await DevcategoryListActive({
 			      	"nPageIndex": 0,
@@ -660,26 +657,39 @@
 			    else  self.selectedCategory=self.DevSubClass[0][0];
 		    }
 		    togetData();
-
+		    /*self.DevSubClass[0]=[];
+		    self.DevSubClass[0]=await DevcategoryListActive({
+		      	"nPageIndex": 0,
+		      	"nPageSize": -1,
+		      	"uDevCategoryParentUUID":self.DevParentClass[0].uDevCategoryUUID,
+		      	"uUserUUID":-1
+			});*/
+		},
+		async created(){
 			let list=await DevModelListActive({
 					nPageIndex:0,
 					nPageSize:this.pageSize,
 					uDevTypeUUID:-1,
-					uDevCategoryUUID:7,
+					uDevCategoryUUID:-1,
 					uVendorUUID:-1,
 					uUserUUID:-1
 				});
 			this.DevModelList=list.obj.objectlist;
 			this.totalCount=list.obj.totalcount;
-			// console.log(this.DevModelList);
-		},
-		created(){
+			console.log(this.DevModelList);
 			setTimeout(()=>{
-				this.DevParentClass.forEach((ele,index)=>{
+				this.DevParentClass.forEach(async(ele,index)=>{
+						this.DevSubClass[index]=[];
 						let obj1={};
 						obj1.value=ele.uDevCategoryUUID;
 						obj1.label=ele.strDevCategoryName;
 						obj1.children=[];
+						this.DevSubClass[index]=await DevcategoryListActive({
+					      	"nPageIndex": 0,
+					      	"nPageSize": -1,
+					      	"uDevCategoryParentUUID":ele.uDevCategoryUUID,
+					      	"uUserUUID":-1
+					    });
 						this.DevSubClass[index].forEach((ele)=>{
 							let obj2={};
 							obj2.value=ele.uDevCategoryUUID;

@@ -49,36 +49,47 @@
       <Button class="addPlant" type="primary" icon="plus-round" @click="plantEdit(null,null,true)">添加工厂</Button>
     </div>
     <div class="plant-list">
-      <ul class="list-group">
-        <li class="list-group-item" v-for="(plant,index) in plantList">
-          <div class="row">
+      <ul>
+        <li class="plant-Info" v-for="(plant,index) in plantList">
+          <Row style="border:solid 1px #E5E0E0;" type="flex" align="middle">
+            <Col span="5" style="border:solid 0px;">
+              <img src="../pic/plant1.jpg" alt="厂区图片" style="height:115px;">
+            </Col>
+            <Col span="5" style="border:solid 0px;">
+              <p>基本信息</p>
+              <p><span>名称:</span> &nbsp {{plant.strFactoryName}}</p>
+              <p><span>地址:</span> &nbsp {{plant.strFactoryAddress}}</p>
+              <p><span>联系方式:13000000000</span></p>
+            </Col>
+            <Col span="5" style="border:solid 0px;">
+              <p>建筑信息</p>
+              <p><span>厂房数量:15</span></p>
+              <p><span>建筑面积:126m^2</span></p>
+            </Col>
+            <Col span="5" style="border:solid 0px;">
+              <p>生产信息</p>
+              <p><span>主要产品:注射器</span></p>
+              <p><span>年产量:500万pcs</span></p>
+            </Col>
+            <Col span="4" style="border:solid 0px;">
+              <Button  icon="edit" @click="plantEdit(plant,index)">编辑</Button>
+                <Button  icon="trash-a" @click="plantDelete(plant)">删除</Button>
+            </Col>
+          </Row>
+          <!-- <div class="row">
             <div class="col-md-2 plant-pic">
               <img src="../pic/plant1.jpg" alt="厂区图片">
             </div>
             <div class="col-md-6 plant-info">
               <p><b>名称:</b> &nbsp {{plant.strFactoryName}}</p>
               <p><b>地址:</b> &nbsp {{plant.strFactoryAddress}}</p>
-              <!-- <p><b>联系方式:</b></p> -->
+              <p><b>联系方式:</b></p>
             </div>
             <div class="col-md-4 plant-oper" >
-              <!-- <a href="#" class="btn btn-default"><i class="fa fa-pencil fa-sm"></i> Edit</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-trash-o fa-lg"></i> Delete</a>
-              <a class="btn btn-default" href="#">
-                <i class="fa fa-cog fa-lg"></i> Settings</a> -->
-                <!-- <span class="font-icon-btn" @click="plantEdit(index)">
-                  <i class="fa fa-edit fa-lg" title="编辑"></i>
-                </span> -->
                 <Button  icon="edit" @click="plantEdit(plant,index)">编辑</Button>
                 <Button  icon="trash-a" @click="plantDelete(plant)">删除</Button>
-                <!-- <span class="font-icon-btn" @click="plantDelete(plant)">
-                  <i class="fa fa-trash-o fa-lg" title="删除"></i>
-                </span> -->
-                <!-- <span class="font-icon-btn" title="查看详情">
-                  <i class="fa fa-list-alt fa-lg"></i>
-                </span> -->
             </div>
-          </div>
+          </div> -->
         </li>
       </ul>
     </div>
@@ -275,7 +286,7 @@
     max-height:120px;
     max-width:180px;
   }
-  .plant-list .list-group-item {
+  .plant-list .plant-Info {
     margin-bottom:15px;
     padding: 0px 10px;
     /*border:solid 1px #EA0F0F;*/

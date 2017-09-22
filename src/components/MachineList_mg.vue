@@ -15,7 +15,7 @@
 		</Modal>
 		<Modal
 		    v-model="modal2"
-		    title="车间编辑"
+		    title="机台编辑"
 		    @on-cancel="cancel"
 		    :footer-hide="true">
 		    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -94,6 +94,9 @@
 					            <Dropdown-item :name="index" :key="workshop.uWorkshopUUID" v-for="(workshop,index) in workshopList">
 					            	{{workshop.strWorkshopName}}
 					            </Dropdown-item>
+					            <Dropdown-item divided>
+					            	所有车间
+					            </Dropdown-item>
 					        </Dropdown-menu>
 					    </Dropdown>
 					</label>
@@ -107,7 +110,7 @@
 					<Button class="addMachineList" type="primary" icon="plus-round" @click="machineEdit(null,'add')">添加机台</Button>
 		        </Col>
 		        <Col span="4">
-		        	<Input  placeholder="请输入..."></Input>
+		        	<Input v-model="searchTxt"  placeholder="请输入..."></Input>
 		        </Col>
 		        <Col span="2">
 					<Button type="ghost" shape="circle" icon="ios-search">搜索</Button>
@@ -130,7 +133,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="(machine,index) in machineList">
+					<tr v-for="(machine,index) in computedList">
 						<!-- <td><input type="checkbox"></td> -->
 						<td><span>{{machine.strWorkstationID}}</span></td>
 						<td><span>{{machine.strWorkstationName}}</span></td>
@@ -181,6 +184,7 @@
 				selectedFactory:{},
 				selectedWorkshop:{},
 				editedMachine:{},
+				searchTxt:'',
 				deletePopContent:'',
 				editTypeTxt:'机台',
 				showMachineEdit:false,
@@ -330,18 +334,32 @@
 			        });
 	        	this.workshopList=list.obj.objectlist;
 	        	this.selectedWorkshop=this.workshopList[0];
-			    this.toggleWorkshop();
+			    this.toggleWorkshop(-1);
 			},
 			async toggleWorkshop(index) {
-				if(index>=0)  this.selectedWorkshop=this.workshopList[index];
-				this.showPaging=false;
-				let list=await WorkstationListActive({
-		              	"nPageIndex": this.currentPage,
+				let UUID=null,
+					list=[];
+					// alert(typeof index)
+				if(index!=undefined)  {
+					if(index!=-1) {console.log('-1');this.selectedWorkshop=this.workshopList[index];}
+					// this.selectedWorkshop=this.workshopList[index];
+					UUID=this.selectedWorkshop.uWorkshopUUID;
+				}
+				else {
+					UUID=-1;
+					this.selectedWorkshop={
+						strWorkshopName:"所有车间",
+						uWorkshopUUID:-1,
+						// uFactoryUUID:-1
+					}
+				}
+				list=await WorkstationListActive({
+		              	"nPageIndex": 0,
 		              	"nPageSize":this.pageSize,
-		              	"uPLineUUID":this.selectedWorkshop.uWorkshopUUID,
+		              	"uPLineUUID":UUID,
 		              	"uWorkstationTypeUUID":-1,
 		    			"uWorkstationAdminUUID":-1,
-		              });
+		            });
 	        	this.machineList=list.obj.objectlist;
 	        	this.totalCount=list.obj.totalcount;
 			},
@@ -399,16 +417,6 @@
 	  				"uWorkshopAdminUUID":-1
 				});
 			this.workshopList=workshoplist.obj.objectlist;
-			this.selectedWorkshop=this.workshopList[0];
-			let workstationList=await WorkstationListActive({
-	              	"nPageIndex": 0,
-	              	"nPageSize": this.pageSize,
-	              	"uPLineUUID": this.selectedWorkshop.uWorkshopUUID,
-	              	"uWorkstationTypeUUID":-1,
-	    			"uWorkstationAdminUUID":-1,
-		  	    });
-			this.machineList=workstationList.obj.objectlist;
-			this.totalCount=workstationList.obj.totalcount;
 			this.machineTypeList=await WorkstationTypeListActive({
 				"nPageIndex":0,
 				"nPageSize":-1
@@ -434,7 +442,37 @@
 				});
 				this.cascadeData.push(obj1);
 			});
+		},
+		async created(){
+			// this.selectedWorkshop=this.workshopList[0];
+			this.selectedWorkshop={
+				strWorkshopName:"所有车间",
+				uWorkshopUUID:-1
+			}
+			let workstationList=await WorkstationListActive({
+	              	"nPageIndex": 0,
+	              	"nPageSize": this.pageSize,
+	              	"uPLineUUID": -1,
+	              	"uWorkstationTypeUUID":-1,
+	    			"uWorkstationAdminUUID":-1,
+		  	    });
+			this.machineList=workstationList.obj.objectlist;
+			this.totalCount=workstationList.obj.totalcount;
+		},
+		computed:{
+			computedList(){
+				const self=this;
+				self.searchTxt=self.searchTxt.trim();
+				return this.machineList.filter(function(ele,index) {
+					if((ele.strWorkstationName.indexOf(self.searchTxt) > -1 ||
+                        ele.strWorkstationTypeName.indexOf(self.searchTxt) > -1)
+                        ){
+                        return ele;
+                    }
+				});
+			}
 		}
+
 	}
 </script>
 <style>

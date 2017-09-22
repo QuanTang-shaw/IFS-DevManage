@@ -53,7 +53,7 @@
 					<Button  type="primary" icon="plus-round" @click="ManufaEdit(null,'add')">添加厂商</Button>
 		        </Col>
 		        <Col span="4">
-		        	<Input  placeholder="请输入..."></Input>
+		        	<Input v-model="searchTxt" placeholder="请输入..."></Input>
 		        </Col>
 		        <Col span="2">
 					<Button type="ghost" shape="circle" icon="ios-search">搜索</Button>
@@ -77,7 +77,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="(company,index) in companyList">
+					<tr v-for="(company,index) in computedList">
 						<td><img src="../../static/img/TOP-STAR-LOGO.png" height="25px;" alt=""></td>
 						<td>{{company.strVendorShortName}}</td>
 						<td>{{company.strVendorShortName_EN}}</td>
@@ -122,6 +122,7 @@
 				editedManufa:{},
 				editTypeTxt:'机台',
 				deletePopContent:'',
+				searchTxt:'',
 				showManufaEdit:false,
 				showPaging:false,
 				isAddManufa:false,
@@ -220,15 +221,6 @@
                     }
                 })
             },
-            handleSubmit (name) {
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        this.$Message.success('提交成功!');
-                    } else {
-                        this.$Message.error('表单验证失败!');
-                    }
-                })
-            },
 			handleReset (name) {
                 this.$refs[name].resetFields();
             },
@@ -292,6 +284,21 @@
 		},
 		components:{
 			"mf-edit":manufaEdit
+		},
+		computed:{
+			computedList(){
+				const self=this;
+				self.searchTxt=self.searchTxt.trim();
+				return this.companyList.filter(function(ele,index) {
+					if((ele.strVendorShortName.indexOf(self.searchTxt) > -1 ||
+                        ele.strVendorShortName_EN.indexOf(self.searchTxt) > -1)||
+                        ele.strVendorName.indexOf(self.searchTxt) > -1 ||
+                        ele.strVendorAddress.indexOf(self.searchTxt) > -1
+                        ){
+                        return ele;
+                    }
+				});
+			}
 		},
 		async created(){
 			let list=await Vendor_ListActive({

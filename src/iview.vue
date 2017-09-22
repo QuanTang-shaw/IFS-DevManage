@@ -1,6 +1,6 @@
 <template>
     <div class="layout">
-        <Row type="flex" justify="center" align="middle" class="code-row-bg" style="height:60px;border-bottom:solid 1px #F0F0F0;background-color:#FFFFFF;">
+        <Row type="flex" justify="center" align="middle" class="code-row-bg" style="height:6%;border-bottom:solid 1px #F0F0F0;background-color:#FFFFFF;">
             <Col span="4" style="border:solid 0px;">
                 <img src="../static/img/TOP-STAR-LOGO.png" alt="" height="40px;">
             </Col>
@@ -22,7 +22,7 @@
                 </Dropdown>
             </Col>
             <Col span="2">
-                <img src="../static/img/flage.jpg" alt="" style="height:30px;">
+                <!-- <img src="../static/img/flage.jpg" alt="" style="height:30px;"> -->
             </Col>
         </Row>
         <Row type="flex" class="layout-wrap">
@@ -93,8 +93,8 @@
                     </div>
                 </div>
                 <div class="layout-copy">
-                    <span>CopyRight(C)TOP-LINK 智能制造2025</span>
-                    <span style="margin-left:25px;">深圳市拓联智能信息技术有限公司</span>
+                    <span>CopyRight &copy; TOPSTAR</span>
+                    <span style="margin-left:25px;">拓斯达科技</span>
                 </div>
             </i-col>
         </Row>
@@ -170,20 +170,27 @@
         }
     }
 </script>
-<style scoped>
+<style >
+    html,body,#app{
+        height:100%;
+    }
     .layout{
         border: 1px solid #d7dde4;
         background: #f5f7f9;
         position: relative;
         /*width:90%;*/
         /*margin:0 auto;*/
+        height:100%;
     }
-    .layout-wrap{min-height:694px;}
+    .layout-wrap{
+        /*min-height:694px;*/
+        min-height:94%;
+    }
     .layout-breadcrumb{
         padding: 10px 15px 0;
     }
     .layout-content{
-        min-height: 200px;
+        min-height: 780px;
         margin: 15px;
         overflow: hidden;
         background: #fff;
@@ -203,7 +210,7 @@
         /*position: absolute;*/
         right: 0;
         left: 0;
-        background-color: #d4e1ec;
+        background-color:#f5f7f9;
     }
     .layout-menu-left{
         background: #464c5b;

@@ -14,7 +14,7 @@
 		</Modal>
 		<Modal
 		    v-model="modal2"
-		    title="车间编辑"
+		    title="设备编辑"
 		    @on-cancel="cancel"
 		    :footer-hide="true">
 		    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -52,49 +52,10 @@
 	            </Form-item>
 		    </Form>
 		</Modal>
-		<!-- <device-edit v-if='showDeviceEdit' @submit="deviceEditSub" :editDevice="editDevice" :isAddDevice="isAddDevice" :selectedFactory="selectedFactory" :selectedWorkshop="selectedWorkshop" :selectedMachine="selectedMachine" :factoryList="factoryList"></device-edit> -->
 		<div class="Filtering">
 			<div class="row">
 				<div class="col-md-10">
 					<div class="InsLocation">
-						<!-- <div>安装位置:
-							<div class="btn-group">
-							  <button type="button" class="btn btn-default">{{selectedFactory.strFactoryName}}</button>
-							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							    <span class="caret"></span>
-							    <span class="sr-only">Toggle Dropdown</span>
-							  </button>
-							  <ul class="dropdown-menu">
-							  	<li v-for="(factory,index) in factoryList" @click="toggleFactory(factory)"><a >{{factory.strFactoryName}}</a></li>
-							    <li role="separator" class="divider"></li>
-							    <li><a href="#">全部工厂</a></li>
-							  </ul>
-							</div>
-							<div class="btn-group">
-							  <button type="button" class="btn btn-default">{{selectedWorkshop.strWorkshopName}}</button>
-							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							    <span class="caret"></span>
-							    <span class="sr-only">Toggle Dropdown</span>
-							  </button>
-							  <ul class="dropdown-menu">
-							  	<li v-for="(workshop,index) in workshopList"  @click="toggleWorkshop(workshop)"><a>{{workshop.strWorkshopName}}</a></li>
-							    <li role="separator" class="divider"></li>
-							    <li><a href="#">全部厂房</a></li>
-							  </ul>
-							</div>
-							<div class="btn-group">
-							  <button type="button" class="btn btn-default">{{selectedMachine.strWorkstationName}}</button>
-							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							    <span class="caret"></span>
-							    <span class="sr-only">Toggle Dropdown</span>
-							  </button>
-							  <ul class="dropdown-menu">
-							  	<li v-for="(machine,index) in machineList" @click="toggleMachine(machine)"><a >{{machine.strWorkstationName}}</a></li>
-							    <li role="separator" class="divider"></li>
-							    <li><a href="#">全部机台</a></li>
-							  </ul>
-							</div>
-						</div> -->
 						<div>安装位置:
 							<Dropdown style="margin-left: 20px" @on-click="toggleFactory">
 						        <Button >
@@ -126,6 +87,9 @@
 						        <Dropdown-menu slot="list" >
 						            <Dropdown-item :name="index" :key="machine.uWorkstationUUID" v-for="(machine,index) in machineList">
 						            	{{machine.strWorkstationName}}
+						            </Dropdown-item>
+						            <Dropdown-item devided>
+						            	全部机台
 						            </Dropdown-item>
 						        </Dropdown-menu>
 						    </Dropdown>
@@ -321,6 +285,9 @@
 		components:{
 			"device-edit":deviceEdit,
 		},
+		computed(){
+			
+		},
 		methods:{
 			ok (){
 			  	let self=this;
@@ -433,11 +400,24 @@
 		              });
 			    this.machineList=list.obj.objectlist;
 	        	this.selectedMachine=this.machineList[0];
-	        	this.toggleMachine();
+	        	this.toggleMachine(-1);
 			},
 			async toggleMachine(index) {
-				if(index>=0) this.selectedMachine=this.machineList[index];
-				let list=await DeviceListActive({
+				let UUID=null,
+					list=[];
+				// if(index>=0) this.selectedMachine=this.machineList[index];
+				if(index!=undefined){
+					if(index!=-1){this.selectedMachine=this.machineList[index];}
+					UUID=this.selectedMachine.uWorkstationUUID;
+				}
+				else{
+					UUID=-1;
+					this.selectedMachine={
+						strWorkstationName:"所有机台",
+						uWorkstationUUID:-1
+					}
+				}
+				list=await DeviceListActive({
 			      	"nPageIndex": 0,
 			      	"nPageSize":this.pageSize,
 			      	"uDevModelUUID":-1,
@@ -541,8 +521,18 @@
 		},
 		async beforeCreate() {
 		    let self=this;
-			this.factoryList=await FactoryListActive();
+		    this.factoryList=await FactoryListActive();
 			this.selectedFactory=this.factoryList[0];
+
+		    let DevList=await DeviceListActive({
+			      	"nPageIndex": 0,
+			      	"nPageSize":this.pageSize,
+			      	"uDevModelUUID": -1,
+			      	"uWorkstationUUID":-1
+			});
+	      	this.deviceList=DevList.obj.objectlist;
+	      	this.totalCount=DevList.obj.totalcount;
+
 			let wsList=await Workshop_ListActive({
 		        	"nPageIndex": 0,
 		            "nPageSize": -1,
@@ -560,15 +550,11 @@
 	    			"uWorkstationAdminUUID":-1,
 		    });
 			this.machineList=list.obj.objectlist;
-			this.selectedMachine=this.machineList[0];
-			let DevList=await DeviceListActive({
-			      	"nPageIndex": 0,
-			      	"nPageSize":this.pageSize,
-			      	"uDevModelUUID": -1,
-			      	"uWorkstationUUID":this.selectedMachine.uWorkstationUUID
-			});
-	      	this.deviceList=DevList.obj.objectlist;
-	      	this.totalCount=DevList.obj.totalcount;
+			// this.selectedMachine=this.machineList[0];
+			this.selectedMachine={
+				strWorkstationName:"未指定机台",
+				uWorkstationUUID:-1
+			}
 		},
 		async created(){
 			this.factoryList=await FactoryListActive();

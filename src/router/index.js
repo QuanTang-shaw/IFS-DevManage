@@ -1,15 +1,14 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import plant from '@/components/Plant_mg'
-import workshop from '@/components/Workshop_mg'
-import machineList from '@/components/MachineList_mg'
-import deviceCategory from '@/components/DeviceCategory_mg'
-import deviceManufacturers from '@/components/DeviceManufacturers_mg'
-import deviceList from '@/components/DeviceList_mg'
-import report from '@/components/Report_mg'
-
 Vue.use(Router)
+const plant = r => require.ensure([], () => r(require('@/components/Plant_mg')), 'plant');
+const workshop = r => require.ensure([], () => r(require('@/components/Workshop_mg')), 'Workshop');
+const machineList = r => require.ensure([], () => r(require('@/components/MachineList_mg')), 'machineList');
+const devCategory = r => require.ensure([], () => r(require('@/components/deviceCategory_mg')), 'devCategory');
+const devMF = r => require.ensure([], () => r(require('@/components/DeviceManufacturers_mg')), 'devMF');
+const devList = r => require.ensure([], () => r(require('@/components/DeviceList_mg')), 'devList');
+const report = r => require.ensure([], () => r(require('@/components/Report_mg')), 'report');
 
 export default new Router({
   routes: [
@@ -17,8 +16,6 @@ export default new Router({
       path: '/',
       name: 'plantMg',
       components:{
-      	// default:navPlant,
-        // a:navPlant,
       	b:plant
       }
     },
@@ -26,8 +23,6 @@ export default new Router({
       path: '/workshop',
       name: 'workshopMg',
       components:{
-      	// default:navworkshop,
-      	// a:navworkshop,
       	b:workshop
       }
     },
@@ -35,8 +30,6 @@ export default new Router({
       path: '/machineList',
       name: 'machineListMg',
       components:{
-      	// default:navMachineList,
-      	// a:navMachineList,
       	b:machineList
       }
     },
@@ -44,35 +37,27 @@ export default new Router({
       path: '/deviceCategory',
       name: 'deviceCategoryMg',
       components:{
-      	// default:navDeviceCategory,
-      	// a:navDeviceCategory,
-      	b:deviceCategory
+      	b:devCategory
       }
     },
     {
       path: '/deviceManufacturers',
       name: 'deviceManufacturersMg',
       components:{
-      	// default:navDeviceManufacturers,
-      	// a:navDeviceManufacturers,
-      	b:deviceManufacturers
+      	b:devMF
       }
     },
     {
       path: '/deviceList',
       name: 'deviceListMg',
       components:{
-      	// default:navDeviceList,
-      	// a:navDeviceList,
-      	b:deviceList
+      	b:devList
       }
     },
     {
       path: '/report',
       name: 'reportMg',
       components:{
-      	// default:navReport,
-      	// a:navReport,
       	b:report
       }
     }

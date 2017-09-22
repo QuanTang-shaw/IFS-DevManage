@@ -157,7 +157,6 @@
 					VendorNum:0,
 					VendorModelNum:0
 				}
-
 			}
 		},
 		methods:{
@@ -231,7 +230,6 @@
                 	"nPageSize": -1,
                 	"uDevCategoryParentUUID":this.curParCategory.uDevCategoryUUID,
                 	"uUserUUID":-1});
-
 			},
 			toggleSubCagegory(obj,index){
 				let self=this;
@@ -376,7 +374,6 @@
     		    		});
     		    		self.curDevVendorModel=self.DevVendorModelList[0];
 	    			});
-
 		},
 		created:function () {
 			console.log(this.editDevice);
